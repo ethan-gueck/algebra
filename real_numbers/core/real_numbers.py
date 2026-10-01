@@ -1,0 +1,384 @@
+"""Properties of real numbers, order of operations, and where floating point breaks them.
+
+formula.py holds the mathematics as written: each property as a function of
+a, b, c returning its two sides, and the PEMDAS ranking. This module runs those
+same functions on exact numbers and on floats, steps through expressions, and
+formats everything for the page.
+
+Real numbers here are exact rationals (fractions.Fraction): "0.1" is exactly
+one tenth. Floating point is IEEE 754 double precision, what Python's float
+and JavaScript's Number use, where 0.1 is the nearest double to one tenth.
+Comparing the two shows which properties survive on a computer.
+
+The page's JavaScript mirror (html/static/real_numbers_math.js) uses BigInt
+fractions for the exact side and is kept identical by tests/test_js_parity.py.
+"""
+
+from __future__ import annotations
+
+import math
+import re
+from dataclasses import dataclass
+from fractions import Fraction
+
+from . import formula
+
+MINUS = "−"
+OPS = {"+": "+", "-": MINUS, "*": "×", "/": "÷", "^": "^"}
+MAX_EXPONENT = 64
+MAX_DIGITS = 400
+
+
+# ---- Exact numbers ----------------------------------------------------------
+
+def parse_number(text: str) -> Fraction:
+    """'0.1' -> 1/10, '-3' -> -3, '2/3' -> 2/3. Decimals are read exactly, not via float."""
+    s = text.strip().replace(MINUS, "-")
+    if re.fullmatch(r"[+-]?\d+/\d+", s):
+        num, den = s.split("/")
+        if int(den) == 0:
+            raise ValueError("A fraction can't have a zero denominator.")
+        return Fraction(int(num), int(den))
+    if not re.fullmatch(r"[+-]?(\d+\.?\d*|\.\d+)(e[+-]?\d+)?", s, re.I):
+        raise ValueError(f"'{text.strip()}' isn't a number. Try 0.1, -3 or 2/3.")
+    return Fraction(s)
+
+
+def to_float(text: str) -> float:
+    """The double a computer stores for ``text`` (the nearest one to its exact value)."""
+    return float(parse_number(text))
+
+
+def exact_text(value: Fraction) -> str:
+    """Exact value as text: a terminating decimal when there is one ('0.6', '-2.5'), else 'p/q'."""
+    den = value.denominator
+    twos = fives = 0
+    while den % 2 == 0:
+        den //= 2
+        twos += 1
+    while den % 5 == 0:
+        den //= 5
+        fives += 1
+    sign = MINUS if value < 0 else ""
+    if den != 1:
+        return f"{sign}{abs(value.numerator)}/{value.denominator}"
+    places = max(twos, fives)
+    scaled = abs(value.numerator) * 10**places // value.denominator
+    whole, frac = divmod(scaled, 10**places) if places else (scaled, 0)
+    text = str(whole) + (("." + str(frac).rjust(places, "0")).rstrip("0").rstrip(".") if places else "")
+    return sign + text
+
+
+def _show(value: Fraction) -> str:
+    """An operand inside an expression: negatives in parentheses."""
+    text = exact_text(value)
+    return f"({text})" if value < 0 else text
+
+
+# ---- Properties -------------------------------------------------------------
+
+@dataclass(frozen=True)
+class _Property:
+    id: str
+    name: str
+    rule: str
+
+
+PROPERTIES = (
+    _Property("commutative_add", "Commutative (addition)", "a + b = b + a"),
+    _Property("commutative_mul", "Commutative (multiplication)", "a × b = b × a"),
+    _Property("associative_add", "Associative (addition)", "(a + b) + c = a + (b + c)"),
+    _Property("associative_mul", "Associative (multiplication)", "(a × b) × c = a × (b × c)"),
+    _Property("distributive", "Distributive", "a × (b + c) = a × b + a × c"),
+    _Property("identity_add", "Additive identity", "a + 0 = a"),
+    _Property("identity_mul", "Multiplicative identity", "a × 1 = a"),
+    _Property("inverse_add", "Additive inverse", "a + (−a) = 0"),
+    _Property("inverse_mul", "Multiplicative inverse", "a × (1 ÷ a) = 1"),
+)
+
+
+def properties(a: str, b: str, c: str) -> list[dict]:
+    """Check each property with a, b, c, both exactly and in floating point.
+
+    Each entry: id, name, rule, the two sides with the numbers filled in, their
+    exact values (text, and as the nearest float), their float values, and
+    whether each pair agrees.
+    The multiplicative inverse is skipped (``applies: False``) when a = 0.
+    """
+    A, B, C = (parse_number(x) for x in (a, b, c))
+    fa, fb, fc = float(A), float(B), float(C)
+    sa, sb, sc = _show(A), _show(B), _show(C)
+    neg_a = _show(-A)
+    # property id -> (formula function, its arguments, the two sides as text)
+    rows = {
+        "commutative_add": (formula.commutative_addition, 2, f"{sa} + {sb}", f"{sb} + {sa}"),
+        "commutative_mul": (formula.commutative_multiplication, 2, f"{sa} × {sb}", f"{sb} × {sa}"),
+        "associative_add": (formula.associative_addition, 3, f"({sa} + {sb}) + {sc}", f"{sa} + ({sb} + {sc})"),
+        "associative_mul": (formula.associative_multiplication, 3, f"({sa} × {sb}) × {sc}", f"{sa} × ({sb} × {sc})"),
+        "distributive": (formula.distributive, 3, f"{sa} × ({sb} + {sc})", f"{sa} × {sb} + {sa} × {sc}"),
+        "identity_add": (formula.additive_identity, 1, f"{sa} + 0", sa),
+        "identity_mul": (formula.multiplicative_identity, 1, f"{sa} × 1", sa),
+        "inverse_add": (formula.additive_inverse, 1, f"{sa} + {neg_a}", "0"),
+        "inverse_mul": (formula.multiplicative_inverse, 1, f"{sa} × (1 ÷ {sa})", "1"),
+    }
+    out = []
+    for prop in PROPERTIES:
+        if prop.id == "inverse_mul" and A == 0:
+            out.append({"id": prop.id, "name": prop.name, "rule": prop.rule, "applies": False})
+            continue
+        fn, n, left, right = rows[prop.id]
+        el, er = (Fraction(v) for v in fn(*(A, B, C)[:n]))  # exact: the real-number answer
+        fl, fr = (float(v) for v in fn(*(fa, fb, fc)[:n]))  # the same expression in floating point
+        out.append({
+            "id": prop.id, "name": prop.name, "rule": prop.rule, "applies": True,
+            "left": left, "right": right,
+            "exact": [exact_text(el), exact_text(er)], "exact_holds": el == er,
+            "exact_float": [float(el), float(er)],
+            "float": [fl, fr], "float_holds": fl == fr,
+        })
+    return out
+
+
+# ---- Order of operations ----------------------------------------------------
+
+@dataclass
+class _Num:
+    value: Fraction
+    fvalue: float
+
+
+@dataclass
+class _Bin:
+    op: str
+    left: object
+    right: object
+    paren: bool = False
+
+
+@dataclass
+class _Neg:
+    child: object
+    paren: bool = False
+
+
+_TOKEN = re.compile(r"\s*(?:(\d+\.?\d*|\.\d+)|(\*\*|[-+*/^()×÷·−]))")
+_NORMAL = {"×": "*", "·": "*", "÷": "/", "−": "-", "**": "^"}
+
+
+def _tokenize(expr: str) -> list[str]:
+    tokens, pos = [], 0
+    expr = expr.rstrip()
+    while pos < len(expr):
+        match = _TOKEN.match(expr, pos)
+        if not match:
+            raise ValueError(f"Unexpected '{expr[pos:].strip()[0]}'. Use numbers, + − × ÷ ^ and parentheses.")
+        tokens.append(match.group(1) or _NORMAL.get(match.group(2), match.group(2)))
+        pos = match.end()
+    if not tokens:
+        raise ValueError("Enter an expression, e.g. 3 + 4 × 2.")
+    return tokens
+
+
+class _Parser:
+    """Recursive descent. Precedence: ( ) > ^ (right to left) > unary − > × ÷ > + −; implicit 2(3) = 2 × 3."""
+
+    def __init__(self, tokens: list[str]):
+        self.tokens, self.i = tokens, 0
+
+    def peek(self) -> str | None:
+        return self.tokens[self.i] if self.i < len(self.tokens) else None
+
+    def take(self) -> str:
+        token = self.peek()
+        if token is None:
+            raise ValueError("The expression ends too soon.")
+        self.i += 1
+        return token
+
+    def parse(self):
+        node = self.expr()
+        if self.peek() is not None:
+            raise ValueError(f"Unexpected '{self.peek()}'.")
+        return node
+
+    def expr(self):
+        node = self.term()
+        while self.peek() in ("+", "-"):
+            node = _Bin(self.take(), node, self.term())
+        return node
+
+    def term(self):
+        node = self.unary()
+        while self.peek() in ("*", "/") or self.peek() == "(":
+            op = "*" if self.peek() == "(" else self.take()  # 2(3 + 4) means 2 × (3 + 4)
+            node = _Bin(op, node, self.unary())
+        return node
+
+    def unary(self):
+        if self.peek() == "-":
+            self.take()
+            child = self.unary()
+            if isinstance(child, _Num):  # −3 is just a negative number
+                return _Num(-child.value, -child.fvalue)
+            return _Neg(child)
+        if self.peek() == "+":
+            self.take()
+            return self.unary()
+        return self.power()
+
+    def power(self):
+        base = self.atom()
+        if self.peek() == "^":
+            self.take()
+            return _Bin("^", base, self.unary())
+        return base
+
+    def atom(self):
+        token = self.take()
+        if token == "(":
+            node = self.expr()
+            if self.take() != ")":
+                raise ValueError("A '(' is missing its ')'.")
+            if not isinstance(node, _Num):
+                node.paren = True
+            return node
+        if token[0].isdigit() or token[0] == ".":
+            return _Num(Fraction(token), float(token))
+        raise ValueError(f"Unexpected '{token}'.")
+
+
+def _render(node, top: bool = True) -> str:
+    if isinstance(node, _Num):
+        return exact_text(node.value) if top else _show(node.value)
+    if isinstance(node, _Neg):
+        text = MINUS + _render(node.child, False)
+    else:
+        sep = "" if node.op == "^" else " "
+        text = f"{_render(node.left, False)}{sep}{OPS[node.op]}{sep}{_render(node.right, False)}"
+    return f"({text})" if node.paren else text
+
+
+def _fpow(base: float, n: int) -> float:
+    """base ** n by repeated multiplication, so Python and JavaScript round identically."""
+    result = 1.0
+    for _ in range(abs(n)):
+        result *= base
+    return 1.0 / result if n < 0 else result
+
+
+_RANK = formula.PRECEDENCE
+_RULE = {"^": "Exponent", "neg": "Negation", "*": "Multiplication", "/": "Division", "+": "Addition", "-": "Subtraction"}
+
+
+def _apply(node) -> tuple[_Num, str]:
+    """Evaluate one reducible node; returns the number and the work, e.g. '2 × 3 = 6'."""
+    if isinstance(node, _Neg):
+        value, fvalue = -node.child.value, -node.child.fvalue
+        work = f"{MINUS}({exact_text(node.child.value)})"
+    else:
+        a, b = node.left, node.right
+        if node.op == "+":
+            value, fvalue = a.value + b.value, a.fvalue + b.fvalue
+        elif node.op == "-":
+            value, fvalue = a.value - b.value, a.fvalue - b.fvalue
+        elif node.op == "*":
+            value, fvalue = a.value * b.value, a.fvalue * b.fvalue
+        elif node.op == "/":
+            if b.value == 0:
+                raise ValueError("Division by zero is undefined.")
+            value, fvalue = a.value / b.value, a.fvalue / b.fvalue
+        else:
+            if b.value.denominator != 1 or abs(b.value) > MAX_EXPONENT:
+                raise ValueError(f"Exponents here must be whole numbers from −{MAX_EXPONENT} to {MAX_EXPONENT}.")
+            if a.value == 0 and b.value < 0:
+                raise ValueError("0 to a negative power divides by zero, so it is undefined.")
+            value, fvalue = a.value ** int(b.value), _fpow(a.fvalue, int(b.value))
+        sep = "" if node.op == "^" else " "
+        work = f"{_show(a.value)}{sep}{OPS[node.op]}{sep}{_show(b.value)}"
+    if len(str(value.numerator)) + len(str(value.denominator)) > MAX_DIGITS:
+        raise ValueError("The numbers get too large to show exactly.")
+    return _Num(value, fvalue), f"{work} = {exact_text(value)}"
+
+
+def _walk(node, parent, side, depth, found, order):
+    """Collect reducible nodes as (depth inside parentheses, rank, position, node, parent, side)."""
+    if isinstance(node, _Num):
+        return found
+    depth += 1 if node.paren else 0
+    position = order[0]
+    order[0] += 1
+    if isinstance(node, _Neg):
+        _walk(node.child, node, "child", depth, found, order)
+        if isinstance(node.child, _Num):
+            found.append((depth, _RANK["neg"], position, node, parent, side))
+    else:
+        _walk(node.left, node, "left", depth, found, order)
+        _walk(node.right, node, "right", depth, found, order)
+        if isinstance(node.left, _Num) and isinstance(node.right, _Num):
+            found.append((depth, _RANK[node.op], position, node, parent, side))
+    return found
+
+
+def order_of_operations(expr: str) -> dict:
+    """Evaluate ``expr`` one operation at a time, in PEMDAS order.
+
+    Each step does the operation inside the deepest parentheses first, then the
+    highest-ranked operation (exponents, negation, multiply/divide, add/subtract),
+    leftmost first among equals. Arithmetic is exact; the same steps are also
+    done in floating point, and ``value`` is that float result, so the two can
+    be compared. Returns {"start", "steps": [{rule, parentheses, work, expression}], "result", "value"}.
+    """
+    root = _Parser(_tokenize(expr)).parse()
+    start = _render(root)
+    steps = []
+    while not isinstance(root, _Num):
+        candidates = _walk(root, None, None, 0, [], [0])
+        depth, _, _, node, parent, side = min(candidates, key=lambda f: (-f[0], -f[1], f[2]))
+        number, work = _apply(node)
+        if parent is None:
+            root = number
+        else:
+            setattr(parent, side, number)
+        rule = _RULE["neg" if isinstance(node, _Neg) else node.op]
+        steps.append({"rule": rule, "parentheses": depth > 0, "work": work, "expression": _render(root)})
+    return {"start": start, "steps": steps, "result": exact_text(root.value), "value": root.fvalue}
+
+
+# ---- When grouping changes the answer --------------------------------------
+
+def altitude_deg(sine: float) -> float | None:
+    """arcsin in degrees, or ``None`` outside [−1, 1], where arcsin has no answer (NaN / domain error)."""
+    if not -1.0 <= sine <= 1.0:
+        return None
+    return formula.solar_altitude(sine)
+
+
+def guarded_altitude_deg(sine: float, tolerance: float = 1e-12) -> float:
+    """arcsin after guarding the physical bounds: snap values within ``tolerance`` of 0 or ±1, then clamp to [−1, 1]."""
+    if abs(sine) <= tolerance:
+        sine = 0.0
+    elif abs(abs(sine) - 1.0) <= tolerance:
+        sine = math.copysign(1.0, sine)
+    return formula.solar_altitude(max(-1.0, min(1.0, sine)))
+
+
+def sum_two_ways(a: str, b: str, c: str) -> dict:
+    """a + b + c grouped two ways in floating point, against the exact sum.
+
+    Treats the sum as the sine of an angle, as in solar altitude, and reports
+    arcsin of each: a grouping can land on the wrong side of 0 (a sun below
+    the horizon) or just past 1 (no angle at all).
+    """
+    A, B, C = (parse_number(x) for x in (a, b, c))
+    fa, fb, fc = float(A), float(B), float(C)
+    exact = A + B + C
+    left, right = formula.associative_addition(fa, fb, fc)
+    return {
+        "exact": exact_text(exact),
+        "exact_value": float(exact),
+        "left": left,
+        "right": right,
+        "same": left == right,
+        "altitude": {"exact": altitude_deg(float(exact)), "left": altitude_deg(left), "right": altitude_deg(right)},
+        "guarded": {"left": guarded_altitude_deg(left), "right": guarded_altitude_deg(right)},
+    }

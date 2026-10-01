@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en" data-theme="{{theme_name}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{title}}</title>
+  {{head}}
+  <style>
+{{styles}}
+  </style>
+</head>
+<body>
+  <header class="masthead">
+    <div class="container">
+      <div class="masthead__bar">
+        <span class="masthead__kicker">Algebra · A1.4</span>
+        <a href="https://ethan-gueck.github.io/">ethan-gueck.github.io</a>
+      </div>
+      <div class="masthead__title">
+        <div>
+          <h1 class="masthead__name">{{title}}</h1>
+          <p class="masthead__subtitle">Rise over run: how steeply a line climbs between two points.</p>
+        </div>
+        <p class="masthead__aside formula" aria-label="m equals y 2 minus y 1, over x 2 minus x 1, equals delta y over delta x">
+          <span class="var">m</span> =
+          <span class="frac">
+            <span class="num"><span class="var">y</span>₂ − <span class="var">y</span>₁</span>
+            <span class="den"><span class="var">x</span>₂ − <span class="var">x</span>₁</span>
+          </span>
+          =
+          <span class="frac">
+            <span class="num">Δ<span class="var">y</span></span>
+            <span class="den">Δ<span class="var">x</span></span>
+          </span>
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <main class="container page-body">
+    <div class="widget">
+      <section class="widget__main" aria-label="Animation">
+        <div class="stage">
+          <canvas id="scene"></canvas>
+          <button id="run" class="stage__run" type="button">▶ Run animation</button>
+        </div>
+        <div class="narration" id="narration" aria-live="polite">Press run to animate.</div>
+        <div class="transport">
+          <button id="play" class="btn btn--primary btn--pill" type="button">▶ Play</button>
+          <button id="finish" class="btn btn--pill" type="button">Show final</button>
+          <input id="scrub" type="range" min="0" max="1000" value="1000" aria-label="Timeline position">
+          <label class="inline">Speed
+            <select id="speed" class="select">
+              <option value="0.5">0.5×</option>
+              <option value="1" selected>1×</option>
+              <option value="2">2×</option>
+            </select>
+          </label>
+        </div>
+
+        <section class="panel steps-panel" aria-labelledby="steps-title">
+          <div class="panel__head">
+            <h2 class="panel__title" id="steps-title">Step by step</h2>
+            {{code_button}}
+          </div>
+          <ol class="steps steps--compact" id="steps"></ol>
+        </section>
+      </section>
+
+      <aside class="widget__side">
+        <fieldset class="panel">
+          <legend>Points</legend>
+          <p class="point-label">Point 1 (<span class="var">x</span>₁, <span class="var">y</span>₁)</p>
+          <div class="field">
+            <label for="x1-num"><span class="var">x</span>₁</label>
+            <input id="x1-range" type="range" min="-10" max="10" step="0.5" aria-label="x1 slider">
+            <input id="x1-num" type="number" step="any">
+          </div>
+          <div class="field">
+            <label for="y1-num"><span class="var">y</span>₁</label>
+            <input id="y1-range" type="range" min="-10" max="10" step="0.5" aria-label="y1 slider">
+            <input id="y1-num" type="number" step="any">
+          </div>
+          <p class="point-label">Point 2 (<span class="var">x</span>₂, <span class="var">y</span>₂)</p>
+          <div class="field">
+            <label for="x2-num"><span class="var">x</span>₂</label>
+            <input id="x2-range" type="range" min="-10" max="10" step="0.5" aria-label="x2 slider">
+            <input id="x2-num" type="number" step="any">
+          </div>
+          <div class="field">
+            <label for="y2-num"><span class="var">y</span>₂</label>
+            <input id="y2-range" type="range" min="-10" max="10" step="0.5" aria-label="y2 slider">
+            <input id="y2-num" type="number" step="any">
+          </div>
+          <p id="error" class="error" role="alert" hidden></p>
+          <div class="chips">
+            <button class="btn" type="button" data-preset="1,1,4,3">Positive</button>
+            <button class="btn" type="button" data-preset="-2,4,3,-1">Negative</button>
+            <button class="btn" type="button" data-preset="-3,2,4,2">Zero</button>
+            <button class="btn" type="button" data-preset="2,-3,2,4">Undefined</button>
+          </div>
+        </fieldset>
+
+        <fieldset class="panel">
+          <legend>Show</legend>
+          <div class="checks">
+            <label class="check"><input type="checkbox" data-show="grid" checked> Grid</label>
+            <label class="check"><input type="checkbox" data-show="labels" checked> Labels</label>
+            <label class="check"><input type="checkbox" data-show="triangle" checked> Rise and run</label>
+            <label class="check"><input type="checkbox" data-show="yint" checked> y-intercept</label>
+          </div>
+        </fieldset>
+
+        <fieldset class="panel">
+          <legend>Results</legend>
+          <dl class="results" id="results"></dl>
+          <details class="glossary">
+            <summary>What these terms mean</summary>
+            <dl class="terms" id="glossary"></dl>
+          </details>
+        </fieldset>
+      </aside>
+    </div>
+  </main>
+
+  <script id="pp-config" type="application/json">{{config}}</script>
+  <script>
+{{scripts}}
+  </script>
+</body>
+</html>

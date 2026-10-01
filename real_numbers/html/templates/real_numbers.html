@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en" data-theme="{{theme_name}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{title}}</title>
+  {{head}}
+  <style>
+{{styles}}
+  </style>
+</head>
+<body>
+  <header class="masthead">
+    <div class="container">
+      <div class="masthead__bar">
+        <span class="masthead__kicker">Algebra · A1.1</span>
+        <a href="https://ethan-gueck.github.io/">ethan-gueck.github.io</a>
+      </div>
+      <div class="masthead__title">
+        <div>
+          <h1 class="masthead__name">{{title}}</h1>
+          <p class="masthead__subtitle">The rules arithmetic follows on paper, the order it happens in, and where a computer quietly breaks them.</p>
+        </div>
+        <p class="masthead__aside formula" aria-label="a times the quantity b plus c equals a b plus a c">
+          <span class="var">a</span>(<span class="var">b</span> + <span class="var">c</span>) = <span class="var">ab</span> + <span class="var">ac</span>
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <main class="container page-body">
+    <p class="lede">Real numbers obey a short list of properties: you can swap, regroup and distribute without changing the answer. Computers don't store real numbers, though. They store <em>floating-point</em> numbers, the nearest binary fraction to each value, and round after every operation. Most properties survive that. Some don't.</p>
+
+    <section class="panel rn-panel" aria-labelledby="props-title">
+      <div class="panel__head">
+        <h2 class="panel__title" id="props-title">Properties explorer</h2>
+        {{code_button}}
+      </div>
+      <p class="rn-help">Pick three numbers. Each property is checked twice: exactly, as real numbers, and in floating point, as a computer does it.</p>
+      <div class="rn-inputs">
+        <label class="rn-input"><span class="var">a</span><input id="a" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
+        <label class="rn-input"><span class="var">b</span><input id="b" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
+        <label class="rn-input"><span class="var">c</span><input id="c" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
+      </div>
+      <div class="chips">
+        <button class="btn" type="button" data-props="0.1,0.2,0.3">0.1, 0.2, 0.3</button>
+        <button class="btn" type="button" data-props="2,3,4">Whole numbers</button>
+        <button class="btn" type="button" data-props="1/3,2/3,1/7">Fractions</button>
+        <button class="btn" type="button" data-props="1e16,1,-1e16">Huge and tiny</button>
+      </div>
+      <p id="props-error" class="error" role="alert" hidden></p>
+      <div class="table-scroll">
+        <table class="rn-table">
+          <thead><tr><th scope="col">Property</th><th scope="col">Exact (real numbers)</th><th scope="col">Floating point (computer)</th></tr></thead>
+          <tbody id="props"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel rn-panel" aria-labelledby="ops-title">
+      <h2 class="panel__title" id="ops-title">Order of operations</h2>
+      <p class="rn-help"><strong>PEMDAS:</strong> Parentheses, Exponents, Multiplication and Division (left to right), then Addition and Subtraction (left to right). Type an expression to watch it reduce one operation at a time.</p>
+      <div class="rn-expr">
+        <input id="expr" type="text" autocomplete="off" spellcheck="false" aria-label="Expression">
+      </div>
+      <div class="chips">
+        <button class="btn" type="button" data-expr="3 + 4 × 2 ÷ (1 − 5)^2">Classic</button>
+        <button class="btn" type="button" data-expr="2 + 3 × 4 − 5 × 6">Multiply first</button>
+        <button class="btn" type="button" data-expr="−2^2 + (−2)^2">−2² vs (−2)²</button>
+        <button class="btn" type="button" data-expr="8 ÷ 4 × 2">Left to right</button>
+        <button class="btn" type="button" data-expr="0.1 + 0.2 − 0.3">0.1 + 0.2 − 0.3</button>
+      </div>
+      <p id="ops-error" class="error" role="alert" hidden></p>
+      <p class="rn-start" id="ops-start"></p>
+      <ol class="steps steps--compact" id="ops-steps"></ol>
+      <dl class="results rn-result" id="ops-result"></dl>
+    </section>
+
+    <section class="panel rn-panel rn-story" aria-labelledby="story-title">
+      <h2 class="panel__title" id="story-title">When grouping changes the answer: a real case</h2>
+      <p>On paper, addition is associative: (<span class="var">a</span> + <span class="var">b</span>) + <span class="var">c</span> and <span class="var">a</span> + (<span class="var">b</span> + <span class="var">c</span>) are the same number. In floating point they often aren't. 0.1 is stored as 0.1000000000000000055…, and every addition rounds its result again, so changing the grouping changes which roundings happen. Subtraction is addition of a negative, so it inherits the same problem.</p>
+      <p>I ran into this while calculating solar altitude, the angle of the sun above the horizon. The sine of the altitude is a sum of products of the latitude, the sun’s declination and the hour angle, and the altitude is the arcsin of that sum:</p>
+      <p class="rn-formula">sin(<span class="var">H</span><sub>c</sub>) = cos(Lat)·cos(<span class="var">δ</span>)·cos(<span class="var">ω</span>) + sin(Lat)·sin(<span class="var">δ</span>) &nbsp;&nbsp;→&nbsp;&nbsp; <span class="var">H</span><sub>c</sub> = arcsin(…)</p>
+      <p>Some of the arcsin results came back negative where that was not physically possible. Nothing was wrong with the formula. The floating-point arithmetic underneath it had rounded the sum to the wrong side of a boundary: a fundamental detail of how computers add numbers produced physically impossible outputs.</p>
+
+      <h3 class="rn-subtitle">Try it</h3>
+      <p class="rn-help">Three terms whose exact sum is 0 (the sun on the horizon) or 1 (the sun straight overhead), added in the two possible groupings.</p>
+      <div class="rn-inputs">
+        <label class="rn-input"><span><span class="var">t</span>₁</span><input id="t1" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
+        <label class="rn-input"><span><span class="var">t</span>₂</span><input id="t2" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
+        <label class="rn-input"><span><span class="var">t</span>₃</span><input id="t3" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
+      </div>
+      <div class="chips">
+        <button class="btn" type="button" data-sum="0.1,0.3,-0.4">Sun on the horizon</button>
+        <button class="btn" type="button" data-sum="0.1,0.34,0.56">Sun overhead</button>
+        <button class="btn" type="button" data-sum="0.25,0.5,-0.75">Exact in binary</button>
+      </div>
+      <p id="sum-error" class="error" role="alert" hidden></p>
+      <div class="table-scroll">
+        <table class="rn-table">
+          <thead><tr><th scope="col">How it's added</th><th scope="col">sin(<span class="var">H</span><sub>c</sub>)</th><th scope="col">Altitude <span class="var">H</span><sub>c</sub> = arcsin</th><th scope="col">Physically</th></tr></thead>
+          <tbody id="sum"></tbody>
+        </table>
+      </div>
+
+      <h3 class="rn-subtitle">How to guard against it</h3>
+      <ul class="rn-list">
+        <li>Don't compare floats for exact equality; compare within a tolerance.</li>
+        <li>Clamp a value to a function's domain before calling it: arcsin and arccos only accept −1 to 1.</li>
+        <li>Snap results within a tolerance of a physical boundary (here 0 and ±1) onto the boundary. The guarded row above does both.</li>
+        <li>Add long sums with compensated summation (Python's <code>math.fsum</code>), or at least in a consistent order.</li>
+      </ul>
+    </section>
+  </main>
+
+  <script id="pp-config" type="application/json">{{config}}</script>
+  <script>
+{{scripts}}
+  </script>
+</body>
+</html>

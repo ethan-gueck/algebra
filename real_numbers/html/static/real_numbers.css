@@ -1,0 +1,48 @@
+/* real_numbers.css: page-specific styles for properties of real numbers. */
+.formula { margin: 0; font-family: var(--font-serif); }
+.rn-panel { margin-bottom: var(--space-4); }
+.rn-help { font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-soft); margin: var(--space-2) 0 var(--space-3); max-width: 75ch; }
+.rn-inputs { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.rn-input { display: inline-flex; align-items: center; gap: var(--space-2); font-size: 1.15rem; }
+.rn-input input, .rn-expr input {
+  font: 1rem var(--font-sans); padding: 0.35rem 0.55rem; border: 1px solid var(--rule); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--text); width: 9rem;
+}
+.rn-expr input { width: 100%; font-size: 1.1rem; font-family: var(--font-serif); }
+.rn-input input:focus-visible, .rn-expr input:focus-visible { outline: none; box-shadow: var(--focus); }
+
+.table-scroll { overflow-x: auto; margin-top: var(--space-3); }
+.rn-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.rn-table th, .rn-table td { text-align: left; vertical-align: top; padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--rule); }
+.rn-table thead th { font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 600; color: var(--text-soft); border-bottom: 2px solid var(--primary); }
+.rn-table tbody th { font-weight: 400; min-width: 12rem; }
+.rn-table tr.is-broken td:last-child { background: rgba(233,161,91,0.12); }
+.rn-table code, .rn-start code, .steps__math code { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: 0.88em; }
+.rn-name { display: block; font-family: var(--font-sans); font-weight: 600; color: var(--primary); }
+.rn-rule { display: block; font-style: italic; color: var(--text-soft); }
+.rn-na { color: var(--text-soft); font-style: italic; }
+.rn-mark { display: inline-block; margin-top: 0.2rem; font-family: var(--font-sans); font-size: 0.8rem; font-weight: 600; }
+.rn-mark.is-ok { color: var(--primary-soft); }
+.rn-mark.is-bad { color: #B4561E; }
+
+.rn-expr { margin-bottom: var(--space-2); }
+.rn-start { margin: var(--space-3) 0 0; }
+.rn-label { font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 600; color: var(--text-soft); margin-right: var(--space-2); }
+.rn-badge {
+  display: inline-grid; place-items: center; width: 1.5em; height: 1.5em; margin-right: 0.5em; border-radius: 4px;
+  background: var(--accent); color: var(--primary-strong); font-size: 0.8em;
+}
+.rn-result { margin-top: var(--space-3); }
+
+.rn-story p { max-width: 75ch; }
+.rn-panel > .panel__title, .rn-panel > .panel__head { margin-bottom: var(--space-2); }
+.rn-formula { font-family: var(--font-serif); font-size: 1.1rem; padding: 0.5rem 0.8rem; background: var(--bg); border-left: 3px solid var(--accent); overflow-x: auto; }
+.rn-subtitle { font-family: var(--font-sans); font-size: 1rem; font-weight: 600; color: var(--primary); margin: var(--space-4) 0 0; }
+.rn-list { margin: var(--space-2) 0 0; padding-left: 1.3em; max-width: 75ch; }
+.rn-list li { margin-bottom: var(--space-1); }
+.rn-list code { font-size: 0.9em; }
+
+@media (max-width: 640px) {
+  .rn-input input { width: 6.5rem; }
+  .rn-table tbody th { min-width: 9rem; }
+}

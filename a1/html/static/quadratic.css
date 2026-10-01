@@ -1,0 +1,27 @@
+/* quadratic.css: page-specific styles for the quadratic formula. */
+.formula { margin: 0; display: inline-flex; align-items: center; gap: 0.4em; font-family: var(--font-serif); }
+.frac { display: inline-flex; flex-direction: column; align-items: center; line-height: 1.25; }
+.frac .num { padding: 0 0.3em 0.1em; border-bottom: 1.5px solid currentColor; }
+.frac .den { padding-top: 0.1em; }
+.radicand { border-top: 1.5px solid currentColor; padding: 0 0.15em; }
+
+.steps-panel { margin-top: var(--space-4); }
+
+/* Equation-form toggle: radio buttons styled as a segmented control. */
+.segmented { display: flex; border: 1px solid var(--rule); border-radius: 999px; overflow: hidden; font-family: var(--font-sans); font-size: var(--fs-sm); }
+.segmented label { flex: 1; text-align: center; padding: 0.3rem 0.5rem; cursor: pointer; color: var(--text-soft); transition: background-color 0.2s ease, color 0.2s ease; }
+.segmented label + label { border-left: 1px solid var(--rule); }
+.segmented input { position: absolute; opacity: 0; pointer-events: none; }
+.segmented label:has(input:checked) { background: var(--primary); color: var(--on-primary); font-weight: 600; }
+.segmented label:has(input:focus-visible) { box-shadow: inset var(--focus); }
+.form-eq { margin: var(--space-3) 0 var(--space-1); font-size: 1.2rem; overflow-wrap: anywhere; }
+.form-about { margin: 0; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-soft); }
+.form-general { display: block; font-family: var(--font-serif); font-style: italic; color: var(--text); }
+
+/* Term definitions: symbol/term above its meaning. */
+.terms { grid-template-columns: minmax(0, 1fr); gap: 0; }
+.terms dt { color: var(--text); font-weight: 600; padding-top: var(--space-2); }
+.terms dd { margin: 0; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-soft); }
+.glossary { margin-top: var(--space-3); }
+.glossary summary { cursor: pointer; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--primary-soft); }
+.glossary .terms { display: grid; margin: 0; }

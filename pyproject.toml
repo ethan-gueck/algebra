@@ -1,0 +1,32 @@
+[project]
+name = "algebra"
+version = "0.1.0"
+description = "Algebra: interactive formula pages for Ethan's NN on ethan-gueck.github.io."
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+# general/ (themes, styles, page builder, static API) comes from the shared library.
+dependencies = ["portfolio-projects"]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+# Manim videos. macOS system deps: brew install pkgconf cairo pango
+animations = ["manim>=0.19"]
+
+[tool.uv]
+package = false
+# `uv sync` installs the dev and animations groups; add `--group animations` for Manim videos.
+default-groups = ["dev", "animations"]
+
+[tool.uv.sources]
+portfolio-projects = { git = "https://github.com/ethan-gueck/portfolio-projects", branch = "main" }
+
+# Read by `python -m general build`: the site's title and public URL.
+[tool.portfolio-site]
+title = "Algebra"
+url = "https://ethan-gueck.github.io/algebra/"
+description = "Algebra formulas as interactive pages. Each page fills a neuron on Ethan's NN."
+decks = ["Algebra I", "Algebra II"]
+
+[tool.pytest.ini_options]
+norecursedirs = [".*", "_site", "output", "node_modules", "venv"]
+addopts = "-p no:cacheprovider"

@@ -1,0 +1,10 @@
+# Testing files and experimental directories:
+*/testing
+
+# Build output and caches:
+_site/
+output/
+__pycache__/
+.pytest_cache/
+.venv
+.DS_Store
