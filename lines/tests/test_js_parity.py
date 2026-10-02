@@ -1,4 +1,4 @@
-"""The browser module (html/static/lines_math.js) must match core/ exactly."""
+"""The browser module (html/static/lines_math.js) must match solver.py exactly."""
 
 import json
 
@@ -6,7 +6,7 @@ import pytest
 
 from general.jsrun import AVAILABLE, assert_close, run_js
 from lines.api import TOPIC
-from lines.core import solve
+from lines.solver import solve
 
 MODULE = TOPIC.modules[0]
 CASES = [(1, 3, 2), (0, 4, -0.5), (-2, 3, 0), (0, 0, 1.5), (2, -1, 0.75), (-3.5, 2.25, -1.25), (4, -6, 3)]

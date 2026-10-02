@@ -1,5 +1,5 @@
 /*
- * real_numbers_math.js — browser mirror of core/real_numbers.py.
+ * real_numbers_math.js — browser mirror of real_numbers/solver.py.
  *
  * Exact real numbers are BigInt fractions (Python: fractions.Fraction);
  * floating point is plain Number (IEEE 754 doubles, like Python's float).

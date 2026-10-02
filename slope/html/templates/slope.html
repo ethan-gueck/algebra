@@ -42,6 +42,7 @@
       <section class="widget__main" aria-label="Animation">
         <div class="stage">
           <canvas id="scene"></canvas>
+          {{stage_settings}}
           <button id="run" class="stage__run" type="button">▶ Run animation</button>
         </div>
         <div class="narration" id="narration" aria-live="polite">Press run to animate.</div>
@@ -98,16 +99,6 @@
             <button class="btn" type="button" data-preset="-2,4,3,-1">Negative</button>
             <button class="btn" type="button" data-preset="-3,2,4,2">Zero</button>
             <button class="btn" type="button" data-preset="2,-3,2,4">Undefined</button>
-          </div>
-        </fieldset>
-
-        <fieldset class="panel">
-          <legend>Show</legend>
-          <div class="checks">
-            <label class="check"><input type="checkbox" data-show="grid" checked> Grid</label>
-            <label class="check"><input type="checkbox" data-show="labels" checked> Labels</label>
-            <label class="check"><input type="checkbox" data-show="triangle" checked> Rise and run</label>
-            <label class="check"><input type="checkbox" data-show="yint" checked> y-intercept</label>
           </div>
         </fieldset>
 

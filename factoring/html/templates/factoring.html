@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en" data-theme="{{theme_name}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{title}}</title>
+  {{head}}
+  <style>
+{{styles}}
+  </style>
+</head>
+<body>
+  <header class="masthead">
+    <div class="container">
+      <div class="masthead__bar">
+        <span class="masthead__kicker">Algebra · A1.10</span>
+        <a href="https://ethan-gueck.github.io/">ethan-gueck.github.io</a>
+      </div>
+      <div class="masthead__title">
+        <div>
+          <h1 class="masthead__name">{{title}}</h1>
+          <p class="masthead__subtitle">One quadratic, three forms, and whether (and how) it factors.</p>
+        </div>
+        <p class="masthead__aside formula forms-aside" aria-label="y equals a x squared plus b x plus c; y equals a times x minus h squared plus k; y equals a times x minus r 1 times x minus r 2">
+          <span><span class="var">y</span> = <span class="var">ax</span>² + <span class="var">bx</span> + <span class="var">c</span></span>
+          <span><span class="var">y</span> = <span class="var">a</span>(<span class="var">x</span> − <span class="var">h</span>)² + <span class="var">k</span></span>
+          <span><span class="var">y</span> = <span class="var">a</span>(<span class="var">x</span> − <span class="var">r</span>₁)(<span class="var">x</span> − <span class="var">r</span>₂)</span>
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <main class="container page-body">
+    <div class="widget">
+      <section class="widget__main" aria-label="Animation">
+        <div class="stage">
+          <canvas id="scene"></canvas>
+          {{stage_settings}}
+          <button id="run" class="stage__run" type="button">▶ Run animation</button>
+        </div>
+        <div class="narration" id="narration" aria-live="polite">Press run to animate.</div>
+        <div class="transport">
+          <button id="play" class="btn btn--primary btn--pill" type="button">▶ Play</button>
+          <button id="finish" class="btn btn--pill" type="button">Show final</button>
+          <input id="scrub" type="range" min="0" max="1000" value="1000" aria-label="Timeline position">
+          <label class="inline">Speed
+            <select id="speed" class="select">
+              <option value="0.5">0.5×</option>
+              <option value="1" selected>1×</option>
+              <option value="2">2×</option>
+            </select>
+          </label>
+        </div>
+
+        <section class="panel verdict-panel" aria-labelledby="verdict-title">
+          <div class="panel__head">
+            <h2 class="panel__title" id="verdict-title">Can it be factored?</h2>
+            {{code_button}}
+          </div>
+          <p class="verdict" id="verdict" data-step="factor"></p>
+          <p class="verdict__reason" id="verdict-reason"></p>
+          <p class="verdict__result" id="factored-result" aria-live="polite"></p>
+
+          <h3 class="panel__title subhead">Factoring step by step</h3>
+          <ol class="steps steps--compact" id="factoring"></ol>
+        </section>
+
+        <section class="panel convert-panel" aria-labelledby="convert-title">
+          <div class="panel__head">
+            <h2 class="panel__title" id="convert-title">Converting to the other forms</h2>
+          </div>
+          <div class="conversions" id="conversions"></div>
+        </section>
+      </section>
+
+      <aside class="widget__side">
+        <fieldset class="panel">
+          <legend>Form of the quadratic</legend>
+          <label class="form-pick">
+            <span class="visually-hidden">Form</span>
+            <select id="form" class="select">
+              <option value="standard">Standard: ax² + bx + c</option>
+              <option value="vertex">Vertex: a(x − h)² + k</option>
+              <option value="factored">Factored: a(x − r₁)(x − r₂)</option>
+            </select>
+          </label>
+          <p class="form-about" id="form-about"></p>
+          <div class="field">
+            <label for="p0-num" id="p0-label"><span class="var">a</span></label>
+            <input id="p0-range" type="range" min="-5" max="5" step="0.5" aria-label="first variable slider">
+            <input id="p0-num" type="number" step="any">
+          </div>
+          <div class="field">
+            <label for="p1-num" id="p1-label"><span class="var">b</span></label>
+            <input id="p1-range" type="range" min="-10" max="10" step="0.5" aria-label="second variable slider">
+            <input id="p1-num" type="number" step="any">
+          </div>
+          <div class="field">
+            <label for="p2-num" id="p2-label"><span class="var">c</span></label>
+            <input id="p2-range" type="range" min="-10" max="10" step="0.5" aria-label="third variable slider">
+            <input id="p2-num" type="number" step="any">
+          </div>
+          <p id="warning" class="warning" role="status" hidden></p>
+          <dl class="results terms param-terms" id="param-terms"></dl>
+          <p id="error" class="error" role="alert" hidden></p>
+          <p id="note" class="note" hidden></p>
+          <div class="chips">
+            <button class="btn" type="button" data-preset="standard:2,1,-6">2x² + x − 6</button>
+            <button class="btn" type="button" data-preset="standard:1,6,9">Perfect square</button>
+            <button class="btn" type="button" data-preset="standard:1,-2,-1">Irrational roots</button>
+            <button class="btn" type="button" data-preset="standard:1,2,5">No real roots</button>
+            <button class="btn" type="button" data-preset="vertex:1,1.5,-0.25">From a vertex</button>
+            <button class="btn" type="button" data-preset="factored:-1,-2,3">From its roots</button>
+          </div>
+        </fieldset>
+
+        <fieldset class="panel">
+          <legend>The same parabola, three ways</legend>
+          <dl class="forms-list" id="forms"></dl>
+        </fieldset>
+
+        <fieldset class="panel">
+          <legend>Key features</legend>
+          <dl class="results" id="results"></dl>
+          <details class="glossary">
+            <summary>What these terms mean</summary>
+            <dl class="terms" id="glossary"></dl>
+          </details>
+        </fieldset>
+      </aside>
+    </div>
+  </main>
+
+  <script id="pp-config" type="application/json">{{config}}</script>
+  <script>
+{{scripts}}
+  </script>
+</body>
+</html>

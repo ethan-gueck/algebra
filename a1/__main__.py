@@ -18,7 +18,7 @@ from pathlib import Path
 
 from general.themes import THEMES
 
-from .core import solve
+from .solver import solve
 from .html import build_quadratic_html
 from .html.quadratic_page import DEFAULT_OUTPUT
 

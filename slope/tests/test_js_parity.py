@@ -1,4 +1,4 @@
-"""The browser module (html/static/slope_math.js) must match core/ exactly."""
+"""The browser module (html/static/slope_math.js) must match solver.py exactly."""
 
 import json
 
@@ -6,7 +6,7 @@ import pytest
 
 from general.jsrun import AVAILABLE, assert_close, run_js
 from slope.api import TOPIC
-from slope.core import solve
+from slope.solver import solve
 
 MODULE = TOPIC.modules[0]
 CASES = [(1, 1, 4, 3), (-2, 4, 3, -1), (-3, 2, 4, 2), (2, -3, 2, 4), (0, 0, 1, 1), (0.5, 1.5, 2, -0.25), (-3, 0, 5, 0), (1.5, -2.5, -4, 7)]

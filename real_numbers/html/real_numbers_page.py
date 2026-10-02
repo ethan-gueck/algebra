@@ -8,7 +8,7 @@ from general.styles import BASE
 from general.themes import Theme
 from general.web import CodeFile, render_page, write_page
 
-from ..core import order_of_operations, properties, sum_two_ways
+from ..solver import order_of_operations, properties, sum_two_ways
 
 HTML_DIR = Path(__file__).resolve().parent
 STATIC = HTML_DIR / "static"
@@ -20,8 +20,11 @@ BUNDLE = BASE.extend(
     css=("components/controls.css", "components/results.css", "components/steps.css", STATIC / "real_numbers.css"),
     js=("params.js", *MATH_SCRIPTS, STATIC / "real_numbers.js"),
 )
-# The "View the code" popup shows only the concept: core/formula.py, the math as written.
-CODE = (CodeFile(HTML_DIR.parent / "core" / "formula.py", "Each property as a Python function returning its two sides, and the PEMDAS ranking. The page runs these same functions on exact numbers and on floats."),)
+# The "View the code" popup shows only the concept: this page's functions from core/formula.py.
+FORMULA = HTML_DIR.parent.parent / "core" / "formula.py"  # the Algebra track's mathematics, one section per neuron
+MATH = ("module", "commutative_addition", "commutative_multiplication", "associative_addition", "associative_multiplication", "distributive",
+        "additive_identity", "multiplicative_identity", "additive_inverse", "multiplicative_inverse", "sine_of_solar_altitude", "solar_altitude", "PRECEDENCE")
+CODE = (CodeFile(FORMULA, "Each property as a Python function returning its two sides, and the PEMDAS ranking. The page runs these same functions on exact numbers and on floats.", only=MATH),)
 DEFAULTS = {"a": "0.1", "b": "0.2", "c": "0.3", "expr": "3 + 4 × 2 ÷ (1 − 5)^2", "terms": ["0.1", "0.3", "-0.4"]}
 
 

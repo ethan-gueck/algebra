@@ -1,6 +1,6 @@
-"""The line through a point (x₁, y₁) with slope m, in all three forms, built on formula.py.
+"""The line through a point (x₁, y₁) with slope m, in all three forms, built on core/formula.py.
 
-formula.py holds the mathematics as written: the three forms and the
+core/formula.py (A1.5 Equations of a Line) holds the mathematics as written: the three forms and the
 conversions between them. This module calls those and adds what the page
 needs around them: float tidying, whole-number standard form, the forms as
 text, a table showing all three forms give the same y, and a plot window.
@@ -16,7 +16,7 @@ from fractions import Fraction
 
 from general.plotting import Viewport, fit_viewport
 
-from . import formula
+from core import formula
 
 TABLE_XS = (-2, -1, 0, 1, 2)
 
@@ -124,8 +124,8 @@ class LineSolution:
 
 def solve(x1: float, y1: float, m: float) -> LineSolution:
     """Write the line through (x₁, y₁) with slope m in all three forms."""
-    b = _clean(formula.y_intercept(x1, y1, m))
-    xi = None if m == 0 else _clean(formula.x_intercept(m, formula.y_intercept(x1, y1, m)))
+    b = _clean(formula.y_intercept(m, x1, y1))
+    xi = None if m == 0 else _clean(formula.x_intercept_of_linear_form(m, formula.y_intercept(m, x1, y1)))
     A, B, C = standard_whole_numbers(m, b)
     return LineSolution(
         x1=x1,

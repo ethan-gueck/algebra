@@ -16,8 +16,7 @@ Shared themes, CSS/JS, plotting, Manim helpers and the page builder live in [`ge
 
 ```
 a1/
-├── core/formula.py          # the mathematics as written (parabola, Δ, quadratic formula, intercepts, vertex,
-│                            #   axis of symmetry, forms), then the solver built on it: roots, text forms, solve()
+├── solver.py                # built on ../core/formula.py (A1.11, A1.12): roots, text forms, plot window, solve()
 ├── animations/
 │   ├── quadratic_scene.py   #   QuadraticScene(ThemedScene) + make_quadratic_scene(a, b, c, theme=..., **show)
 │   └── render.py            #   render_quadratic(...)
@@ -25,12 +24,12 @@ a1/
 │   ├── quadratic_page.py    #   build_quadratic_html(a, b, c, theme=...)
 │   ├── templates/quadratic.html
 │   └── static/
-│       ├── quadratic_math.js   # browser mirror of core/ (published as the API module)
+│       ├── quadratic_math.js   # browser mirror of solver.py (published as the API module)
 │       ├── quadratic.js        # page controller (builds a Manim.Timeline)
 │       └── quadratic.css
 ├── style.py                 # element → theme role (curve=primary, roots=highlight, vertex=point, ...)
 ├── api.py                   # TOPIC: what gets published to the API
-├── tests/                   # core, page, and JS-vs-Python parity
+├── tests/                   # solver, page, and JS-vs-Python parity
 └── __main__.py              # CLI
 ```
 
@@ -47,7 +46,7 @@ python -m a1 all   1 -3 2                  # video + page with the video embedde
 ```
 
 ```python
-from a1.core import solve
+from a1.solver import solve
 from a1.html import build_quadratic_html
 from a1.animations import render_quadratic
 

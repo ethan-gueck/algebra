@@ -8,7 +8,7 @@ from general.styles import WIDGET
 from general.themes import Theme
 from general.web import CodeFile, render_page, write_page
 
-from ..core import solve
+from ..solver import solve
 from ..style import ROLES
 
 HTML_DIR = Path(__file__).resolve().parent
@@ -18,9 +18,12 @@ DEFAULT_OUTPUT = HTML_DIR.parent / "output" / "quadratic.html"
 
 # Scripts the browser module needs (also published to the API by api.py).
 MATH_SCRIPTS = (STATIC / "quadratic_math.js",)
-# The "View the code" popup shows only the mathematics at the top of core/formula.py, not the solver below it.
-MATH = ("module", "parabola", "discriminant", "quadratic_formula", "x_intercepts", "axis_of_symmetry", "vertex", "y_intercept", "opens", "vertex_form", "factored_form")
-CODE = (CodeFile(HTML_DIR.parent / "core" / "formula.py", "The quadratic formula in Python, as it reads: Δ = b² − 4ac, then x = (−b ± √Δ) / 2a.", only=MATH),)
+# The "View the code" popup shows only the concept: this page's functions from core/formula.py.
+MATH = ("module", "parabola", "discriminant", "quadratic_formula", "x_intercepts", "axis_of_symmetry", "vertex", "y_intercept_of_parabola", "opens", "vertex_form", "factored_form")
+FORMULA = HTML_DIR.parent.parent / "core" / "formula.py"  # the Algebra track's mathematics, one section per neuron
+# The animation's toggles, in the gear menu in the corner of the stage.
+SHOW = (("grid", "Grid"), ("labels", "Labels"), ("symmetry", "Symmetry"), ("vertex", "Vertex"), ("yint", "y-intercept"), ("roots", "Roots"))
+CODE = (CodeFile(FORMULA, "The quadratic formula in Python, as it reads: Δ = b² − 4ac, then x = (−b ± √Δ) / 2a.", only=MATH),)
 BUNDLE = WIDGET.extend(css=[STATIC / "quadratic.css"], js=[*MATH_SCRIPTS, STATIC / "quadratic.js"])
 
 
@@ -46,5 +49,5 @@ def build_quadratic_html(
         "roles": ROLES,
         "video": video_src,
     }
-    document = render_page(TEMPLATE, title=title, config=config, theme=theme, bundle=BUNDLE, code=CODE)
+    document = render_page(TEMPLATE, title=title, config=config, theme=theme, bundle=BUNDLE, code=CODE, show=SHOW)
     return document if output_path is None else write_page(document, output_path)

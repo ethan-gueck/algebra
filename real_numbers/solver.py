@@ -21,7 +21,7 @@ import re
 from dataclasses import dataclass
 from fractions import Fraction
 
-from . import formula
+from core import formula
 
 MINUS = "−"
 OPS = {"+": "+", "-": MINUS, "*": "×", "/": "÷", "^": "^"}

@@ -7,7 +7,9 @@ Frontend usage once deployed:
 
 from general.api import JSModule, Page, Topic
 
-from . import core
+from core import formula
+
+from . import solver
 from .html.lines_page import MATH_SCRIPTS, build_lines_html
 
 
@@ -25,12 +27,12 @@ TOPIC = Topic(
             global_name="LineMath",
             scripts=MATH_SCRIPTS,
             functions={
-                "solve": core.solve,
-                "linear_form": core.linear_form,
-                "point_form_slope": core.point_form_slope,
-                "standard_form_for_linear_form": core.standard_form_for_linear_form,
-                "y_intercept": core.y_intercept,
-                "x_intercept": core.x_intercept,
+                "solve": solver.solve,
+                "linear_form": formula.linear_form,
+                "point_form_slope": formula.point_form_slope,
+                "standard_form_for_linear_form": formula.standard_form_for_linear_form,
+                "y_intercept": formula.y_intercept,
+                "x_intercept_of_linear_form": formula.x_intercept_of_linear_form,
             },
         ),
     ),

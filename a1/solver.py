@@ -1,86 +1,28 @@
-"""The quadratic y = ax² + bx + c: the mathematics, then the solver the page uses.
+"""The quadratic y = ax² + bx + c: the solver the page uses, built on core/formula.py.
 
-The mathematics, written the way it reads (this is what the page's "View the code"
-popup shows):
-
-    y = ax² + bx + c                 parabola
-    Δ = b² − 4ac                     discriminant
-    x = (−b ± √Δ) / 2a               quadratic formula (roots, x-intercepts)
-    h = −b / 2a,  k = f(h)           vertex; x = h is the axis of symmetry
-    (0, c)                           y-intercept
-    y = a(x − h)² + k                vertex form
-    y = a(x − r₁)(x − r₂)            factored (intercept) form
-
-The solver, below the line, calls those and adds what the page needs: input
+core/formula.py holds the mathematics as written (A1.11 Quadratic Formula and
+A1.12 Vertex Form). This module calls it and adds what the page needs: input
 checks, float tidying, sorted and real/complex-aware results, the forms as text
 and a plot window. Pure Python with no plotting dependencies; both
-``animations/`` and ``html/`` consume it.
+``animations/`` and ``html/`` consume it. The JavaScript mirror
+(html/static/quadratic_math.js) is kept identical by tests/test_js_parity.py.
 """
 
 from __future__ import annotations
 
-import cmath
 import math
 from dataclasses import asdict, dataclass
 
+from core.formula import (
+    axis_of_symmetry,
+    discriminant,
+    opens,
+    parabola,
+    quadratic_formula,
+    vertex,
+    y_intercept_of_parabola,
+)
 from general.plotting import Viewport, fit_viewport
-
-
-def parabola(a, b, c, x):
-    """y = ax² + bx + c"""
-    return a * x**2 + b * x + c
-
-
-def discriminant(a, b, c):
-    """Δ = b² − 4ac"""
-    return b**2 - 4 * a * c
-
-
-def quadratic_formula(a, b, c):
-    """x = (−b ± √(b² − 4ac)) / 2a: both solutions of ax² + bx + c = 0."""
-    root = cmath.sqrt(discriminant(a, b, c))
-    return (-b + root) / (2 * a), (-b - root) / (2 * a)
-
-
-def x_intercepts(a, b, c):
-    """Where y = 0: the real solutions of the quadratic formula (none when Δ < 0)."""
-    if discriminant(a, b, c) < 0:
-        return []
-    return sorted({x.real for x in quadratic_formula(a, b, c)})
-
-
-def axis_of_symmetry(a, b):
-    """x = −b / 2a"""
-    return -b / (2 * a)
-
-
-def vertex(a, b, c):
-    """(h, k) with h = −b / 2a and k = f(h)"""
-    h = axis_of_symmetry(a, b)
-    return h, parabola(a, b, c, h)
-
-
-def y_intercept(a, b, c):
-    """(0, f(0)) = (0, c)"""
-    return 0, parabola(a, b, c, 0)
-
-
-def opens(a):
-    """Up when a > 0 (the vertex is a minimum), down when a < 0 (a maximum)."""
-    return "up" if a > 0 else "down"
-
-
-def vertex_form(a, h, k, x):
-    """y = a(x − h)² + k"""
-    return a * (x - h) ** 2 + k
-
-
-def factored_form(a, r1, r2, x):
-    """y = a(x − r₁)(x − r₂)"""
-    return a * (x - r1) * (x - r2)
-
-
-# ---- The solver: checks, tidying and text the page needs around the mathematics ----
 
 
 def _validate(a: float) -> None:
@@ -168,7 +110,7 @@ def axis_x(a: float, b: float, c: float) -> float:
 
 def y_intercept_point(a: float, b: float, c: float) -> tuple[float, float]:
     """Where the curve crosses x = 0: (0, c) (y_intercept)."""
-    x, y = y_intercept(a, b, c)
+    x, y = y_intercept_of_parabola(a, b, c)
     return float(x), _clean(y)
 
 
@@ -284,6 +226,7 @@ def solve(a: float, b: float, c: float) -> QuadraticSolution:
         window=plot_window(a, b, c),
     )
 
+# ___________ Linear case (a = 0) _____________
 
 def solve_linear(b: float, c: float) -> dict:
     """The degenerate a = 0 case, y = bx + c, so sliders can pass through a = 0.

@@ -1,5 +1,5 @@
 /*
- * slope_math.js — browser mirror of core/slope.py (+ general/plotting/viewport.py).
+ * slope_math.js — browser mirror of slope/solver.py (+ general/plotting/viewport.py).
  *
  * The page recalculates as points move, so the math is ported here. Python
  * stays the source of truth: tests/test_js_parity.py runs this file and

@@ -43,7 +43,7 @@ def test_writes_file(tmp_path):
 
 def test_code_popup_shows_the_formula_and_what_the_page_reads_off_it():
     dialog = build_quadratic_html(1, -3, 2, output_path=None).split('<dialog class="code-modal"')[1]
-    for name in ("parabola", "discriminant", "quadratic-formula", "x-intercepts", "axis-of-symmetry", "vertex", "y-intercept", "vertex-form", "factored-form"):
+    for name in ("parabola", "discriminant", "quadratic-formula", "x-intercepts", "axis-of-symmetry", "vertex", "y-intercept-of-parabola", "vertex-form", "factored-form"):
         assert f'id="pp-code-0-{name}"' in dialog
     assert "_clean" not in dialog and "quadratic_math.js" not in dialog  # only the concept
 

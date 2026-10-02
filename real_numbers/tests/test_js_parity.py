@@ -1,4 +1,4 @@
-"""The browser module (html/static/real_numbers_math.js) must match core/ exactly."""
+"""The browser module (html/static/real_numbers_math.js) must match solver.py exactly."""
 
 import json
 
@@ -6,7 +6,7 @@ import pytest
 
 from general.jsrun import AVAILABLE, assert_close, run_js
 from real_numbers.api import TOPIC
-from real_numbers.core import order_of_operations, properties, sum_two_ways
+from real_numbers.solver import order_of_operations, properties, sum_two_ways
 
 MODULE = TOPIC.modules[0]
 G = f"window.{MODULE.global_name}"

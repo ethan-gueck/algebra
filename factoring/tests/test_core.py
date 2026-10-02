@@ -1,0 +1,70 @@
+import pytest
+
+from core import formula
+from factoring.solver import solve, to_standard
+
+CASES = [("standard", 1, -3, 2), ("standard", 2, 1, -6), ("standard", -2, 4, 6), ("standard", 1, 6, 9), ("standard", 1, -2, -1),
+         ("standard", 1, 2, 5), ("standard", 3, -6, 0), ("vertex", 1, 1.5, -0.25), ("vertex", 2, -1, 3), ("factored", -1, -2, 3), ("factored", 0.5, 1.5, 1.5)]
+
+
+@pytest.mark.parametrize("a, b, c", [(1, -3, 2), (2, 1, -6), (-1, 2, 3), (0.5, -1, -4), (3, 0, -12)])
+def test_conversions_describe_the_same_parabola(a, b, c):
+    _, h, k = formula.convert_standard_form_to_vertex_form(a, b, c)
+    _, r1, r2 = formula.convert_standard_form_to_factored_form(a, b, c)
+    for x in (-3.0, -0.5, 0.0, 1.25, 4.0):
+        y = formula.parabola(a, b, c, x)
+        assert formula.vertex_form(a, h, k, x) == pytest.approx(y)
+        assert formula.factored_form(a, r1, r2, x) == pytest.approx(y)
+    assert formula.convert_vertex_form_to_standard_form(a, h, k) == pytest.approx((a, b, c))
+    assert formula.convert_factored_form_to_standard_form(a, r1, r2) == pytest.approx((a, b, c))
+    assert formula.convert_factored_form_to_vertex_form(a, r1, r2) == pytest.approx((a, h, k))
+    assert sorted(formula.convert_vertex_form_to_factored_form(a, h, k)[1:]) == pytest.approx(sorted((r1, r2)))
+
+
+def test_vertex_to_factored_uses_minus_k_over_a():
+    # y = (x − 1.5)² − 0.25 crosses the x-axis at 1 and 2 (−k/a = 0.25 ≥ 0).
+    assert sorted(formula.convert_vertex_form_to_factored_form(1, 1.5, -0.25)[1:]) == [1, 2]
+    with pytest.raises(ValueError):
+        formula.convert_vertex_form_to_factored_form(2, -1, 3)  # −k/a < 0: no real roots
+
+
+def test_ac_method_numbers():
+    m, n = formula.ac_method(2, 1, -6)
+    assert m * n == 2 * -6 and m + n == 1
+
+
+@pytest.mark.parametrize("case", CASES)
+def test_every_form_text_is_the_same_parabola(case):
+    s = solve(*case)
+    a, b, c = to_standard(*case)
+    assert (s.standard["a"], s.standard["b"], s.standard["c"]) == (a, b, c)
+    assert formula.vertex_form(a, s.vertex["h"], s.vertex["k"], 0.7) == pytest.approx(formula.parabola(a, b, c, 0.7))
+    if s.factored:
+        assert formula.factored_form(a, s.factored["r1"], s.factored["r2"], 0.7) == pytest.approx(formula.parabola(a, b, c, 0.7))
+    assert len(s.conversions) == 2 and {conv["to"] for conv in s.conversions} == {"standard", "vertex", "factored"} - {case[0]}
+
+
+@pytest.mark.parametrize("case, verdict, result", [
+    (("standard", 2, 1, -6), "Yes: it factors over the integers.", "y = (x + 2)(2x - 3)"),
+    (("standard", -2, 4, 6), "Yes: it factors over the integers.", "y = -2(x + 1)(x - 3)"),
+    (("standard", 1, 6, 9), "Yes: it's a perfect square.", "y = (x + 3)²"),
+    (("standard", 3, -6, 0), "Yes: it factors over the integers.", "y = 3x(x - 2)"),
+    (("standard", 1, -2, -1), "Yes, over the real numbers, but not over the integers.", "y = (x + 0.4142)(x - 2.414)"),
+    (("standard", 1, 2, 5), "No: it can't be factored over the real numbers.", None),
+    (("vertex", 2, -1, 3), "No: it can't be factored over the real numbers.", None),
+])
+def test_discriminant_decides_whether_it_factors(case, verdict, result):
+    s = solve(*case)
+    assert s.factorable["verdict"] == verdict and s.factored_result == result
+
+
+def test_ac_method_steps():
+    steps = [step["math"] for step in solve("standard", 2, 1, -6).factoring]
+    assert "m = 4, n = -3" in steps[1]
+    assert steps[2] == "2x² + 4x - 3x - 6"
+    assert steps[3] == "2x(x + 2) - 3(x + 2)"
+
+
+def test_a_must_be_non_zero():
+    with pytest.raises(ValueError):
+        solve("standard", 0, 1, 2)

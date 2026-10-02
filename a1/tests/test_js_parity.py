@@ -1,11 +1,11 @@
-"""The browser module (html/static/quadratic_math.js) must match core/ exactly."""
+"""The browser module (html/static/quadratic_math.js) must match solver.py exactly."""
 
 import json
 
 import pytest
 
 from a1.api import TOPIC
-from a1.core import solve, solve_linear
+from a1.solver import solve, solve_linear
 from general.jsrun import AVAILABLE, assert_close, run_js
 
 MODULE = TOPIC.modules[0]

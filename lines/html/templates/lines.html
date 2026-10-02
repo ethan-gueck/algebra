@@ -35,6 +35,7 @@
       <section class="widget__main" aria-label="Animation">
         <div class="stage">
           <canvas id="scene"></canvas>
+          {{stage_settings}}
           <button id="run" class="stage__run" type="button">▶ Run animation</button>
         </div>
         <div class="narration" id="narration" aria-live="polite">Press run to animate.</div>
@@ -95,16 +96,6 @@
             <button class="btn" type="button" data-preset="0,4,-0.5">Falling</button>
             <button class="btn" type="button" data-preset="-2,3,0">Horizontal</button>
             <button class="btn" type="button" data-preset="2,-1,0.75">Fractions</button>
-          </div>
-        </fieldset>
-
-        <fieldset class="panel">
-          <legend>Show</legend>
-          <div class="checks">
-            <label class="check"><input type="checkbox" data-show="grid" checked> Grid</label>
-            <label class="check"><input type="checkbox" data-show="labels" checked> Labels</label>
-            <label class="check"><input type="checkbox" data-show="triangle" checked> Slope triangle</label>
-            <label class="check"><input type="checkbox" data-show="intercepts" checked> Intercepts</label>
           </div>
         </fieldset>
 

@@ -2,9 +2,9 @@
 
 Layout (copy this folder to start a new topic):
 
-    core/        pure calculations, no rendering deps (source of truth)
-    animations/  Manim scene built on core/ + general.animations (optional: needs `manim`)
-    html/        interactive page built on core/ + general.web / general.styles
+    solver.py    the page's calculations, built on solver.pyformula.py (A1.11, A1.12)
+    animations/  Manim scene built on solver.py + general.animations (optional: needs `manim`)
+    html/        interactive page built on solver.py + general.web / general.styles
     style.py     maps this topic's elements onto general theme roles
     api.py       what this topic publishes to the static API (PP.use / PP.embed)
     __main__.py  CLI:  python -m a1 --help
@@ -23,6 +23,6 @@ except ImportError:  # Not installed: find the repo root (the folder holding gen
             sys.path.insert(0, str(_parent))
             break
 
-from .core import solve  # noqa: E402
+from .solver import solve  # noqa: E402
 
 __all__ = ["solve"]

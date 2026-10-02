@@ -1,6 +1,6 @@
-"""The line through two points (x₁, y₁) and (x₂, y₂), built on formula.py.
+"""The line through two points (x₁, y₁) and (x₂, y₂), built on core/formula.py.
 
-formula.py holds the mathematics as written: rise, run, m = Δy / Δx, both
+core/formula.py (A1.4 Slope) holds the mathematics as written: rise, run, m = Δy / Δx, both
 intercepts, the angle and the line's three forms. This module calls those and
 adds what the page needs around them: input checks, the vertical and
 horizontal cases, float tidying, the forms as text and a plot window. The JavaScript mirror (html/static/slope_math.js) is kept identical by
@@ -15,7 +15,7 @@ from fractions import Fraction
 
 from general.plotting import Viewport, fit_viewport
 
-from . import formula
+from core import formula
 
 
 def _is_zero(value: float, *scale: float) -> bool:

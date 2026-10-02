@@ -2,7 +2,7 @@ from fractions import Fraction
 
 import pytest
 
-from real_numbers.core import exact_text, order_of_operations, parse_number, properties, sum_two_ways
+from real_numbers.solver import exact_text, order_of_operations, parse_number, properties, sum_two_ways
 
 
 @pytest.mark.parametrize("text, value", [("0.1", Fraction(1, 10)), ("-3", Fraction(-3)), ("2/3", Fraction(2, 3)), ("1e-3", Fraction(1, 1000)), (".5", Fraction(1, 2)), ("−2.5", Fraction(-5, 2))])
@@ -81,7 +81,7 @@ def test_grouping_can_leave_arcsin_without_an_answer():
 def test_solar_altitude_formula():
     import math
 
-    from real_numbers.core import formula
+    from core import formula
 
     # Sun on the celestial equator at noon, seen from the equator: straight overhead.
     assert formula.solar_altitude(formula.sine_of_solar_altitude(0.0, 0.0, 0.0)) == pytest.approx(90)

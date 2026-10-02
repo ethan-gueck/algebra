@@ -1,6 +1,6 @@
 import pytest
 
-from a1.core import (
+from a1.solver import (
     discriminant,
     evaluate,
     factored_form_text,
@@ -122,7 +122,7 @@ def test_small_a_root_tends_to_linear_root():
 
 @pytest.mark.parametrize("abc", [(1, -3, 2), (2, 4, -6), (-0.5, 1, 3)])
 def test_the_three_forms_describe_the_same_parabola(abc):
-    from a1.core import formula
+    from core import formula
 
     a, b, c = abc
     h, k = formula.vertex(a, b, c)
@@ -134,7 +134,7 @@ def test_the_three_forms_describe_the_same_parabola(abc):
 
 
 def test_formula_intercepts_match_the_solver():
-    from a1.core import formula
+    from core import formula
 
     assert formula.x_intercepts(1, -3, 2) == [1.0, 2.0] and formula.x_intercepts(1, 2, 5) == []
-    assert formula.y_intercept(1, -3, 2) == (0, 2)
+    assert formula.y_intercept_of_parabola(1, -3, 2) == (0, 2)

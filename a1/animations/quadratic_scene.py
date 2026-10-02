@@ -24,7 +24,7 @@ if __package__ in (None, ""):
 
 from manim import DL, DOWN, DR, LEFT, RIGHT, UL, UP, UR, Create, DashedLine, Dot, FadeIn, Flash, GrowFromCenter, VGroup, Write
 
-from ..core import evaluate, fmt, solve  # importing the topic package also puts general/ on sys.path
+from ..solver import evaluate, fmt, solve  # importing the topic package also puts general/ on sys.path
 from ..style import ROLES
 
 from general.animations.manim_base import ThemedScene  # noqa: E402  (must follow the topic import)

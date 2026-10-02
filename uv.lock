@@ -430,7 +430,7 @@ wheels = [
 [[package]]
 name = "portfolio-projects"
 version = "0.1.0"
-source = { git = "https://github.com/ethan-gueck/portfolio-projects?branch=main#51cfac704d77390f0b7a58c85a88143516b36a66" }
+source = { git = "https://github.com/ethan-gueck/portfolio-projects?branch=main#a4e86684c493655a912761de9543ea543c039526" }
 
 [[package]]
 name = "pycairo"

@@ -7,7 +7,7 @@ Frontend usage once deployed:
 
 from general.api import JSModule, Page, Topic
 
-from . import core
+from . import solver
 from .html.real_numbers_page import MATH_SCRIPTS, build_real_numbers_html
 
 
@@ -25,12 +25,12 @@ TOPIC = Topic(
             global_name="RealMath",
             scripts=MATH_SCRIPTS,
             functions={
-                "properties": core.properties,
-                "order_of_operations": core.order_of_operations,
-                "sum_two_ways": core.sum_two_ways,
-                "to_float": core.to_float,
-                "altitude_deg": core.altitude_deg,
-                "guarded_altitude_deg": core.guarded_altitude_deg,
+                "properties": solver.properties,
+                "order_of_operations": solver.order_of_operations,
+                "sum_two_ways": solver.sum_two_ways,
+                "to_float": solver.to_float,
+                "altitude_deg": solver.altitude_deg,
+                "guarded_altitude_deg": solver.guarded_altitude_deg,
             },
         ),
     ),

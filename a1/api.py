@@ -7,7 +7,9 @@ Frontend usage once deployed:
 
 from general.api import JSModule, Page, Topic
 
-from . import core
+from core import formula
+
+from . import solver
 from .html.quadratic_page import MATH_SCRIPTS, build_quadratic_html
 
 
@@ -26,11 +28,11 @@ TOPIC = Topic(
             scripts=MATH_SCRIPTS,
             # Browser function -> Python reference implementation (docs + parity tests).
             functions={
-                "solve": core.solve,
-                "evaluate": core.evaluate,
-                "discriminant": core.discriminant,
-                "roots": core.roots,
-                "vertex": core.vertex_point,
+                "solve": solver.solve,
+                "evaluate": solver.evaluate,
+                "discriminant": formula.discriminant,
+                "roots": solver.roots,
+                "vertex": solver.vertex_point,
             },
         ),
     ),

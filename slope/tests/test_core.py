@@ -2,7 +2,7 @@ import math
 
 import pytest
 
-from slope.core import classify, rise, run, slope, solve, standard_form, x_intercept, y_intercept
+from slope.solver import classify, rise, run, slope, solve, standard_form, x_intercept, y_intercept
 
 
 @pytest.mark.parametrize(
@@ -59,7 +59,7 @@ def test_window_frames_both_points():
 
 
 def test_the_three_forms_describe_the_same_line():
-    from slope.core import formula
+    from core import formula
 
     x1, y1, x2, y2 = 0.5, 1.5, 2, -0.25
     m = formula.slope(x1, y1, x2, y2)

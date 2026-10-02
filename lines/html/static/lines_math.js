@@ -1,5 +1,5 @@
 /*
- * lines_math.js — browser mirror of core/formula.py + core/lines.py (+ general/plotting/viewport.py).
+ * lines_math.js — browser mirror of core/formula.py (A1.4, A1.5) + lines/solver.py (+ general/plotting/viewport.py).
  *
  * The page recalculates as the point and slope move, so the math is ported
  * here. Python stays the source of truth: tests/test_js_parity.py runs this
@@ -9,14 +9,14 @@
 (function (global) {
   "use strict";
 
-  // ---- formula.py -----------------------------------------------------------
+  // ---- core/formula.py--------------------------------------------------------
   const linearForm = (b, c, x) => b * x + c;                          // y = bx + c
   const pointFormSlope = (x1, y1, m, x) => m * (x - x1) + y1;         // y − y₁ = m(x − x₁)
   const standardFormForLinearForm = (A, B, C, x) => (C - A * x) / B;  // Ax + By = C, for B ≠ 0
-  const yIntercept = (x1, y1, m) => y1 - m * x1;                      // b = y₁ − m·x₁
-  const xIntercept = (m, b) => -b / m;                                // x = −b / m
+  const yIntercept = (m, x1, y1) => y1 - m * x1;                      // b = y₁ − m·x₁ (A1.4)
+  const xInterceptOfLinearForm = (m, b) => -b / m;                    // x = −b / m
 
-  // ---- lines.py -------------------------------------------------------------
+  // ---- lines/solver.py----------------------------------------------------------
   const TABLE_XS = [-2, -1, 0, 1, 2];
   const clean = (v) => { const r = Number(v.toFixed(10)); return r === 0 ? 0 : r; };
   const fmt = (v) => String(Number(clean(v).toPrecision(4)));
@@ -115,8 +115,8 @@
 
   /** Same shape as LineSolution.to_dict() in Python. */
   function solve(x1, y1, m) {
-    const b = clean(yIntercept(x1, y1, m));
-    const xi = m === 0 ? null : clean(xIntercept(m, yIntercept(x1, y1, m)));
+    const b = clean(yIntercept(m, x1, y1));
+    const xi = m === 0 ? null : clean(xInterceptOfLinearForm(m, yIntercept(m, x1, y1)));
     const [A, B, C] = standardWholeNumbers(m, b);
     return {
       x1, y1, m, b, x_intercept: xi,
@@ -132,7 +132,7 @@
   const api = {
     solve, fmt,
     linear_form: linearForm, point_form_slope: pointFormSlope, standard_form_for_linear_form: standardFormForLinearForm,
-    y_intercept: yIntercept, x_intercept: xIntercept,
+    y_intercept: yIntercept, x_intercept_of_linear_form: xInterceptOfLinearForm,
   };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else global.LineMath = api;

@@ -7,7 +7,7 @@ Frontend usage once deployed:
 
 from general.api import JSModule, Page, Topic
 
-from . import core
+from . import solver
 from .html.slope_page import MATH_SCRIPTS, build_slope_html
 
 
@@ -25,12 +25,12 @@ TOPIC = Topic(
             global_name="SlopeMath",
             scripts=MATH_SCRIPTS,
             functions={
-                "solve": core.solve,
-                "slope": core.slope,
-                "rise": core.rise,
-                "run": core.run,
-                "y_intercept": core.y_intercept,
-                "x_intercept": core.x_intercept,
+                "solve": solver.solve,
+                "slope": solver.slope,
+                "rise": solver.rise,
+                "run": solver.run,
+                "y_intercept": solver.y_intercept,
+                "x_intercept": solver.x_intercept,
             },
         ),
     ),

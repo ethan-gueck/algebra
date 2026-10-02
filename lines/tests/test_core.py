@@ -1,12 +1,12 @@
 import pytest
 
-from lines.core import formula
-from lines.core import solve, standard_whole_numbers
+from core import formula
+from lines.solver import solve, standard_whole_numbers
 
 
 @pytest.mark.parametrize("x1, y1, m", [(1, 3, 2), (0, 4, -0.5), (-2, 3, 0), (0, 0, 1.5), (2, -1, 0.75), (-3.5, 2.25, -1.25)])
 def test_the_three_forms_give_the_same_y(x1, y1, m):
-    b = formula.y_intercept(x1, y1, m)
+    b = formula.y_intercept(m, x1, y1)
     A, B, C = formula.standard_coefficients(m, b)
     for x in (-4.0, -1.0, 0.0, 0.5, 3.0):
         y = formula.linear_form(m, b, x)
@@ -21,7 +21,7 @@ def test_standard_form_solves_for_y():
 
 
 def test_intercepts():
-    assert formula.y_intercept(1, 3, 2) == 1 and formula.x_intercept(2, 1) == -0.5
+    assert formula.y_intercept(2, 1, 3) == 1 and formula.x_intercept_of_linear_form(2, 1) == -0.5
 
 
 @pytest.mark.parametrize("m, b, abc", [(2, 1, (2, -1, -1)), (-0.5, 4, (1, 2, 8)), (0, 3, (0, 1, 3)), (0.75, -2.5, (3, -4, 10)), (1.5, 0, (3, -2, 0))])
