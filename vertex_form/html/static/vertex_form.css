@@ -1,0 +1,50 @@
+/* vertex_form.css: page-specific styles for the vertex form (formula typesetting as on the factoring and quadratic pages). */
+.formula { margin: 0; display: inline-flex; align-items: center; gap: 0.25em; font-family: var(--font-serif); font-size: var(--fs-md); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.build-panel, .convert-panel { margin-top: var(--space-4); }
+
+/* The chosen form: a drop-down, its general equation and what each variable means. */
+.form-pick { display: block; margin-bottom: var(--space-2); }
+.form-pick .select { width: 100%; }
+.form-about { margin: 0 0 var(--space-2); font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-soft); }
+.form-general { display: block; font-family: var(--font-serif); font-style: italic; font-size: 1.1rem; color: var(--text); }
+.terms { grid-template-columns: minmax(0, 1fr); gap: 0; }
+.terms dt { color: var(--text); font-weight: 600; padding-top: var(--space-2); }
+.terms dd { margin: 0; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-soft); }
+.param-terms { margin: var(--space-2) 0; }
+.note { margin: var(--space-2) 0 0; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-soft); font-style: italic; }
+.glossary { margin-top: var(--space-3); }
+.glossary summary { cursor: pointer; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--primary-soft); }
+.glossary .terms { display: grid; margin: 0; }
+
+/* The same parabola in all three forms; the vertex form is marked. */
+.forms-list { margin: 0; display: grid; gap: var(--space-2); }
+.forms-list__row { padding: var(--space-2) var(--space-3); border-left: 3px solid var(--rule); }
+.forms-list__row.is-chosen { border-left-color: var(--primary); background: color-mix(in srgb, var(--primary) 7%, transparent); }
+.forms-list dt { font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 600; color: var(--text-soft); }
+.forms-list dd { margin: 0.15rem 0 0; font-size: 1.05rem; overflow-wrap: anywhere; }
+
+/* Building it from y = x²: one row per transformation, lit while the animation plays it. */
+.moves { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); gap: var(--space-3); counter-reset: move; }
+.moves__item { counter-increment: move; padding: var(--space-2) var(--space-3); border-top: 3px solid var(--rule); transition: border-color 0.2s ease, background 0.2s ease; }
+.moves__item.is-active { border-top-color: var(--primary); background: color-mix(in srgb, var(--primary) 7%, transparent); }
+.moves__title { margin: 0; font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 600; color: var(--text); }
+.moves__title::before { content: counter(move) ". "; color: var(--text-soft); }
+.moves__equation { margin: var(--space-1) 0 0; font-size: 1.1rem; overflow-wrap: anywhere; }
+.moves__why { margin: var(--space-1) 0 0; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-soft); }
+.build__result { margin: var(--space-3) 0 0; padding-top: var(--space-2); border-top: 2px solid var(--primary); font-size: 1.2rem; overflow-wrap: anywhere; }
+.build__label { display: block; font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 600; color: var(--text-soft); }
+
+/* Into and out of vertex form: one column per conversion, stacked on narrow screens. */
+.conversions { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: var(--space-4); margin-top: var(--space-3); }
+.conversion--wide { grid-column: 1 / -1; }
+.conversion .steps { margin-top: var(--space-2); }
+.conversion__result { margin: var(--space-2) 0 0; padding-top: var(--space-2); border-top: 2px solid var(--primary); font-size: 1.1rem; overflow-wrap: anywhere; }
+.steps__math { overflow-wrap: anywhere; }
+.conversion__title { margin: 0; font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 600; color: var(--text); }
+.conversion__empty { margin: 0; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-soft); }
+/* a = 0: still drawn (as a line), but flagged as not a quadratic. */
+.warning { margin: var(--space-2) 0 0; padding: 0.45rem 0.75rem; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text); background: color-mix(in srgb, var(--accent) 22%, transparent); border-left: 3px solid var(--accent); border-radius: 0 var(--radius-sm, 4px) var(--radius-sm, 4px) 0; }
+.warning[hidden] { display: none; }
+.warning strong { color: var(--accent-strong, var(--primary)); }

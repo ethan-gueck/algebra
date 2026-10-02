@@ -13,6 +13,7 @@ Flashcard decks in this track: Algebra I, Algebra II. A neuron on the portfolio 
 | [`lines/`](lines/) | [Equations of a Line](https://ethan-gueck.github.io/algebra/lines/lines.html) | A1.5 |
 | [`factoring/`](factoring/) | [Factoring](https://ethan-gueck.github.io/algebra/factoring/factoring.html) | A1.10 |
 | [`a1/`](a1/) | [Quadratic Formula](https://ethan-gueck.github.io/algebra/a1/quadratic.html) | A1.11 |
+| [`vertex_form/`](vertex_form/) | [Vertex Form](https://ethan-gueck.github.io/algebra/vertex_form/vertex_form.html) | A1.12 |
 
 ## Layout
 
