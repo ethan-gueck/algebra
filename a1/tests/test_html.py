@@ -18,7 +18,7 @@ def test_page_inlines_its_scripts_and_styles():
     assert "window.Manim" in document and "window.QuadMath" in document and "window.QuadForms" in document
     assert "<script src=" not in document  # only web fonts load from the network
     assert "--green-800: #0B3D2E" in document  # default theme is the portfolio palette
-    assert 'data-show="trail"' in document and "stage-settings" in document
+    assert 'data-show="roots"' in document and 'data-show="trail"' not in document and "stage-settings" in document
 
 
 def test_config_carries_solution_theme_and_roles():

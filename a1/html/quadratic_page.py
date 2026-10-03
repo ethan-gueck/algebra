@@ -39,7 +39,7 @@ MATH = (
     "convert_factored_form_to_vertex_form",
 )
 # The animation's toggles, in the gear menu in the corner of the stage.
-SHOW = (("grid", "Grid"), ("labels", "Labels"), ("parent", "Parent y = x²"), ("trail", "Each step's curve", False), ("symmetry", "Axis of symmetry"), ("intercepts", "Intercepts"))
+SHOW = (("grid", "Grid"), ("labels", "Labels"), ("symmetry", "Axis of symmetry"), ("vertex", "Vertex"), ("yint", "y-intercept"), ("roots", "Roots"))
 CODE = (CodeFile(FORMULA, "The quadratic formula and the vertex form in Python, as they read, with the conversions between the forms.", only=MATH),)
 
 

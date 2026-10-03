@@ -2,10 +2,9 @@
  * quadratic.js — page controller for the quadratic formula and the vertex form.
  *
  * Reads the Python-built config, wires the form drop-down and the three sliders,
- * and turns a solution into a Manim-style Timeline that builds the parabola
- * from y = x²: the curve slides sideways by h, stretches (or flips) by a and
- * lifts by k, carrying the vertex from (0, 0) to (h, k); then the discriminant
- * decides the roots, real or complex. Changing the form rewrites the same
+ * and turns a solution into a Manim-style Timeline: the parabola is drawn, then
+ * the discriminant, axis of symmetry, vertex, y-intercept and roots (real, or
+ * complex when the curve misses the x-axis) appear with their labels. Changing the form rewrites the same
  * parabola in the new form's variables, and a = 0 shows the line the parabola
  * flattens into, so sliders pass straight through it. The URL hash
  * (#a=1&b=-3&c=2, #a=2&h=1&k=-8 or #a=-1&r1=-1&r2=5) presets the quadratic and
@@ -220,21 +219,10 @@
   }
 
   // ---- Timeline -------------------------------------------------------------
-  /**
-   * The parabola at each stage of the build: y = x², y = (x − h)², y = a(x − h)², y = a(x − h)² + k.
-   * `morph(i, t)` is the curve partway (t from 0 to 1) from stage i − 1 to stage i, with its vertex.
-   */
-  function stages(a, h, k) {
-    return (i, t) => {
-      if (i === 1) return { f: (x) => (x - t * h) ** 2, v: [t * h, 0] };
-      if (i === 2) { const s = 1 + t * (a - 1); return { f: (x) => s * (x - h) ** 2, v: [h, 0] }; }
-      return { f: (x) => a * (x - h) ** 2 + t * k, v: [h, t * k] };
-    };
-  }
-
   function buildTimeline(sol) {
     const quad = sol.quadratic;
     const { a, b, c } = sol.standard;
+    const f = (x) => a * x * x + b * x + c;
     const show = state.show;
     const tl = new Timeline(scene, {
       onFrame: (t, total) => { el.scrub.value = total ? Math.round((t / total) * 1000) : 1000; },
@@ -242,47 +230,19 @@
       onDone: () => setPlaying(false),
     });
     tl.speed = Number(el.speed.value);
-    const last = () => tl.steps[tl.steps.length - 1];
-    const over = (step) => tl.time > step.end + 1e-9;
 
-    if (show.grid) tl.add({ id: "parent", caption: "Set up the axes", duration: 0.8, draw: (p) => scene.grid(p) });
-    tl.add({ id: "parent", caption: "Set up the axes", duration: 1.0, parallel: show.grid, draw: (p) => scene.axes(p) });
+    if (show.grid) tl.add({ id: "axes", caption: "Set up the axes", duration: 0.8, draw: (p) => scene.grid(p) });
+    tl.add({ id: "axes", caption: "Set up the axes", duration: 1.2, parallel: show.grid, draw: (p) => scene.axes(p) });
+    tl.add({ id: "curve", caption: `Plot ${sol.forms[sol.form] || sol.equation}`, duration: 1.8, wait: 0.2, draw: (p) => scene.curve(f, p, C.curve) });
 
     if (sol.linear) {
-      tl.add({ id: "lift", caption: `a = 0 flattens the parabola into ${sol.equation}`, duration: 1.6, draw: (p) => scene.curve((x) => b * x + c, p, C.curve) });
+      tl.add({ id: "curve", caption: `a = 0: the parabola flattens into the line ${sol.equation}`, duration: 1.2, rate: rate.linear, draw: () => {} });
     } else {
       const { h, k } = sol.vertex;
-      const at = stages(a, h, k);
-      // The parent y = x²: traced, then left behind as a faint guide once the build moves on.
-      tl.add({ id: "parent", caption: "Start from the parent parabola y = x², vertex (0, 0)", duration: 1.4, wait: 0.2, draw: (p) => {
-        const done = over(parentStep);
-        if (done && !show.parent) return;
-        scene.curve((x) => x * x, p, done ? C.parent : C.curve, { width: done ? 2 : 4 });
-        if (!done) scene.dot(0, 0, Math.min(1, p * 2), C.vertex, 6);
-        else if (show.labels) scene.label("y = x²", 0, 0, 1, C.parent, { dx: 10, dy: 18 });
-      } });
-      const parentStep = last();
-      // Each transformation moves the live curve; finished stages stay as a faint trail when "Each step's curve" is on.
-      const moves = sol.transformations.slice(1);
-      moves.forEach((move, i) => {
-        const stage = i + 1;
-        const idle = (stage === 1 && h === 0) || (stage === 2 && a === 1) || (stage === 3 && k === 0);
-        tl.add({ id: move.id, caption: `${move.title}: ${move.equation}`, duration: idle ? 0.7 : 1.5, wait: 0.15, draw: (p) => {
-          const final = stage === moves.length;
-          const done = over(self) && !final;
-          if (done && !show.trail) return;
-          const { f, v } = at(stage, p);
-          scene.curve(f, 1, done ? C.parent : C.curve, { width: done ? 2 : 4 });
-          if (!done) {
-            scene.dot(v[0], v[1], 1, C.vertex, 6);
-            if (!idle && stage !== 2) scene.line(stage === 1 ? 0 : h, 0, v[0], v[1], 1, C.shift, { width: 2.5, dash: [6, 5] });
-          }
-        } });
-        const self = last();
-      });
+      tl.add({ id: "discriminant", caption: `Δ = b² − 4ac = ${fmt(quad.discriminant)}: ${quad.root_nature}`, duration: 1.4, rate: rate.linear, draw: () => {} });
       if (show.symmetry) {
         tl.add({
-          id: "symmetry", caption: `Axis of symmetry: x = h = ${fmt(h)}`, duration: 0.8,
+          id: "symmetry", caption: `Axis of symmetry: x = h = −b / 2a = ${fmt(h)}`, duration: 0.9,
           draw: (p) => {
             const v = scene.view;
             scene.line(h, v.y_min, h, v.y_max, p, C.symmetry, { dash: [8, 6] });
@@ -290,39 +250,46 @@
           },
         });
       }
-      const below = quad.direction === "up";
-      tl.add({
-        id: "vertex", caption: `Vertex (h, k) = ${point(h, k)}: the ${sol.features.extreme}`, duration: 0.7,
-        draw: (p) => {
-          scene.dot(h, k, p, C.vertex);
-          if (show.labels) scene.label(`vertex ${point(h, k)}`, h, k, p, C.vertex, { dy: below ? 22 : -22, dx: 0, align: "center" });
-        },
-      });
-      tl.add({ id: "vertex", duration: 0.6, parallel: true, rate: rate.linear, draw: (p) => scene.flash(h, k, p, C.vertex) });
-      tl.add({ id: "discriminant", caption: `Δ = b² − 4ac = ${fmt(quad.discriminant)}: ${quad.root_nature}`, duration: 1.4, rate: rate.linear, draw: () => {} });
+      if (show.vertex) {
+        const below = quad.direction === "up";
+        tl.add({
+          id: "vertex", caption: `Vertex (h, k) = ${point(h, k)}: the ${sol.features.extreme}`, duration: 0.7,
+          draw: (p) => {
+            scene.dot(h, k, p, C.vertex);
+            if (show.labels) scene.label(`vertex ${point(h, k)}`, h, k, p, C.vertex, { dy: below ? 22 : -22, dx: 0, align: "center" });
+          },
+        });
+        tl.add({ id: "vertex", duration: 0.6, parallel: true, rate: rate.linear, draw: (p) => scene.flash(h, k, p, C.vertex) });
+      }
     }
 
-    if (show.intercepts) {
-      const below = sol.linear || quad.direction === "up";
+    if (show.yint) {
       tl.add({
-        id: "intercepts", caption: `y-intercept (0, ${fmt(c)})`, duration: 0.6,
+        id: "intercepts", caption: `y-intercept: f(0) = c = ${fmt(c)}`, duration: 0.7,
         draw: (p) => {
           scene.dot(0, c, p, C.y_intercept);
           if (show.labels) scene.label(`(0, ${fmt(c)})`, 0, c, p, C.y_intercept, { dx: -10, align: "right" });
         },
       });
+    }
+    if (show.roots) {
       const xs = quad.x_intercepts;
+      const below = sol.linear || quad.direction === "up";
       xs.forEach(([x], i) => {
+        // Push each root label outward (left root left, right root right) so it clears the vertex label.
+        // A repeated root sits on the vertex, so its label goes on the opposite side to the vertex label.
         const side = xs.length === 1
           ? { dx: -10, dy: below ? -20 : 20, align: "right" }
           : i === 0 ? { dx: -8, dy: 20, align: "right" } : { dx: 8, dy: 20, align: "left" };
         tl.add({
-          id: "roots", caption: sol.linear ? `Root x = −c / b = ${fmt(x)}` : xs.length === 1 ? `Repeated root x = ${fmt(x)}` : `Root x${i ? "₂" : "₁"} = (−b ${i ? "+" : "−"} √Δ) / 2a = ${fmt(x)}`, duration: 0.6,
+          id: "roots", caption: sol.linear ? `Root x = −c / b = ${fmt(x)}` : xs.length === 1 ? `Repeated root x = ${fmt(x)}` : `Root x${i ? "₂" : "₁"} = (−b ${i ? "+" : "−"} √Δ) / 2a = ${fmt(x)}`,
+          duration: 0.7,
           draw: (p) => {
             scene.dot(x, 0, p, C.roots);
             if (show.labels) scene.label(`x = ${fmt(x)}`, x, 0, p, C.roots, side);
           },
         });
+        tl.add({ id: "roots", duration: 0.6, parallel: true, rate: rate.linear, draw: (p) => scene.flash(x, 0, p, C.roots) });
       });
       if (!xs.length && !sol.linear) {
         const text = `No real roots: x = ${quad.roots.map(complex).join(", ")}`;
@@ -332,7 +299,6 @@
         });
       }
     }
-    tl.add({ id: "lift", caption: sol.equation, duration: 1.0, rate: rate.linear, draw: () => {} });
     return tl;
   }
 

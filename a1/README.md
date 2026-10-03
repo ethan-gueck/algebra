@@ -4,7 +4,7 @@ Solves and visualises **ax² + bx + c = 0**, and writes the same parabola in ver
 
 $$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$$
 
-Start from standard, vertex or factored form. The animation builds the parabola from y = x² (shift by h, stretch by a, lift by k), then the discriminant decides the roots, real or complex. Completing the square and the expansion back are written out step by step.
+Start from standard, vertex or factored form. The animation draws the parabola and labels its discriminant, axis of symmetry, vertex, y-intercept and roots (real or complex). The step panels show how y = x² shifts, stretches and lifts into a(x − h)² + k, and work through completing the square and expanding back.
 
 From one set of calculations this topic produces:
 
@@ -69,7 +69,7 @@ A1_A=1 A1_B=-3 A1_C=2 A1_THEME=portfolio manim -pql a1/animations/quadratic_scen
 
 - **Start from**: standard (a, b, c), vertex (a, h, k) or factored (a, r₁, r₂) form, with sliders and number inputs. `a = 0` shows the line the parabola flattens into.
 - **Presets**: two roots, one repeated root, complex roots, completing the square, vertex form, from the roots.
-- **Show** (gear menu): grid, labels, parent y = x², each step's curve, axis of symmetry, intercepts.
+- **Show** (gear menu): grid, labels, axis of symmetry, vertex, y-intercept, roots.
 - **Playback**: run/play/pause, show final, scrubber, speed 0.5×/1×/2×.
 - **Deep links**: `quadratic.html#a=1&b=2&c=5`, `#a=2&h=1&k=-8` or `#a=-1&r1=-1&r2=5`. The page watches the hash, so `PP.embed(...).set({...})` updates it live.
 
