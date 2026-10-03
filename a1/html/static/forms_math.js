@@ -1,11 +1,11 @@
 /*
- * vertex_form_math.js — browser mirror of vertex_form/solver.py and the A1.12 section of core/formula.py.
+ * forms_math.js — browser mirror of a1/forms.py and the A1.12 section of core/formula.py.
  *
  * Loaded after a1's quadratic_math.js (window.QuadMath), which supplies the
  * parabola's details and the three forms as text, exactly as the Python solver
  * takes them from a1.solver.solve. Python stays the source of truth:
- * tests/test_js_parity.py runs this file and compares solve() with the Python output.
- * Exposes window.VertexMath (browser) or module.exports (Node).
+ * tests/test_forms_parity.py runs this file and compares solve() with the Python output.
+ * Exposes window.QuadForms (browser) or module.exports (Node).
  */
 (function (global) {
   "use strict";
@@ -22,7 +22,7 @@
   const convertFactoredFormToVertexForm = (a, r1, r2) => { const h = (r1 + r2) / 2; return [a, h, factoredForm(a, r1, r2, h)]; };
   const convertFactoredFormToStandardForm = (a, r1, r2) => [a, -a * (r1 + r2), a * r1 * r2];
 
-  // ---- vertex_form/solver.py (formatting helpers as in factoring/solver.py) ----
+  // ---- a1/forms.py (formatting helpers as in factoring/solver.py) -------------
   const FORMS = ["standard", "vertex", "factored"];
   const PARAMS = { standard: ["a", "b", "c"], vertex: ["a", "h", "k"], factored: ["a", "r1", "r2"] };
 
@@ -50,6 +50,23 @@
 
   const shifted = (h) => (clean(h) === 0 ? "x" : `(x${signed(-h)})`);
   const equation = (a, h, k) => `y = ${coef(a)}${shifted(h)}²` + (clean(k) ? signed(k) : "");
+
+  // ---- Solving ax² + bx + c = 0 -------------------------------------------------
+  const complex = (z) => (z.im === 0 ? fmt(z.re) : `${fmt(z.re)} ${z.im < 0 ? "−" : "+"} ${fmt(Math.abs(z.im))}i`);
+
+  function solving(a, b, c, quadratic) {
+    const d = quadratic.discriminant;
+    const root = d >= 0 ? fmt(Math.sqrt(d)) : `${fmt(Math.sqrt(-d))}i`;
+    const [r1, r2] = quadratic.roots;
+    const roots = r1.re === r2.re && r1.im === r2.im ? `x = ${complex(r1)} (repeated)` : `x₁ = ${complex(r1)},  x₂ = ${complex(r2)}`;
+    return [
+      { id: "discriminant", title: "Identify the coefficients", math: `a = ${fmt(a)},  b = ${fmt(b)},  c = ${fmt(c)}` },
+      { id: "discriminant", title: "Find the discriminant", math: `Δ = b² − 4ac = ${p_(b)}² − 4·${p_(a)}·${p_(c)} = ${fmt(d)}: ${quadratic.root_nature}` },
+      { id: "discriminant", title: "Take its square root" + (d < 0 ? " (Δ < 0, so it is imaginary: √−1 = i)" : ""), math: `√Δ = ${root}` },
+      { id: "roots", title: "Apply the quadratic formula", math: `x = (−b ± √Δ) / 2a = (${fmt(-b)} ± ${root}) / ${p_(2 * a)}` },
+      { id: "roots", title: "The roots", math: roots },
+    ];
+  }
 
   // ---- Building a(x − h)² + k from y = x² --------------------------------------
   function transformations(a, h, k) {
@@ -124,7 +141,7 @@
     step("Write a(x − h)² + k", equation(a, h, k)),
   ];
 
-  /** Same shape as VertexFormSolution.to_dict() in Python. */
+  /** Same shape as QuadraticPage.to_dict() in Python. */
   function solve(form, a, p, q) {
     if (a === 0) throw new Error("'a' must be non-zero; with a = 0 the equation is linear, not quadratic.");
     let b, c, h, k;
@@ -147,6 +164,7 @@
       equation: equation(a, h, k),
       forms: Object.fromEntries(FORMS.map((name) => [name, quadratic[`${name}_form`]])),
       quadratic,
+      solving: solving(a, b, c, quadratic),
       transformations: transformations(a, h, k),
       features: features(a, h, k),
       completing_square: completingTheSquare(a, b, c, h, k),
@@ -157,12 +175,12 @@
   }
 
   const api = {
-    solve, fmt, equation, FORMS, PARAMS, to_standard: toStandard,
+    solve, fmt, equation, complex, FORMS, PARAMS, to_standard: toStandard,
     vertex_form: vertexForm,
     convert_standard_form_to_vertex_form: convertStandardFormToVertexForm,
     convert_vertex_form_to_standard_form: convertVertexFormToStandardForm,
     convert_factored_form_to_vertex_form: convertFactoredFormToVertexForm,
   };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
-  else global.VertexMath = api;
+  else global.QuadForms = api;
 })(typeof window !== "undefined" ? window : globalThis);

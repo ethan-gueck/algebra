@@ -2,15 +2,16 @@
 
 Frontend usage once deployed:
     PP.call("a1/quadratic", "solve", 1, -3, 2)
-    PP.embed("#el", "a1/quadratic", { a: 1, b: -3, c: 2 })
+    PP.call("a1/quadratic_forms", "solve", "vertex", 2, 1, -8)
+    PP.embed("#el", "a1/quadratic", { a: 1, b: -3, c: 2 })   // or { a: 2, h: 1, k: -8 }
 """
 
 from general.api import JSModule, Page, Topic
 
 from core import formula
 
-from . import solver
-from .html.quadratic_page import MATH_SCRIPTS, build_quadratic_html
+from . import forms, solver
+from .html.quadratic_page import MATH_SCRIPTS, PAGE_SCRIPTS, build_quadratic_html
 
 
 def _build_page(output_path, theme=None):
@@ -18,9 +19,9 @@ def _build_page(output_path, theme=None):
 
 
 TOPIC = Topic(
-    title="Quadratic Formula",
-    description="Discriminant, roots (real or complex), vertex, axis of symmetry, intercepts and forms of ax² + bx + c.",
-    cards=("A1.11",),  # flashcard: Quadratic Formula & Discriminant
+    title="Quadratic Formula & Vertex Form",
+    description="Solve ax² + bx + c = 0 (real or complex roots) and write it as a(x − h)² + k: y = x² shifted, stretched and lifted, completing the square, and back.",
+    cards=("A1.11", "A1.12"),  # flashcards: Quadratic Formula & Discriminant; Vertex Form of a Quadratic
     modules=(
         JSModule(
             name="quadratic",
@@ -35,12 +36,25 @@ TOPIC = Topic(
                 "vertex": solver.vertex_point,
             },
         ),
+        JSModule(
+            name="quadratic_forms",
+            global_name="QuadForms",
+            scripts=PAGE_SCRIPTS,
+            functions={
+                "solve": forms.solve,
+                "equation": forms.equation,
+                "vertex_form": formula.vertex_form,
+                "convert_standard_form_to_vertex_form": formula.convert_standard_form_to_vertex_form,
+                "convert_vertex_form_to_standard_form": formula.convert_vertex_form_to_standard_form,
+                "convert_factored_form_to_vertex_form": formula.convert_factored_form_to_vertex_form,
+            },
+        ),
     ),
     pages=(
         Page(
             name="quadratic",
-            title="Quadratic Formula",
-            description="Interactive, Manim-style walkthrough of the quadratic formula.",
+            title="Quadratic Formula & Vertex Form",
+            description="Interactive walkthrough of a quadratic: the quadratic formula, the vertex form built from y = x², completing the square and expanding back.",
             build=_build_page,
             params=("a", "b", "c"),
             example={"a": 1, "b": -3, "c": 2},

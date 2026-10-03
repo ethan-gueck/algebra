@@ -1,0 +1,23 @@
+/* complex_numbers.css: page-specific styles for complex numbers (formula typesetting as on the quadratic page). */
+.formula { margin: 0; display: inline-flex; align-items: center; gap: 0.3em; font-family: var(--font-serif); font-size: var(--fs-md); }
+.formulas { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-2); }
+.radicand { border-top: 1.5px solid currentColor; padding: 0 0.15em; }
+
+.steps-panel, .powers-panel { margin-top: var(--space-4); }
+
+.terms { grid-template-columns: minmax(0, 1fr); gap: 0; }
+.terms dt { color: var(--text); font-weight: 600; padding-top: var(--space-2); }
+.terms dd { margin: 0; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-soft); }
+.param-terms { margin: var(--space-2) 0; }
+.glossary { margin-top: var(--space-3); }
+.glossary summary { cursor: pointer; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--primary-soft); }
+.glossary .terms { display: grid; margin: 0; }
+
+/* Powers of i: i⁰ … i⁴ in a row; i² is the one the card is about. */
+.powers { margin: var(--space-2) 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-2); }
+.powers__item { padding: var(--space-2); text-align: center; border-top: 3px solid var(--rule); }
+.powers__item.is-key { border-top-color: var(--primary); background: color-mix(in srgb, var(--primary) 7%, transparent); }
+.powers__exp { margin: 0; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-soft); }
+.powers__value { margin: var(--space-1) 0 0; font-size: 1.25rem; }
+.powers__note { margin: var(--space-3) 0 0; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-soft); }
+.powers.is-active .powers__item.is-key { border-top-width: 4px; }

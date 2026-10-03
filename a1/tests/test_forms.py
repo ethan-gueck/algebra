@@ -1,7 +1,7 @@
 import pytest
 
 from core import formula
-from vertex_form.solver import equation, solve
+from a1.forms import equation, solve
 
 CASES = [("vertex", 2, 1, -8), ("vertex", -0.5, -2, 4), ("vertex", 1, 3, 2), ("vertex", 1, 0, 0), ("vertex", -1, 0, 3), ("vertex", 0.25, 2, -1),
          ("standard", 1, -6, 5), ("standard", 3, 12, 7), ("standard", -2, 4, 6), ("standard", 1, 0, -4), ("factored", -1, -1, 5), ("factored", 2, 0.5, 0.5)]
@@ -56,6 +56,17 @@ def test_completing_the_square_steps():
     assert steps[2] == "y = 3(x² + 4x + 4 - 4) + 7"
     assert steps[3].endswith("y = 3(x + 2)² - 12 + 7")
     assert steps[4] == "k = 7 − 3·4 = -5  →  y = 3(x + 2)² - 5"
+
+
+@pytest.mark.parametrize("case, roots", [
+    (("standard", 1, -3, 2), "x₁ = 1,  x₂ = 2"),
+    (("standard", 1, -2, 1), "x = 1 (repeated)"),
+    (("standard", 1, 2, 5), "x₁ = -1 − 2i,  x₂ = -1 + 2i"),
+])
+def test_quadratic_formula_steps(case, roots):
+    steps = solve(*case).solving
+    assert steps[-1]["math"] == roots
+    assert ("imaginary" in steps[2]["title"]) == (case == ("standard", 1, 2, 5))
 
 
 def test_equation_text():

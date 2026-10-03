@@ -76,6 +76,12 @@ PRECEDENCE = {"^": 4, "neg": 3, "*": 2, "/": 2, "+": 1, "-": 1}
 
 # _____________ A1.2 Exponent Rules _____________
 
+def power_of_a_power(a, m, n):
+    """(a^m)^n = a^(m·n)"""
+    return a ** (m * n)
+
+# ... to be continued: more exponent rules needed ...
+
 
 # _____________ A1.3 Radicals & Rational Exponents _____________
 
@@ -290,6 +296,17 @@ def convert_factored_form_to_vertex_form(a, r1, r2):
 
 # _____________ A1.14 Ratios, Proportions & Percent Change _____________
 
+def ratio(a, b):
+    """a : b"""
+    return a, b
+
+def proportion(a, b, c, d):
+    """a : b = c : d"""
+    return a / b == c / d
+
+def percent_change(original, new):
+    """(new − original) ÷ original × 100%"""
+    return (new - original) / original * 100
 
 # _____________ A1.15 Linear Inequalities _____________
 
@@ -304,6 +321,22 @@ def convert_factored_form_to_vertex_form(a, r1, r2):
 
 
 # _____________ A2.3 Complex Numbers _____________
+
+def complex_to_real(i):
+    """i² = −1"""
+    return i**2
+
+def complex_standard_form(a, b):
+    """z = a + bi"""
+    return complex(a, b)
+
+def complex_conjugate(z):
+    """If z = a + bi, then z̄ = a − bi"""
+    return z.real - z.imag * 1j
+
+def complex_modulus(z):
+    """|z| = √(a² + b²)"""
+    return abs(z)
 
 
 # _____________ A2.4 Remainder, Factor & Rational Root Theorems _____________

@@ -1,8 +1,9 @@
-"""A1 algebra: quadratic equations (template topic).
+"""A1.11 Quadratic Formula and A1.12 Vertex Form: one page for ax² + bx + c = a(x − h)² + k (template topic).
 
 Layout (copy this folder to start a new topic):
 
-    solver.py    the page's calculations, built on solver.pyformula.py (A1.11, A1.12)
+    solver.py    the parabola's calculations, built on core/formula.py (A1.11); shared with other topics
+    forms.py     the page's calculations on top of it: the quadratic formula worked through, the vertex form (A1.12)
     animations/  Manim scene built on solver.py + general.animations (optional: needs `manim`)
     html/        interactive page built on solver.py + general.web / general.styles
     style.py     maps this topic's elements onto general theme roles

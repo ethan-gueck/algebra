@@ -13,21 +13,26 @@
   <header class="masthead">
     <div class="container">
       <div class="masthead__bar">
-        <span class="masthead__kicker">Algebra · A1</span>
+        <span class="masthead__kicker">Algebra · A1.11 &amp; A1.12</span>
         <a href="https://ethan-gueck.github.io/">ethan-gueck.github.io</a>
       </div>
       <div class="masthead__title">
         <div>
           <h1 class="masthead__name">{{title}}</h1>
-          <p class="masthead__subtitle">Solve ax² + bx + c = 0 and watch each part of the parabola appear.</p>
+          <p class="masthead__subtitle">Solve ax² + bx + c = 0, and see the same parabola as y = x² shifted by h, stretched by a and lifted by k.</p>
         </div>
-        <p class="masthead__aside formula" aria-label="x equals negative b plus or minus the square root of b squared minus 4 a c, all over 2 a">
-          <span class="var">x</span> =
-          <span class="frac">
-            <span class="num">−<span class="var">b</span> ± √<span class="radicand"><span class="var">b</span>² − 4<span class="var">ac</span></span></span>
-            <span class="den">2<span class="var">a</span></span>
-          </span>
-        </p>
+        <div class="masthead__aside formulas">
+          <p class="formula" aria-label="x equals negative b plus or minus the square root of b squared minus 4 a c, all over 2 a">
+            <span class="var">x</span> =
+            <span class="frac">
+              <span class="num">−<span class="var">b</span> ± √<span class="radicand"><span class="var">b</span>² − 4<span class="var">ac</span></span></span>
+              <span class="den">2<span class="var">a</span></span>
+            </span>
+          </p>
+          <p class="formula" aria-label="y equals a times x minus h squared plus k">
+            <span class="var">y</span> = <span class="var">a</span>(<span class="var">x</span> − <span class="var">h</span>)² + <span class="var">k</span>
+          </p>
+        </div>
       </div>
     </div>
   </header>
@@ -54,12 +59,27 @@
           </label>
         </div>
 
-        <section class="panel steps-panel" aria-labelledby="steps-title">
+        <section class="panel solve-panel" aria-labelledby="solve-title">
           <div class="panel__head">
-            <h2 class="panel__title" id="steps-title">Step by step</h2>
+            <h2 class="panel__title" id="solve-title">Solving with the quadratic formula</h2>
             {{code_button}}
           </div>
-          <ol class="steps steps--compact" id="steps"></ol>
+          <ol class="steps steps--compact" id="solving"></ol>
+        </section>
+
+        <section class="panel build-panel" aria-labelledby="build-title">
+          <div class="panel__head">
+            <h2 class="panel__title" id="build-title">Vertex form: building it from y = x²</h2>
+          </div>
+          <ol class="moves" id="transformations"></ol>
+          <p class="build__result" id="equation" aria-live="polite"></p>
+        </section>
+
+        <section class="panel convert-panel" aria-labelledby="convert-title">
+          <div class="panel__head">
+            <h2 class="panel__title" id="convert-title">Into and out of vertex form</h2>
+          </div>
+          <div class="conversions" id="conversions"></div>
         </section>
 
         <div id="video-wrap" class="video" hidden>
@@ -70,41 +90,49 @@
 
       <aside class="widget__side">
         <fieldset class="panel">
-          <legend>Coefficients</legend>
+          <legend>Start from</legend>
+          <label class="form-pick">
+            <span class="visually-hidden">Form</span>
+            <select id="form" class="select">
+              <option value="standard">Standard: ax² + bx + c</option>
+              <option value="vertex">Vertex: a(x − h)² + k</option>
+              <option value="factored">Factored: a(x − r₁)(x − r₂)</option>
+            </select>
+          </label>
+          <p class="form-about" id="form-about"></p>
           <div class="field">
-            <label for="a-num"><span class="var">a</span></label>
-            <input id="a-range" type="range" min="-5" max="5" step="0.1" aria-label="a slider">
-            <input id="a-num" type="number" step="any">
+            <label for="p0-num" id="p0-label"><span class="var">a</span></label>
+            <input id="p0-range" type="range" min="-5" max="5" step="0.25" aria-label="first variable slider">
+            <input id="p0-num" type="number" step="any">
           </div>
           <div class="field">
-            <label for="b-num"><span class="var">b</span></label>
-            <input id="b-range" type="range" min="-10" max="10" step="0.1" aria-label="b slider">
-            <input id="b-num" type="number" step="any">
+            <label for="p1-num" id="p1-label"><span class="var">b</span></label>
+            <input id="p1-range" type="range" min="-10" max="10" step="0.5" aria-label="second variable slider">
+            <input id="p1-num" type="number" step="any">
           </div>
           <div class="field">
-            <label for="c-num"><span class="var">c</span></label>
-            <input id="c-range" type="range" min="-10" max="10" step="0.1" aria-label="c slider">
-            <input id="c-num" type="number" step="any">
+            <label for="p2-num" id="p2-label"><span class="var">c</span></label>
+            <input id="p2-range" type="range" min="-10" max="10" step="0.5" aria-label="third variable slider">
+            <input id="p2-num" type="number" step="any">
           </div>
+          <p id="warning" class="warning" role="status" hidden></p>
+          <dl class="results terms param-terms" id="param-terms"></dl>
           <p id="error" class="error" role="alert" hidden></p>
+          <p id="note" class="note" hidden></p>
           <div class="chips">
-            <button class="btn" type="button" data-preset="1,-3,2">Two roots</button>
-            <button class="btn" type="button" data-preset="1,-2,1">One root</button>
-            <button class="btn" type="button" data-preset="1,2,5">Complex</button>
-            <button class="btn" type="button" data-preset="-2,4,6">Opens down</button>
+            <button class="btn" type="button" data-preset="standard:1,-3,2">Two roots</button>
+            <button class="btn" type="button" data-preset="standard:1,-2,1">One root</button>
+            <button class="btn" type="button" data-preset="standard:1,2,5">Complex roots</button>
+            <button class="btn" type="button" data-preset="standard:3,12,7">Complete 3x² + 12x + 7</button>
+            <button class="btn" type="button" data-preset="vertex:2,1,-8">2(x − 1)² − 8</button>
+            <button class="btn" type="button" data-preset="vertex:-0.5,-2,4">Flipped and wide</button>
+            <button class="btn" type="button" data-preset="factored:-1,-1,5">From its roots</button>
           </div>
         </fieldset>
 
         <fieldset class="panel">
-          <legend>Equation form</legend>
-          <div class="segmented" role="radiogroup" aria-label="Equation form">
-            <label><input type="radio" name="form" value="standard"> Standard</label>
-            <label><input type="radio" name="form" value="vertex" checked> Vertex</label>
-            <label><input type="radio" name="form" value="intercept"> Intercept</label>
-          </div>
-          <p class="form-eq" id="form-eq" aria-live="polite"></p>
-          <p class="form-about" id="form-about"></p>
-          <dl class="results terms" id="form-terms"></dl>
+          <legend>The same parabola, three ways</legend>
+          <dl class="forms-list" id="forms"></dl>
         </fieldset>
 
         <fieldset class="panel">

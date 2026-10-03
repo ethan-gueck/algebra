@@ -14,6 +14,8 @@ ROLES = {
     "y_intercept": "secondary",
     "symmetry": "guide",
     "discriminant": "warning",
+    "parent": "guide",  # y = x², the curve the vertex form starts from
+    "shift": "warning",  # the path the vertex travels while the curve is shifted
 }
 
 

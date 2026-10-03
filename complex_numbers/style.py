@@ -1,15 +1,14 @@
-"""Maps vertex-form elements onto the generic stage roles of general.themes."""
+"""Maps complex-plane elements onto the generic stage roles of general.themes."""
 
 from general.themes import Theme, get_theme
 
 ROLES = {
-    "curve": "primary",
-    "parent": "guide",
-    "vertex": "point",
-    "symmetry": "guide",
-    "roots": "highlight",
-    "y_intercept": "secondary",
-    "shift": "warning",
+    "z": "primary",
+    "parts": "warning",
+    "conjugate": "secondary",
+    "modulus": "highlight",
+    "unit": "guide",
+    "i": "point",
 }
 
 

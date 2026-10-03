@@ -1,18 +1,18 @@
-"""The vertex form y = a(x − h)² + k: the parabola y = x² moved, stretched and lifted, step by step.
+"""The quadratic page's calculations: solving ax² + bx + c = 0 and writing it as a(x − h)² + k.
 
-The mathematics lives in core/formula.py (section A1.12 Vertex Form): the
-vertex form itself and the conversions into it and out of it. This module
-calls those and adds what the page needs around them: the three
-transformations of the parent y = x² that build a(x − h)² + k, what a, h and k
-say about the graph, completing the square written out step by step, and the
-expansion back to standard form. Everything else about the parabola (roots,
-intercepts, plot window) comes from the quadratic solver, a1.solver.solve.
-The JavaScript mirror (html/static/vertex_form_math.js) is kept identical by
-tests/test_js_parity.py.
+The mathematics lives in core/formula.py (A1.11 Quadratic Formula and A1.12
+Vertex Form). This module calls it and adds what the page needs around it:
+the quadratic formula worked through (complex roots included), the three
+transformations of the parent y = x² that build a(x − h)² + k, what a, h and
+k say about the graph, completing the square written out step by step, and
+the expansion back to standard form. The parabola's details (roots,
+intercepts, plot window) come from solver.solve. The JavaScript mirror
+(html/static/forms_math.js) is kept identical by tests/test_forms_parity.py.
 """
 
 from __future__ import annotations
 
+import math
 from dataclasses import asdict, dataclass
 
 from a1 import solver as quadratic_solver
@@ -33,6 +33,29 @@ def _shifted(h: float) -> str:
 def equation(a: float, h: float, k: float) -> str:
     """'y = a(x - h)² + k' with a redundant 1, a zero h and a zero k dropped."""
     return f"y = {_coef(a)}{_shifted(h)}²" + (_signed(k) if _clean(k) else "")
+
+
+# ---- Solving ax² + bx + c = 0 ----------------------------------------------
+
+
+def _complex(z: dict) -> str:
+    """'re', or 're ± im·i' for a complex root."""
+    return fmt(z["re"]) if z["im"] == 0 else f"{fmt(z['re'])} {'−' if z['im'] < 0 else '+'} {fmt(abs(z['im']))}i"
+
+
+def solving(a: float, b: float, c: float, quadratic: dict) -> list[dict]:
+    """The quadratic formula worked through: Δ, √Δ (imaginary when Δ < 0), then both roots."""
+    d = quadratic["discriminant"]
+    root = fmt(math.sqrt(d)) if d >= 0 else f"{fmt(math.sqrt(-d))}i"
+    r1, r2 = quadratic["roots"]
+    roots = f"x = {_complex(r1)} (repeated)" if r1 == r2 else f"x₁ = {_complex(r1)},  x₂ = {_complex(r2)}"
+    return [
+        {"id": "discriminant", "title": "Identify the coefficients", "math": f"a = {fmt(a)},  b = {fmt(b)},  c = {fmt(c)}"},
+        {"id": "discriminant", "title": "Find the discriminant", "math": f"Δ = b² − 4ac = {_p(b)}² − 4·{_p(a)}·{_p(c)} = {fmt(d)}: {quadratic['root_nature']}"},
+        {"id": "discriminant", "title": "Take its square root" + (" (Δ < 0, so it is imaginary: √−1 = i)" if d < 0 else ""), "math": f"√Δ = {root}"},
+        {"id": "roots", "title": "Apply the quadratic formula", "math": f"x = (−b ± √Δ) / 2a = ({fmt(-b)} ± {root}) / {_p(2 * a)}"},
+        {"id": "roots", "title": "The roots", "math": roots},
+    ]
 
 
 # ---- Building a(x − h)² + k from y = x² ------------------------------------
@@ -134,7 +157,7 @@ def from_roots(a: float, r1: float, r2: float, h: float, k: float) -> list[dict]
 
 
 @dataclass(frozen=True)
-class VertexFormSolution:
+class QuadraticPage:
     """Everything the page needs, computed once."""
 
     form: str
@@ -145,6 +168,7 @@ class VertexFormSolution:
     equation: str
     forms: dict
     quadratic: dict
+    solving: list
     transformations: list
     features: dict
     completing_square: list
@@ -156,8 +180,8 @@ class VertexFormSolution:
         return asdict(self)
 
 
-def solve(form: str, a: float, p: float, q: float) -> VertexFormSolution:
-    """The quadratic given in ``form`` by (a, p, q), written as a(x − h)² + k, with the steps to and from it."""
+def solve(form: str, a: float, p: float, q: float) -> QuadraticPage:
+    """The quadratic given in ``form`` by (a, p, q): solved, written as a(x − h)² + k, with the steps to and from it."""
     if a == 0:
         raise ValueError("'a' must be non-zero; with a = 0 the equation is linear, not quadratic.")
     a, b, c = to_standard(form, a, p, q)
@@ -175,7 +199,7 @@ def solve(form: str, a: float, p: float, q: float) -> VertexFormSolution:
         fac = {"a": a, "r1": min(p, q), "r2": max(p, q)}
     elif xs:
         fac = {"a": a, "r1": xs[0], "r2": xs[-1]}
-    return VertexFormSolution(
+    return QuadraticPage(
         form=form,
         inputs=dict(zip(PARAMS[form], (a, p, q))),
         vertex={"a": a, "h": h, "k": k},
@@ -184,6 +208,7 @@ def solve(form: str, a: float, p: float, q: float) -> VertexFormSolution:
         equation=equation(a, h, k),
         forms={name: quadratic[f"{name}_form"] for name in FORMS},
         quadratic=quadratic,
+        solving=solving(a, b, c, quadratic),
         transformations=transformations(a, h, k),
         features=features(a, h, k),
         completing_square=completing_the_square(a, b, c, h, k),
