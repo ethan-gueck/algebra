@@ -1,9 +1,11 @@
-"""Properties of real numbers, order of operations, and where floating point breaks them.
+"""Properties of real numbers, order of operations, exponent rules, ratios and
+percent change, and where floating point breaks them.
 
 formula.py holds the mathematics as written: each property as a function of
-a, b, c returning its two sides, and the PEMDAS ranking. This module runs those
-same functions on exact numbers and on floats, steps through expressions, and
-formats everything for the page.
+a, b, c returning its two sides, the PEMDAS ranking, each exponent rule and the
+proportion as a check that two sides are equal, and percent change. This module
+runs those functions on exact numbers and on floats, steps through expressions,
+and formats everything for the page.
 
 Real numbers here are exact rationals (fractions.Fraction): "0.1" is exactly
 one tenth. Floating point is IEEE 754 double precision, what Python's float
@@ -381,4 +383,144 @@ def sum_two_ways(a: str, b: str, c: str) -> dict:
         "same": left == right,
         "altitude": {"exact": altitude_deg(float(exact)), "left": altitude_deg(left), "right": altitude_deg(right)},
         "guarded": {"left": guarded_altitude_deg(left), "right": guarded_altitude_deg(right)},
+    }
+
+
+# ---- Exponent rules (A1.2) --------------------------------------------------
+
+MAX_POWER = 20
+MAX_POWER_BITS = 1000  # numerator + denominator bits: keeps every power inside a double's range (2^±1023)
+
+EXPONENT_RULES = (
+    _Property("product", "Product rule", "aᵐ × aⁿ = aᵐ⁺ⁿ"),
+    _Property("quotient", "Quotient rule", "aᵐ ÷ aⁿ = aᵐ⁻ⁿ"),
+    _Property("power", "Power of a power", "(aⁿ)ᵐ = aᵐⁿ"),
+    _Property("zero", "Zero exponent", "a⁰ = 1"),
+    _Property("negative", "Negative exponent", "a⁻ᵐ = 1 ÷ aᵐ"),
+)
+
+
+def parse_exponent(text: str, name: str) -> int:
+    """'3' -> 3, '−2' -> -2: a whole number from −MAX_POWER to MAX_POWER."""
+    s = text.strip().replace(MINUS, "-")
+    if not re.fullmatch(r"[+-]?\d+", s) or abs(int(s)) > MAX_POWER:
+        raise ValueError(f"{name} must be a whole number from −{MAX_POWER} to {MAX_POWER}.")
+    return int(s)
+
+
+def _int_text(k: int) -> str:
+    return f"{MINUS}{-k}" if k < 0 else str(k)
+
+
+def _pow_text(base: str, k: int) -> str:
+    """'2^3', '2^(−3)'."""
+    return f"{base}^({_int_text(k)})" if k < 0 else f"{base}^{k}"
+
+
+def exponent_rules(a: str, m: str, n: str) -> list[dict]:
+    """Check each exponent rule with base a and whole exponents m, n, exactly and in floating point.
+
+    Same shape as ``properties``: the two sides with the numbers filled in, their
+    exact and float values, and whether each pair agrees. The exact verdict is the
+    rule's function in core/formula.py (True when its sides are equal) run on
+    fractions.Fraction. Float powers use repeated multiplication (``_fpow``), as
+    the order-of-operations stepper does, because pow() rounds differently in
+    Python and in each browser. Rules that would need 0⁰ or 0 to a
+    negative power are skipped (``applies: False``) with a ``note``.
+    """
+    A = parse_number(a)
+    M, N = parse_exponent(m, "m"), parse_exponent(n, "n")
+    biggest = max(abs(M), abs(N), abs(M + N), abs(M - N), abs(M * N))
+    big = A ** biggest
+    if A != 0 and big.numerator.bit_length() + big.denominator.bit_length() > MAX_POWER_BITS:
+        raise ValueError("Those powers get too large to compare in floating point. Try a smaller base or exponents.")
+    fa = float(A)
+    sa = _show(A)
+
+    # rule id -> (formula function, its arguments after a, exponents that must be positive when a = 0,
+    #             the two sides as text, the two sides from base x and a power function p)
+    rows = {
+        "product": (formula.exponent_multiplication, (M, N), (M, N),
+                    f"{_pow_text(sa, M)} × {_pow_text(sa, N)}", _pow_text(sa, M + N),
+                    lambda x, p: (p(x, M) * p(x, N), p(x, M + N))),
+        "quotient": (formula.exponent_division, (M, N), (M, N, 0),
+                     f"{_pow_text(sa, M)} ÷ {_pow_text(sa, N)}", _pow_text(sa, M - N),
+                     lambda x, p: (p(x, M) / p(x, N), p(x, M - N))),
+        "power": (formula.exponent_raised_by_exponent, (M, N), (M, N),
+                  _pow_text(f"({_pow_text(sa, N)})", M), _pow_text(sa, M * N),
+                  lambda x, p: (p(p(x, N), M), p(x, M * N))),
+        "zero": (formula.exponent_equal_to_zero, (), (0,),
+                 _pow_text(sa, 0), "1",
+                 lambda x, p: (p(x, 0), 1)),
+        "negative": (formula.negative_exponent, (M,), (M, -M, 0),
+                     _pow_text(sa, -M), f"1 ÷ {_pow_text(sa, M)}",
+                     lambda x, p: (p(x, -M), 1 / p(x, M))),
+    }
+    out = []
+    for rule in EXPONENT_RULES:
+        fn, args, positive, left, right, sides = rows[rule.id]
+        if A == 0 and min(positive) <= 0:
+            note = "Needs a ≠ 0: 0⁰ is undefined." if rule.id == "zero" else "Needs a ≠ 0 here: 0 to a zero or negative power is undefined."
+            out.append({"id": rule.id, "name": rule.name, "rule": rule.rule, "applies": False, "note": note})
+            continue
+        el, er = (Fraction(v) for v in sides(A, pow))
+        fl, fr = sides(fa, _fpow)
+        out.append({
+            "id": rule.id, "name": rule.name, "rule": rule.rule, "applies": True,
+            "left": left, "right": right,
+            "exact": [exact_text(el), exact_text(er)], "exact_holds": bool(fn(A, *args)),
+            "exact_float": [float(el), float(er)],
+            "float": [float(fl), float(fr)], "float_holds": fl == fr,
+        })
+    return out
+
+
+# ---- Ratios, proportions and percent change (A1.14) -------------------------
+
+def _ratio_text(x: Fraction, y: Fraction) -> str:
+    return f"{exact_text(x)} : {exact_text(y)}"
+
+
+def simplest_ratio(x: Fraction, y: Fraction) -> str:
+    """x : y in lowest whole terms: 0.5 : 1.5 -> '1 : 3'."""
+    q = x / y
+    return f"{_int_text(q.numerator)} : {q.denominator}"
+
+
+def proportion(a: str, b: str, c: str, d: str) -> dict:
+    """Is a : b = c : d? Each ratio in lowest terms, both quotients and cross products, exactly and in floating point.
+
+    The verdicts come from formula.proportion run on fractions.Fraction and on float.
+    """
+    A, B, C, D = (parse_number(x) for x in (a, b, c, d))
+    if B == 0 or D == 0:
+        raise ValueError("The second term of a ratio can't be 0: a ÷ 0 is undefined.")
+    fa, fb, fc, fd = float(A), float(B), float(C), float(D)
+    left, right = formula.ratio(A, B), formula.ratio(C, D)
+    return {
+        "left": _ratio_text(*left), "right": _ratio_text(*right),
+        "simplest": [simplest_ratio(*left), simplest_ratio(*right)],
+        "exact": [exact_text(A / B), exact_text(C / D)], "exact_holds": formula.proportion(A, B, C, D),
+        "cross": [exact_text(A * D), exact_text(B * C)],
+        "float": [fa / fb, fc / fd], "float_holds": formula.proportion(fa, fb, fc, fd),
+    }
+
+
+def percent_change(original: str, new: str) -> dict:
+    """Percent change from ``original`` to ``new``, exactly and in floating point, and the change that undoes it.
+
+    ``undo`` is the percent change from new back to original (``None`` when new is 0):
+    +50% is undone by −33⅓%, not −50%.
+    """
+    O, N = parse_number(original), parse_number(new)
+    if O == 0:
+        raise ValueError("The original value can't be 0: percent change divides by it.")
+    exact = formula.percent_change(O, N)
+    undo = formula.percent_change(N, O) if N != 0 else None
+    return {
+        "exact": exact_text(exact), "exact_value": float(exact),
+        "float": formula.percent_change(float(O), float(N)),
+        "direction": "increase" if exact > 0 else "decrease" if exact < 0 else "no change",
+        "undo": None if undo is None else exact_text(undo),
+        "undo_value": None if undo is None else float(undo),
     }

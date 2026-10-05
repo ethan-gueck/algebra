@@ -17,7 +17,7 @@
 .rn-table thead th { font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 600; color: var(--text-soft); border-bottom: 2px solid var(--primary); }
 .rn-table tbody th { font-weight: 400; min-width: 12rem; }
 .rn-table tr.is-broken td:last-child { background: rgba(233,161,91,0.12); }
-.rn-table code, .rn-start code, .steps__math code { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: 0.88em; }
+.rn-table code, .rn-start code, .steps__math code, .rn-result code { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: 0.88em; }
 .rn-name { display: block; font-family: var(--font-sans); font-weight: 600; color: var(--primary); }
 .rn-rule { display: block; font-style: italic; color: var(--text-soft); }
 .rn-na { color: var(--text-soft); font-style: italic; }
@@ -42,7 +42,11 @@
 .rn-list li { margin-bottom: var(--space-1); }
 .rn-list code { font-size: 0.9em; }
 
+.rn-ratio { align-items: center; }
+.rn-colon { font-family: var(--font-serif); font-size: 1.2rem; color: var(--text-soft); }
+
 @media (max-width: 640px) {
   .rn-input input { width: 6.5rem; }
+  .rn-ratio .rn-input input { width: 4.5rem; }
   .rn-table tbody th { min-width: 9rem; }
 }

@@ -13,13 +13,13 @@
   <header class="masthead">
     <div class="container">
       <div class="masthead__bar">
-        <span class="masthead__kicker">Algebra · A1.1</span>
+        <span class="masthead__kicker">Algebra · A1.1 · A1.2 · A1.14</span>
         <a href="https://ethan-gueck.github.io/">ethan-gueck.github.io</a>
       </div>
       <div class="masthead__title">
         <div>
           <h1 class="masthead__name">{{title}}</h1>
-          <p class="masthead__subtitle">The rules arithmetic follows on paper, the order it happens in, and where a computer quietly breaks them.</p>
+          <p class="masthead__subtitle">The rules arithmetic and exponents follow on paper, the order they happen in, ratios and percent change, and where a computer quietly breaks them.</p>
         </div>
         <p class="masthead__aside formula" aria-label="a times the quantity b plus c equals a b plus a c">
           <span class="var">a</span>(<span class="var">b</span> + <span class="var">c</span>) = <span class="var">ab</span> + <span class="var">ac</span>
@@ -110,6 +110,73 @@
         <li>Snap results within a tolerance of a physical boundary (here 0 and ±1) onto the boundary. The guarded row above does both.</li>
         <li>Add long sums with compensated summation (Python's <code>math.fsum</code>), or at least in a consistent order.</li>
       </ul>
+    </section>
+
+    <section class="panel rn-panel" aria-labelledby="exp-title">
+      <h2 class="panel__title" id="exp-title">Exponent rules</h2>
+      <p class="rn-help">An exponent counts repeated multiplication: <span class="var">a</span><sup><span class="var">m</span></sup> is <span class="var">m</span> copies of <span class="var">a</span> multiplied together. Every rule below follows from counting copies. Pick a base <span class="var">a</span> and whole-number exponents <span class="var">m</span> and <span class="var">n</span>; each rule is checked exactly and in floating point, where every multiplication rounds.</p>
+      <div class="rn-inputs">
+        <label class="rn-input"><span class="var">a</span><input id="ea" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
+        <label class="rn-input"><span class="var">m</span><input id="em" type="text" inputmode="numeric" autocomplete="off" spellcheck="false"></label>
+        <label class="rn-input"><span class="var">n</span><input id="en" type="text" inputmode="numeric" autocomplete="off" spellcheck="false"></label>
+      </div>
+      <div class="chips">
+        <button class="btn" type="button" data-exp="2,3,4">Whole numbers</button>
+        <button class="btn" type="button" data-exp="0.1,2,5">0.1, 2, 5</button>
+        <button class="btn" type="button" data-exp="0.7,4,-2">Three rules break</button>
+        <button class="btn" type="button" data-exp="-2,3,2">Negative base</button>
+        <button class="btn" type="button" data-exp="0,2,3">Base 0</button>
+      </div>
+      <p id="exp-error" class="error" role="alert" hidden></p>
+      <div class="table-scroll">
+        <table class="rn-table">
+          <thead><tr><th scope="col">Rule</th><th scope="col">Exact (real numbers)</th><th scope="col">Floating point (computer)</th></tr></thead>
+          <tbody id="exp"></tbody>
+        </table>
+      </div>
+      <h3 class="rn-subtitle">Why the rules hold</h3>
+      <ul class="rn-list">
+        <li><strong>Product:</strong> <span class="var">m</span> copies of <span class="var">a</span> times <span class="var">n</span> more is <span class="var">m</span> + <span class="var">n</span> copies.</li>
+        <li><strong>Quotient:</strong> dividing cancels <span class="var">n</span> of the <span class="var">m</span> copies, leaving <span class="var">m</span> − <span class="var">n</span>.</li>
+        <li><strong>Power of a power:</strong> <span class="var">m</span> groups of <span class="var">n</span> copies is <span class="var">m</span>·<span class="var">n</span> copies.</li>
+        <li><strong>Zero and negative exponents</strong> are the definitions that keep the quotient rule true: <span class="var">a</span><sup><span class="var">m</span></sup> ÷ <span class="var">a</span><sup><span class="var">m</span></sup> = 1 = <span class="var">a</span><sup>0</sup>, and <span class="var">a</span><sup>0</sup> ÷ <span class="var">a</span><sup><span class="var">m</span></sup> = 1 ÷ <span class="var">a</span><sup><span class="var">m</span></sup> = <span class="var">a</span><sup>−<span class="var">m</span></sup>. Both divide by <span class="var">a</span>, so they need <span class="var">a</span> ≠ 0.</li>
+      </ul>
+    </section>
+
+    <section class="panel rn-panel" aria-labelledby="ratio-title">
+      <h2 class="panel__title" id="ratio-title">Ratios, proportions &amp; percent change</h2>
+      <p class="rn-help">A <strong>ratio</strong> <span class="var">a</span> : <span class="var">b</span> compares two quantities by division. Two ratios are in <strong>proportion</strong> when they divide to the same number, which is the same as their cross products being equal: <span class="var">a</span>·<span class="var">d</span> = <span class="var">b</span>·<span class="var">c</span>.</p>
+      <div class="rn-inputs rn-ratio">
+        <label class="rn-input"><span class="var">a</span><input id="ra" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
+        <span class="rn-colon">:</span>
+        <label class="rn-input"><span class="var">b</span><input id="rb" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
+        <span class="rn-colon">=?</span>
+        <label class="rn-input"><span class="var">c</span><input id="rc" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
+        <span class="rn-colon">:</span>
+        <label class="rn-input"><span class="var">d</span><input id="rd" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
+      </div>
+      <div class="chips">
+        <button class="btn" type="button" data-ratio="2,3,4,6">2 : 3 = 4 : 6</button>
+        <button class="btn" type="button" data-ratio="3,4,4,5">3 : 4 vs 4 : 5</button>
+        <button class="btn" type="button" data-ratio="0.1,0.3,1,3">0.1 : 0.3 = 1 : 3</button>
+      </div>
+      <p id="ratio-error" class="error" role="alert" hidden></p>
+      <dl class="results rn-result" id="ratio"></dl>
+
+      <h3 class="rn-subtitle">Percent change</h3>
+      <p class="rn-help">(new − original) ÷ original × 100%. The original is the base, so a change and its undo are not the same percentage.</p>
+      <div class="rn-inputs">
+        <label class="rn-input"><span>original</span><input id="po" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
+        <label class="rn-input"><span>new</span><input id="pn" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
+      </div>
+      <div class="chips">
+        <button class="btn" type="button" data-pct="80,120">80 → 120</button>
+        <button class="btn" type="button" data-pct="120,80">120 → 80</button>
+        <button class="btn" type="button" data-pct="0.1,0.3">0.1 → 0.3</button>
+        <button class="btn" type="button" data-pct="50,0">50 → 0</button>
+      </div>
+      <p id="pct-error" class="error" role="alert" hidden></p>
+      <dl class="results rn-result" id="pct"></dl>
     </section>
   </main>
 

@@ -8,7 +8,7 @@ Flashcard decks in this track: Algebra I, Algebra II. A neuron on the portfolio 
 
 | Folder | Page | Flashcards |
 | --- | --- | --- |
-| [`real_numbers/`](real_numbers/) | [Properties of Real Numbers](https://ethan-gueck.github.io/algebra/real_numbers/properties.html) | A1.1 |
+| [`real_numbers/`](real_numbers/) | [Real Numbers, Exponents & Ratios](https://ethan-gueck.github.io/algebra/real_numbers/properties.html) | A1.1, A1.2, A1.14 |
 | [`slope/`](slope/) | [Slope](https://ethan-gueck.github.io/algebra/slope/slope.html) | A1.4 |
 | [`lines/`](lines/) | [Equations of a Line & Linear Inequalities](https://ethan-gueck.github.io/algebra/lines/lines.html) | A1.5, A1.15 |
 | [`factoring/`](factoring/) | [Factoring](https://ethan-gueck.github.io/algebra/factoring/factoring.html) | A1.10 |

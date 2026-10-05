@@ -1,5 +1,5 @@
 /*
- * real_numbers_math.js — browser mirror of real_numbers/solver.py.
+ * real_numbers_math.js — browser mirror of real_numbers/solver.py (A1.1, A1.2, A1.14).
  *
  * Exact real numbers are BigInt fractions (Python: fractions.Fraction);
  * floating point is plain Number (IEEE 754 doubles, like Python's float).
@@ -296,8 +296,102 @@
     };
   }
 
+  // ---- Exponent rules (A1.2) -------------------------------------------------
+  const MAX_POWER = 20;
+  const MAX_POWER_BITS = 1000;  // numerator + denominator bits: keeps every power inside a double's range (2^±1023)
+  const EXPONENT_RULES = [
+    ["product", "Product rule", "aᵐ × aⁿ = aᵐ⁺ⁿ"],
+    ["quotient", "Quotient rule", "aᵐ ÷ aⁿ = aᵐ⁻ⁿ"],
+    ["power", "Power of a power", "(aⁿ)ᵐ = aᵐⁿ"],
+    ["zero", "Zero exponent", "a⁰ = 1"],
+    ["negative", "Negative exponent", "a⁻ᵐ = 1 ÷ aᵐ"],
+  ];
+
+  function parseExponent(text, name) {
+    const s = text.trim().replaceAll(MINUS, "-");
+    if (!/^[+-]?\d+$/.test(s) || Math.abs(Number(s)) > MAX_POWER) throw new Error(`${name} must be a whole number from −${MAX_POWER} to ${MAX_POWER}.`);
+    return Number(s);
+  }
+  const intText = (k) => (k < 0 ? `${MINUS}${-k}` : String(k));
+  const powText = (base, k) => (k < 0 ? `${base}^(${intText(k)})` : `${base}^${k}`);
+
+  function exponentRules(a, m, n) {
+    const A = parseNumber(a);
+    const M = parseExponent(m, "m"), N = parseExponent(n, "n");
+    const biggest = Math.max(Math.abs(M), Math.abs(N), Math.abs(M + N), Math.abs(M - N), Math.abs(M * N));
+    if (A.n !== 0n) {
+      const big = powInt(A, biggest);
+      if (babs(big.n).toString(2).length + big.d.toString(2).length > MAX_POWER_BITS) throw new Error("Those powers get too large to compare in floating point. Try a smaller base or exponents.");
+    }
+    const fa = toFloat(a), sa = show(A), one = frac(1n);
+    // rule id -> [exponents that must be positive when a = 0, the two sides as text, exact sides, float sides]
+    const rows = {
+      product: [[M, N], `${powText(sa, M)} × ${powText(sa, N)}`, powText(sa, M + N),
+        () => [mul(powInt(A, M), powInt(A, N)), powInt(A, M + N)], () => [fpow(fa, M) * fpow(fa, N), fpow(fa, M + N)]],
+      quotient: [[M, N, 0], `${powText(sa, M)} ÷ ${powText(sa, N)}`, powText(sa, M - N),
+        () => [div(powInt(A, M), powInt(A, N)), powInt(A, M - N)], () => [fpow(fa, M) / fpow(fa, N), fpow(fa, M - N)]],
+      power: [[M, N], powText(`(${powText(sa, N)})`, M), powText(sa, M * N),
+        () => [powInt(powInt(A, N), M), powInt(A, M * N)], () => [fpow(fpow(fa, N), M), fpow(fa, M * N)]],
+      zero: [[0], powText(sa, 0), "1", () => [powInt(A, 0), one], () => [fpow(fa, 0), 1]],
+      negative: [[M, -M, 0], powText(sa, -M), `1 ÷ ${powText(sa, M)}`,
+        () => [powInt(A, -M), div(one, powInt(A, M))], () => [fpow(fa, -M), 1 / fpow(fa, M)]],
+    };
+    return EXPONENT_RULES.map(([id, name, rule]) => {
+      const [positive, left, right, exactSides, floatSides] = rows[id];
+      if (A.n === 0n && Math.min(...positive) <= 0) {
+        const note = id === "zero" ? "Needs a ≠ 0: 0⁰ is undefined." : "Needs a ≠ 0 here: 0 to a zero or negative power is undefined.";
+        return { id, name, rule, applies: false, note };
+      }
+      const [el, er] = exactSides();
+      const [fl, fr] = floatSides();
+      return {
+        id, name, rule, applies: true, left, right,
+        exact: [exactText(el), exactText(er)], exact_holds: eq(el, er),
+        exact_float: [toNumber(el), toNumber(er)],
+        float: [fl, fr], float_holds: fl === fr,
+      };
+    });
+  }
+
+  // ---- Ratios, proportions and percent change (A1.14) -------------------------
+  const ratioText = (x, y) => `${exactText(x)} : ${exactText(y)}`;
+  function simplestRatio(x, y) {
+    const q = div(x, y);
+    return `${q.n < 0n ? MINUS + String(-q.n) : String(q.n)} : ${q.d}`;
+  }
+
+  function proportion(a, b, c, d) {
+    const [A, B, C, D] = [a, b, c, d].map(parseNumber);
+    if (B.n === 0n || D.n === 0n) throw new Error("The second term of a ratio can't be 0: a ÷ 0 is undefined.");
+    const [fa, fb, fc, fd] = [a, b, c, d].map(toFloat);
+    return {
+      left: ratioText(A, B), right: ratioText(C, D),
+      simplest: [simplestRatio(A, B), simplestRatio(C, D)],
+      exact: [exactText(div(A, B)), exactText(div(C, D))], exact_holds: eq(div(A, B), div(C, D)),
+      cross: [exactText(mul(A, D)), exactText(mul(B, C))],
+      float: [fa / fb, fc / fd], float_holds: fa / fb === fc / fd,
+    };
+  }
+
+  const percent = (o, n) => mul(div(sub(n, o), o), frac(100n));
+  function percentChange(original, next) {
+    const O = parseNumber(original), N = parseNumber(next);
+    if (O.n === 0n) throw new Error("The original value can't be 0: percent change divides by it.");
+    const fo = toFloat(original), fn = toFloat(next);
+    const exact = percent(O, N);
+    const undo = N.n !== 0n ? percent(N, O) : null;
+    return {
+      exact: exactText(exact), exact_value: toNumber(exact),
+      float: (fn - fo) / fo * 100,
+      direction: exact.n > 0n ? "increase" : exact.n < 0n ? "decrease" : "no change",
+      undo: undo === null ? null : exactText(undo),
+      undo_value: undo === null ? null : toNumber(undo),
+    };
+  }
+
   const api = {
     properties, order_of_operations: orderOfOperations, sum_two_ways: sumTwoWays,
+    exponent_rules: exponentRules, proportion, percent_change: percentChange,
     exact_text: (text) => exactText(parseNumber(text)), to_float: toFloat,
     altitude_deg: altitudeDeg, guarded_altitude_deg: guardedAltitudeDeg,
   };

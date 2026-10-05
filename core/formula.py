@@ -74,12 +74,25 @@ PRECEDENCE = {"^": 4, "neg": 3, "*": 2, "/": 2, "+": 1, "-": 1}
 
 # _____________ A1.2 Exponent Rules _____________
 
-def power_of_a_power(a, m, n):
-    """(a^m)^n = a^(m·n)"""
-    return a ** (m * n)
+def exponent_multiplication(a, m, n):
+    """aᵐ × aⁿ = aᵐ⁺ⁿ: multiplying powers of the same base adds the exponents."""
+    return a ** m * a ** n == a ** (m + n)
 
-# ... to be continued: more exponent rules needed ...
+def exponent_division(a, m, n):
+    """aᵐ ÷ aⁿ = aᵐ⁻ⁿ, for a ≠ 0: dividing powers of the same base subtracts the exponents."""
+    return a ** m / a ** n == a ** (m - n)
 
+def exponent_raised_by_exponent(a, m, n):
+    """(aⁿ)ᵐ = aᵐⁿ: a power raised to a power multiplies the exponents."""
+    return (a ** n) ** m == a ** (m * n)
+
+def exponent_equal_to_zero(a):
+    """a⁰ = 1, for a ≠ 0 (0⁰ is undefined, though Python returns 1)."""
+    return a ** 0 == 1
+
+def negative_exponent(a, m):
+    """a⁻ᵐ = 1 ÷ aᵐ, for a ≠ 0: a negative exponent is the reciprocal of the positive power."""
+    return a ** (-m) == 1 / a ** m
 
 # _____________ A1.3 Radicals & Rational Exponents _____________
 
@@ -299,11 +312,11 @@ def ratio(a, b):
     return a, b
 
 def proportion(a, b, c, d):
-    """a : b = c : d"""
+    """a : b = c : d: two ratios are in proportion when a ÷ b = c ÷ d (b, d ≠ 0)."""
     return a / b == c / d
 
 def percent_change(original, new):
-    """(new − original) ÷ original × 100%"""
+    """(new − original) ÷ original × 100%, for original ≠ 0: positive is an increase, negative a decrease."""
     return (new - original) / original * 100
 
 # _____________ A1.15 Linear Inequalities _____________

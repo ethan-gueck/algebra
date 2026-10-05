@@ -3,6 +3,8 @@
 Frontend usage once deployed:
     PP.call("real_numbers/real_numbers", "order_of_operations", "3 + 4 × 2")
     PP.call("real_numbers/real_numbers", "properties", "0.1", "0.2", "0.3")
+    PP.call("real_numbers/real_numbers", "exponent_rules", "0.1", "2", "5")
+    PP.call("real_numbers/real_numbers", "percent_change", "80", "120")
 """
 
 from general.api import JSModule, Page, Topic
@@ -16,9 +18,9 @@ def _build_page(output_path, theme=None):
 
 
 TOPIC = Topic(
-    title="Properties of Real Numbers & Order of Operations",
-    description="Commutative, associative, distributive, identity and inverse properties checked exactly and in floating point; PEMDAS one step at a time; and how float rounding produced impossible solar altitudes.",
-    cards=("A1.1",),  # flashcard: Properties of Real Numbers & Order of Operations
+    title="Real Numbers, Exponents & Ratios",
+    description="Commutative, associative, distributive, identity and inverse properties and the exponent rules checked exactly and in floating point; PEMDAS one step at a time; ratios, proportions and percent change; and how float rounding produced impossible solar altitudes.",
+    cards=("A1.1", "A1.2", "A1.14"),  # flashcards: Properties of Real Numbers & Order of Operations; Exponent Rules; Ratios, Proportions & Percent Change
     modules=(
         JSModule(
             name="real_numbers",
@@ -31,14 +33,17 @@ TOPIC = Topic(
                 "to_float": solver.to_float,
                 "altitude_deg": solver.altitude_deg,
                 "guarded_altitude_deg": solver.guarded_altitude_deg,
+                "exponent_rules": solver.exponent_rules,
+                "proportion": solver.proportion,
+                "percent_change": solver.percent_change,
             },
         ),
     ),
     pages=(
         Page(
             name="properties",
-            title="Properties of Real Numbers",
-            description="Properties explorer, PEMDAS stepper, and a real case where float addition wasn't associative.",
+            title="Real Numbers, Exponents & Ratios",
+            description="Properties explorer, PEMDAS stepper, a real case where float addition wasn't associative, exponent rules, and ratios, proportions and percent change.",
             build=_build_page,
             params=("a", "b", "c"),
             example={"a": 0.1, "b": 0.2, "c": 0.3},
