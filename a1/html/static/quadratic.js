@@ -8,13 +8,16 @@
  * parabola in the new form's variables, and a = 0 shows the line the parabola
  * flattens into, so sliders pass straight through it. The URL hash
  * (#a=1&b=-3&c=2, #a=2&h=1&k=-8 or #a=-1&r1=-1&r2=5) presets the quadratic and
- * is watched, so links and PP.embed(...).set() update the page live.
+ * is watched, so links and PP.embed(...).set() update the page live. The Cartesian / Geometric
+ * switch swaps the graph for quadratic_geometry.js's area picture of completing the square
+ * (#view=geometric in the hash).
  */
 (function () {
   "use strict";
   const { ManimCanvas, Timeline, rate, view } = window.Manim;
   const { solve, fmt, complex, PARAMS, to_standard: toStandard } = window.QuadForms;
   const { framing, solve_linear: solveLinear } = window.QuadMath;
+  const Geometry = window.QuadGeometry;
 
   const config = JSON.parse(document.getElementById("pp-config").textContent);
   const C = Object.fromEntries(Object.entries(config.roles).map(([el, role]) => [el, config.theme.stage[role]]));
@@ -58,12 +61,14 @@
     "Completing the square": "Adding and subtracting (b / 2a)² inside the bracket turns x² + (b/a)x into a perfect square (x − h)².",
   };
 
-  const state = { ...config.initial, show: {} };
+  const VIEWS = ["cartesian", "geometric"];
+  const state = { view: "cartesian", ...config.initial, show: {} };
   document.querySelectorAll("[data-show]").forEach((box) => { state.show[box.dataset.show] = box.checked; });
 
   const scene = new ManimCanvas($("scene"), { theme: config.theme, view: config.solution.quadratic.window });
   let timeline = null;
   let current = null;
+  let figure = null;  // the geometric figure's bounds, for the camera
 
   const point = (x, y) => `(${fmt(x)}, ${fmt(y)})`;
   const swatch = (color) => `<span class="swatch" style="background:${color}"></span>`;
@@ -103,6 +108,15 @@
     });
     el.paramTerms.innerHTML = info.vars.map(([sym, meaning], i) =>
       `<dt><span class="var">${sym}</span> = <span id="${SLOTS[i]}-value">${fmt(values()[i])}</span></dt><dd>${meaning}</dd>`).join("");
+  }
+
+  function renderView() {
+    document.querySelectorAll("[data-view]").forEach((button) => {
+      const on = button.dataset.view === state.view;
+      button.classList.toggle("is-active", on);
+      button.setAttribute("aria-pressed", String(on));
+    });
+    $("scene").closest(".stage").dataset.view = state.view;
   }
 
   function syncInputs() {
@@ -231,6 +245,10 @@
     });
     tl.speed = Number(el.speed.value);
 
+    if (state.view === "geometric") {
+      figure = Geometry.build(tl, scene, sol, { show, C });
+      return tl;
+    }
     if (show.grid) tl.add({ id: "axes", caption: "Set up the axes", duration: 0.8, draw: (p) => scene.grid(p) });
     tl.add({ id: "axes", caption: "Set up the axes", duration: 1.2, parallel: show.grid, draw: (p) => scene.axes(p) });
     tl.add({ id: "curve", caption: `Plot ${sol.forms[sol.form] || sol.equation}`, duration: 1.8, wait: 0.2, draw: (p) => scene.curve(f, p, C.curve) });
@@ -306,10 +324,12 @@
   function setPlaying(playing) { el.play.textContent = playing ? "❚❚ Pause" : "▶ Play"; }
 
   function frame(sol, { refit = false } = {}) {
+    const redraw = () => { if (timeline && !timeline.playing) timeline.render(); };
+    if (state.view === "geometric") return scene.moveTo(Geometry.fit(scene, figure), { onFrame: redraw });
     const { points, window: ideal } = framing(sol.quadratic);
     const target = refit ? view.roomy(ideal) : view.follow(scene.targetView, ideal, points);
     if (!target) return;
-    scene.moveTo(target, { onFrame: () => { if (timeline && !timeline.playing) timeline.render(); } });
+    scene.moveTo(target, { onFrame: redraw });
   }
 
   function showError(text) {
@@ -356,19 +376,24 @@
     const params = new URLSearchParams(location.hash.slice(1));
     for (const keys of Object.values(PARAMS)) keys.forEach((key) => params.delete(key));
     PARAMS[state.form].forEach((key, i) => params.set(key, values()[i]));
+    if (state.view === "geometric") params.set("view", "geometric");
+    else params.delete("view");
     history.replaceState(null, "", `#${params.toString()}`);
   }
 
-  /** The form is read from which keys the hash carries: h, k / b, c / r1, r2. */
+  /** The form is read from which keys the hash carries: h, k / b, c / r1, r2; the animation from view=. */
   function readHash() {
     const params = new URLSearchParams(location.hash.slice(1));
+    const view = VIEWS.includes(params.get("view")) ? params.get("view") : "cartesian";
+    const switched = view !== state.view;
+    state.view = view;
     const num = (key) => (params.has(key) && params.get(key) !== "" && Number.isFinite(Number(params.get(key))) ? Number(params.get(key)) : null);
     const form = ["factored", "vertex", "standard"].find((name) => PARAMS[name].slice(1).every((key) => num(key) !== null));
-    if (!form) return false;
+    if (!form) return switched;
     const [a, p, q] = PARAMS[form].map(num);
     const changed = form !== state.form || [a ?? state.a, p, q].some((v, i) => v !== values()[i]);
     Object.assign(state, { form, a: a ?? state.a, p, q });
-    return changed;
+    return changed || switched;
   }
 
   function play() {
@@ -390,6 +415,15 @@
         requestUpdate();
       });
     }
+  });
+  document.querySelectorAll("[data-view]").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (button.dataset.view === state.view) return;
+      state.view = button.dataset.view;
+      renderView();
+      update({ refit: true });
+      play();
+    });
   });
   el.form.addEventListener("change", () => { switchForm(el.form.value); update(); });
   document.querySelectorAll("[data-preset]").forEach((button) => {
@@ -418,8 +452,11 @@
   el.finish.addEventListener("click", () => { if (timeline) { timeline.finish(); setPlaying(false); } });
   el.scrub.addEventListener("input", () => { if (timeline) { timeline.seek(el.scrub.value / 1000); setPlaying(false); } });
   el.speed.addEventListener("change", () => { if (timeline) timeline.speed = Number(el.speed.value); });
-  scene.onResize = () => { if (timeline) timeline.render(); };
-  window.addEventListener("hashchange", () => { if (readHash()) { renderFormControls(); syncInputs(); update(); } });
+  scene.onResize = () => {
+    if (state.view === "geometric" && figure) scene.setView(Geometry.fit(scene, figure));  // keep squares square
+    if (timeline) timeline.render();
+  };
+  window.addEventListener("hashchange", () => { if (readHash()) { renderView(); renderFormControls(); syncInputs(); update(); } });
 
   if (config.video) {
     $("video").src = config.video;
@@ -428,6 +465,7 @@
 
   renderGlossary();
   const fromHash = readHash();
+  renderView();
   renderFormControls();
   syncInputs();
   update({ fromConfig: !fromHash });

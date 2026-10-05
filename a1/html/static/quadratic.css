@@ -53,3 +53,11 @@
 .warning { margin: var(--space-2) 0 0; padding: 0.45rem 0.75rem; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text); background: color-mix(in srgb, var(--accent) 22%, transparent); border-left: 3px solid var(--accent); border-radius: 0 var(--radius-sm, 4px) var(--radius-sm, 4px) 0; }
 .warning[hidden] { display: none; }
 .warning strong { color: var(--accent-strong, var(--primary)); }
+
+/* Cartesian / Geometric: which animation the stage plays (quadratic_geometry.js draws the second). */
+.view-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; padding: 3px; margin-bottom: var(--space-3); border: 1px solid var(--rule); border-radius: 999px; background: var(--surface); }
+.view-switch__btn { padding: 0.45rem 0.75rem; border: 0; border-radius: 999px; background: transparent; cursor: pointer; font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 600; color: var(--text-soft); transition: background-color 0.15s ease, color 0.15s ease; }
+.view-switch__btn:hover { color: var(--text); }
+.view-switch__btn.is-active { background: var(--primary); color: var(--on-primary); }
+/* The geometric figure has no grid, axis or points: only the labels toggle applies. */
+.stage[data-view="geometric"] .stage-settings label:has(input:not([data-show="labels"])) { display: none; }

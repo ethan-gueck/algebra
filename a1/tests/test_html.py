@@ -21,6 +21,13 @@ def test_page_inlines_its_scripts_and_styles():
     assert 'data-show="roots"' in document and 'data-show="trail"' not in document and "stage-settings" in document
 
 
+def test_cartesian_geometric_switch_sits_above_start_from():
+    document = build_quadratic_html(1, -3, 2, output_path=None)
+    assert "window.QuadGeometry" in document
+    body = document.split("<body>", 1)[1]
+    assert body.index('data-view="cartesian"') < body.index('data-view="geometric"') < body.index("<legend>Start from</legend>")
+
+
 def test_config_carries_solution_theme_and_roles():
     config = _config(build_quadratic_html(1, 2, 5, output_path=None, video_src="media/q.mp4"))
     assert config["initial"] == {"form": "standard", "a": 1, "p": 2, "q": 5}
