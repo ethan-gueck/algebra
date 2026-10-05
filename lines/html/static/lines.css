@@ -4,7 +4,12 @@
 .frac .num { padding: 0 0.3em 0.1em; border-bottom: 1.5px solid currentColor; }
 .frac .den { padding-top: 0.1em; }
 
-.steps-panel { margin-top: var(--space-4); }
+.steps-panel, .ineq-panel { margin-top: var(--space-4); }
+/* Linear inequalities: the card's rules, the inequality in both forms, and its steps. */
+.ineq-rules { margin: 0; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-soft); }
+.ineq-result { margin: var(--space-3) 0 var(--space-2); font-size: 1.2rem; overflow-wrap: anywhere; }
+.ineq-result__label { display: block; font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 600; color: var(--text-soft); }
+.segmented--relation label { font-family: var(--font-serif); font-size: 1.05rem; }
 .point-label { margin: var(--space-2) 0 0; font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 600; color: var(--text-soft); }
 .point-label:first-of-type { margin-top: 0; }
 

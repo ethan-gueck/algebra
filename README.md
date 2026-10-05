@@ -10,7 +10,7 @@ Flashcard decks in this track: Algebra I, Algebra II. A neuron on the portfolio 
 | --- | --- | --- |
 | [`real_numbers/`](real_numbers/) | [Properties of Real Numbers](https://ethan-gueck.github.io/algebra/real_numbers/properties.html) | A1.1 |
 | [`slope/`](slope/) | [Slope](https://ethan-gueck.github.io/algebra/slope/slope.html) | A1.4 |
-| [`lines/`](lines/) | [Equations of a Line](https://ethan-gueck.github.io/algebra/lines/lines.html) | A1.5 |
+| [`lines/`](lines/) | [Equations of a Line & Linear Inequalities](https://ethan-gueck.github.io/algebra/lines/lines.html) | A1.5, A1.15 |
 | [`factoring/`](factoring/) | [Factoring](https://ethan-gueck.github.io/algebra/factoring/factoring.html) | A1.10 |
 | [`a1/`](a1/) | [Quadratic Formula & Vertex Form](https://ethan-gueck.github.io/algebra/a1/quadratic.html) | A1.11, A1.12 |
 | [`complex_numbers/`](complex_numbers/) | [Complex Numbers](https://ethan-gueck.github.io/algebra/complex_numbers/complex_numbers.html) | A2.3 |

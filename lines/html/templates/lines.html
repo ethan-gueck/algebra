@@ -13,18 +13,19 @@
   <header class="masthead">
     <div class="container">
       <div class="masthead__bar">
-        <span class="masthead__kicker">Algebra · A1.5</span>
+        <span class="masthead__kicker">Algebra · A1.5 &amp; A1.15</span>
         <a href="https://ethan-gueck.github.io/">ethan-gueck.github.io</a>
       </div>
       <div class="masthead__title">
         <div>
           <h1 class="masthead__name">{{title}}</h1>
-          <p class="masthead__subtitle">One line, written three ways, and how to move between them.</p>
+          <p class="masthead__subtitle">One line, written three ways, how to move between them, and the half of the plane each inequality shades.</p>
         </div>
-        <p class="masthead__aside formula forms-aside" aria-label="y equals m x plus b; y minus y 1 equals m times x minus x 1; A x plus B y equals C">
+        <p class="masthead__aside formula forms-aside" aria-label="y equals m x plus b; y minus y 1 equals m times x minus x 1; A x plus B y equals C; y less than m x plus b">
           <span><span class="var">y</span> = <span class="var">mx</span> + <span class="var">b</span></span>
           <span><span class="var">y</span> − <span class="var">y</span>₁ = <span class="var">m</span>(<span class="var">x</span> − <span class="var">x</span>₁)</span>
           <span><span class="var">Ax</span> + <span class="var">By</span> = <span class="var">C</span></span>
+          <span><span class="var">y</span> &lt; <span class="var">mx</span> + <span class="var">b</span></span>
         </p>
       </div>
     </div>
@@ -68,6 +69,15 @@
             <p class="same-line__note">Each column solves its form for <span class="var">y</span>. They match at every <span class="var">x</span> because they are the same line.</p>
           </div>
         </section>
+
+        <section class="panel ineq-panel" aria-labelledby="ineq-title">
+          <div class="panel__head">
+            <h2 class="panel__title" id="ineq-title">Linear inequalities</h2>
+          </div>
+          <p class="ineq-rules">Add or subtract the same number on both sides and the sign stays: <span class="var">a</span> &lt; <span class="var">b</span> ⇒ <span class="var">a</span> + <span class="var">c</span> &lt; <span class="var">b</span> + <span class="var">c</span>. Multiply or divide by <span class="var">c</span> &gt; 0 and it stays; by <span class="var">c</span> &lt; 0 and it flips.</p>
+          <p class="ineq-result" id="ineq-result" aria-live="polite"></p>
+          <ol class="steps steps--compact" id="ineq-steps"></ol>
+        </section>
       </section>
 
       <aside class="widget__side">
@@ -96,7 +106,21 @@
             <button class="btn" type="button" data-preset="0,4,-0.5">Falling</button>
             <button class="btn" type="button" data-preset="-2,3,0">Horizontal</button>
             <button class="btn" type="button" data-preset="2,-1,0.75">Fractions</button>
+            <button class="btn" type="button" data-preset="1,3,2,>">y &gt; 2x + 1</button>
+            <button class="btn" type="button" data-preset="2,-1,0.75,≤">Flip: 3x − 4y ≥ 10</button>
           </div>
+        </fieldset>
+
+        <fieldset class="panel">
+          <legend>Relation</legend>
+          <div class="segmented segmented--relation" role="radiogroup" aria-label="Relation between y and mx + b">
+            <label><input type="radio" name="relation" value="=" checked> =</label>
+            <label><input type="radio" name="relation" value="&lt;"> &lt;</label>
+            <label><input type="radio" name="relation" value="≤"> ≤</label>
+            <label><input type="radio" name="relation" value="&gt;"> &gt;</label>
+            <label><input type="radio" name="relation" value="≥"> ≥</label>
+          </div>
+          <p class="form-about" id="relation-about"></p>
         </fieldset>
 
         <fieldset class="panel">

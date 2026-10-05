@@ -9,6 +9,8 @@ ROLES = {
     "run": "secondary",
     "y_intercept": "warning",
     "x_intercept": "guide",
+    "shade": "primary",  # the half-plane of solutions, drawn translucent
+    "test": "highlight",  # the test point off the line
 }
 
 

@@ -308,6 +308,9 @@ def percent_change(original, new):
 
 # _____________ A1.15 Linear Inequalities _____________
 
+def linear_inequality(a, b, c):
+    """a > b implies a + c > b + c and ac > bc for c > 0, ac < bc for c < 0 (c ≠ 0)."""
+    return (a > b) == (a + c > b + c) and (a > b) == (a*c > b*c if c > 0 else a*c < b*c)
 
 # _____________ A1.16 Sets, Set Operations & Interval Notation _____________
 

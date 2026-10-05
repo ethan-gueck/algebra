@@ -40,3 +40,36 @@ def test_forms_as_text():
 def test_table_rows_agree():
     for row in solve(2, -1, 0.75).table:
         assert row["slope_intercept"] == row["point_slope"] == row["standard"]
+
+
+def test_linear_inequality_rules():
+    # a > b ⇔ a + c > b + c; multiplying by c > 0 keeps the sign, c < 0 flips it.
+    for a, b in ((5, 2), (2, 5), (-1, -4), (3, 3)):
+        for c in (1, 0.5, -3, -0.25):
+            assert formula.linear_inequality(a, b, c)
+
+
+@pytest.mark.parametrize("case, slope_intercept, standard, shade, dashed", [
+    ((1, 3, 2, ">"), "y > 2x + 1", "2x - y < -1", "above", True),
+    ((2, -1, 0.75, "≤"), "y ≤ 0.75x - 2.5", "3x - 4y ≥ 10", "below", False),
+    ((-2, 3, 0, "≥"), "y ≥ 3", "y ≥ 3", "above", False),
+    ((0, 0, 1.5, "<"), "y < 1.5x", "3x - 2y > 0", "below", True),
+])
+def test_inequality_forms_and_shading(case, slope_intercept, standard, shade, dashed):
+    ineq = solve(*case).inequality
+    assert (ineq["slope_intercept_form"], ineq["standard_form"], ineq["shade"], ineq["dashed"]) == (slope_intercept, standard, shade, dashed)
+
+
+@pytest.mark.parametrize("case", [(1, 3, 2, ">"), (2, -1, 0.75, "≤"), (0, 0, 1.5, "<"), (0, 4, -0.5, "≥"), (-2, 3, 0, "<")])
+def test_test_point_is_on_the_shaded_side(case):
+    s = solve(*case)
+    x0, y0 = s.inequality["test_point"]
+    on_line = formula.linear_form(s.m, s.b, x0)
+    assert y0 != on_line  # off the line
+    assert s.inequality["test_holds"] == ((y0 > on_line) == (s.inequality["shade"] == "above"))
+
+
+def test_equals_has_no_inequality():
+    assert solve(1, 3, 2).inequality is None
+    with pytest.raises(ValueError):
+        solve(1, 3, 2, "!=")

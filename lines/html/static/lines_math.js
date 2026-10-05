@@ -1,5 +1,5 @@
 /*
- * lines_math.js — browser mirror of core/formula.py (A1.4, A1.5) + lines/solver.py (+ general/plotting/viewport.py).
+ * lines_math.js — browser mirror of core/formula.py (A1.4, A1.5, A1.15) + lines/solver.py (+ general/plotting/viewport.py).
  *
  * The page recalculates as the point and slope move, so the math is ported
  * here. Python stays the source of truth: tests/test_js_parity.py runs this
@@ -15,6 +15,8 @@
   const standardFormForLinearForm = (A, B, C, x) => (C - A * x) / B;  // Ax + By = C, for B ≠ 0
   const yIntercept = (m, x1, y1) => y1 - m * x1;                      // b = y₁ − m·x₁ (A1.4)
   const xInterceptOfLinearForm = (m, b) => -b / m;                    // x = −b / m
+  // a > b ⇒ a + c > b + c, and ac > bc for c > 0, ac < bc for c < 0 (A1.15)
+  const linearInequality = (a, b, c) => (a > b) === (a + c > b + c) && (a > b) === (c > 0 ? a * c > b * c : a * c < b * c);
 
   // ---- lines/solver.py----------------------------------------------------------
   const TABLE_XS = [-2, -1, 0, 1, 2];
@@ -77,6 +79,48 @@
     standard: clean(standardFormForLinearForm(A, B, C, x)),
   }));
 
+  // ---- Linear inequalities: y < mx + b and its relatives ------------------------
+  const RELATIONS = ["=", "<", "≤", ">", "≥"];
+  const FLIP = { "=": "=", "<": ">", "≤": "≥", ">": "<", "≥": "≤" };  // multiplying or dividing by a negative
+  const holds = (left, relation, right) => ({ "=": left === right, "<": left < right, "≤": left <= right, ">": left > right, "≥": left >= right })[relation];
+  const withRelation = (text, relation) => text.replace(" = ", ` ${relation} `);
+  const py = (v) => (v ? "True" : "False");
+
+  function inequality(m, b, A, B, C, relation, slopeIntercept, standard) {
+    // Standard form is −mx + y relation b scaled by B (B = k·1): a negative B flips the sign.
+    const standardRelation = B > 0 ? relation : FLIP[relation];
+    // Test a point off the line: the origin, or (0, 1) when the line passes through it.
+    const [x0, y0] = b === 0 ? [0, 1] : [0, 0];
+    const right = clean(linearForm(m, b, x0));
+    const inside = holds(y0, relation, right);
+    const left = clean(A * x0 + B * y0);
+    const dashed = relation === "<" || relation === ">";
+    const sign = B < 0 ? "flips" : "stays";
+    const by = B === 1 ? "y" : B === -1 ? "-y" : `${B}y`;
+    const rest = A === 0 ? String(C) : `${C} − ${A === 1 ? "" : A}x`;
+    const scale = B === 1 ? "" : `, then multiply by ${B} for whole numbers` + (B < 0 ? " (a negative, so the sign flips)" : "");
+    const above = relation === ">" || relation === "≥";
+    const steps = [
+      { id: "inequality", title: "Write the inequality", math: `y ${relation} mx + b  →  ${withRelation(slopeIntercept, relation)}` },
+      { id: "inequality", title: "Move x across: standard form", math: `subtract mx from both sides (the sign stays)${scale}  →  ${withRelation(standard, standardRelation)}` },
+      { id: "inequality", title: "Back to y: divide by B", math: `${by} ${standardRelation} ${rest}, and dividing by B = ${B} the sign ${sign}  →  ${withRelation(slopeIntercept, relation)}` },
+      { id: "inequality", title: "Check the rules with these numbers", math: `linear_inequality(a = ${fmt(left)}, b = ${C}, c = 1/B = ${fmt(1 / B)}) = ${py(linearInequality(left, C, 1 / B))}: adding keeps the sign, multiplying by ${B < 0 ? "a negative flips" : "a positive keeps"} it` },
+      { id: "shade", title: "Test a point off the line", math: `(${fmt(x0)}, ${fmt(y0)}): ${fmt(y0)} ${relation} ${fmt(right)} is ${inside ? "true" : "false"}, so the solutions are the side ${inside ? "with" : "without"} this point: ${above ? "above" : "below"} the line` },
+      { id: "shade", title: "Draw the boundary", math: dashed ? "< and > leave the line out: dashed" : "≤ and ≥ include the line: solid" },
+    ];
+    return {
+      relation,
+      slope_intercept_form: withRelation(slopeIntercept, relation),
+      standard_relation: standardRelation,
+      standard_form: withRelation(standard, standardRelation),
+      shade: above ? "above" : "below",
+      dashed,
+      test_point: [x0, y0],
+      test_holds: inside,
+      steps,
+    };
+  }
+
   // ---- viewport.py ----------------------------------------------------------
   function niceStep(span, targetTicks = 8) {
     if (span <= 0) return 1;
@@ -114,23 +158,27 @@
   }
 
   /** Same shape as LineSolution.to_dict() in Python. */
-  function solve(x1, y1, m) {
+  function solve(x1, y1, m, relation = "=") {
+    if (!RELATIONS.includes(relation)) throw new Error(`relation must be one of ${RELATIONS.join(", ")}`);
     const b = clean(yIntercept(m, x1, y1));
     const xi = m === 0 ? null : clean(xInterceptOfLinearForm(m, yIntercept(m, x1, y1)));
     const [A, B, C] = standardWholeNumbers(m, b);
+    const [slopeIntercept, standard] = [slopeInterceptText(m, b), standardText(A, B, C)];
     return {
       x1, y1, m, b, x_intercept: xi,
       standard: { A, B, C },
-      slope_intercept_form: slopeInterceptText(m, b),
+      slope_intercept_form: slopeIntercept,
       point_slope_form: pointSlopeText(x1, y1, m),
-      standard_form: standardText(A, B, C),
+      standard_form: standard,
       table: table(x1, y1, m, b, A, B, C),
       window: plotWindow(x1, y1, m, b, xi),
+      inequality: relation === "=" ? null : inequality(m, b, A, B, C, relation, slopeIntercept, standard),
     };
   }
 
   const api = {
-    solve, fmt,
+    solve, fmt, RELATIONS,
+    linear_inequality: linearInequality,
     linear_form: linearForm, point_form_slope: pointFormSlope, standard_form_for_linear_form: standardFormForLinearForm,
     y_intercept: yIntercept, x_intercept_of_linear_form: xInterceptOfLinearForm,
   };

@@ -4,8 +4,11 @@
  * Reads the Python-built config, wires the controls, and turns a solution into
  * a Manim-style Timeline: the point, a slope triangle (run 1, rise m), the line
  * and its intercepts. The form toggle shows the same line as y = mx + b,
- * y − y₁ = m(x − x₁) or Ax + By = C. The URL hash (#x1=1&y1=3&m=2) presets
- * values and is watched, so links and PP.embed(...).set() update the page live.
+ * y − y₁ = m(x − x₁) or Ax + By = C. Picking <, ≤, > or ≥ turns it into the
+ * inequality y < mx + b (and so on): the boundary is dashed or solid, the
+ * solutions are shaded and a test point shows which side they are on. The URL
+ * hash (#x1=1&y1=3&m=2&rel=gt) presets values and is watched, so links and
+ * PP.embed(...).set() update the page live.
  */
 (function () {
   "use strict";
@@ -15,12 +18,16 @@
   const config = JSON.parse(document.getElementById("pp-config").textContent);
   const C = Object.fromEntries(Object.entries(config.roles).map(([el, role]) => [el, config.theme.stage[role]]));
   const KEYS = ["x1", "y1", "m"];
+  // The relation in the URL hash: #rel=lt for y < mx + b.
+  const REL_NAMES = { "=": "eq", "<": "lt", "≤": "le", ">": "gt", "≥": "ge" };
+  const REL_FROM = Object.fromEntries(Object.entries(REL_NAMES).map(([r, n]) => [n, r]));
 
   const $ = (id) => document.getElementById(id);
   const el = {
     play: $("play"), finish: $("finish"), scrub: $("scrub"), speed: $("speed"), narration: $("narration"),
     results: $("results"), steps: $("steps"), error: $("error"), run: $("run"), glossary: $("glossary"),
     table: $("table"), formEq: $("form-eq"), formAbout: $("form-about"), formTerms: $("form-terms"),
+    ineqResult: $("ineq-result"), ineqSteps: $("ineq-steps"), relationAbout: $("relation-about"),
   };
   const IDLE = "Press run to animate.";
 
@@ -41,6 +48,8 @@
     "x-intercept": "Where the line crosses the x-axis (y = 0): x = −b / m.",
     "Point (x₁, y₁)": "Any point on the line; point-slope form is built from it.",
     "A, B, C": "Whole numbers in Ax + By = C. From y = mx + b: A = −m, B = 1, C = b, then scaled and signed so A ≥ 0.",
+    "Solutions": "Every point (x, y) that makes the inequality true: one side of the line, shaded. ≤ and ≥ include the line itself.",
+    "Test point": "A point off the line, put into the inequality: if it is true there, the solutions are on its side of the line.",
   };
 
   function renderGlossary() {
@@ -93,6 +102,10 @@
       ["intercepts", "y-intercept b", `${swatch(C.y_intercept)}${point(0, sol.b)}`],
       ["intercepts", "x-intercept", sol.x_intercept === null ? (sol.b === 0 ? "every x (the line is the x-axis)" : "none (horizontal line)") : `${swatch(C.x_intercept)}${point(sol.x_intercept, 0)}`],
       ["standard", "A, B, C", `${A}, ${B}, ${c}`],
+      ...(sol.inequality ? [
+        ["shade", "Solutions", `${swatch(C.shade)}${sol.inequality.shade} the line, ${sol.inequality.dashed ? "line excluded (dashed)" : "line included (solid)"}`],
+        ["shade", "Test point", `${swatch(C.test)}${point(...sol.inequality.test_point)}: ${sol.inequality.test_holds ? "a solution" : "not a solution"}`],
+      ] : []),
     ]);
   }
 
@@ -110,6 +123,21 @@
       `<li class="steps__item" data-step="${id}"><p class="steps__title">${title}</p><p class="steps__math">${math}</p></li>`).join("");
   }
 
+  function renderInequality(sol) {
+    const ineq = sol.inequality;
+    el.relationAbout.textContent = ineq
+      ? `y ${ineq.relation} mx + b: the points ${ineq.shade} the line${ineq.dashed ? ", not on it" : ", and on it"}.`
+      : "y = mx + b: the points on the line. Pick <, ≤, > or ≥ for an inequality.";
+    if (!ineq) {
+      el.ineqResult.innerHTML = '<span class="ineq-result__label">Inequality</span> Pick <, ≤, > or ≥ under Relation to turn the line into an inequality.';
+      el.ineqSteps.innerHTML = "";
+      return;
+    }
+    el.ineqResult.innerHTML = `<span class="ineq-result__label">Inequality</span> ${ineq.slope_intercept_form}  ⇔  ${ineq.standard_form}`;
+    el.ineqSteps.innerHTML = ineq.steps.map(({ id, title, math }) =>
+      `<li class="steps__item" data-step="${id}"><p class="steps__title">${title}</p><p class="steps__math">${math}</p></li>`).join("");
+  }
+
   function renderTable(sol) {
     el.table.innerHTML = sol.table.map((r) =>
       `<tr><td>${fmt(r.x)}</td><td>${fmt(r.slope_intercept)}</td><td>${fmt(r.point_slope)}</td><td>${fmt(r.standard)}</td></tr>`).join("");
@@ -123,6 +151,23 @@
   }
 
   // ---- Timeline -------------------------------------------------------------
+  /** The half-plane above or below y = mx + b, filled translucent to the edge of the view. */
+  function halfPlane(m, b, above, p) {
+    scene.withClip(() => {
+      const { ctx } = scene, v = scene.view;
+      const edge = above ? v.y_max : v.y_min;
+      ctx.globalAlpha = 0.2 * p;
+      ctx.fillStyle = C.shade;
+      ctx.beginPath();
+      ctx.moveTo(scene.px(v.x_min), scene.py(m * v.x_min + b));
+      ctx.lineTo(scene.px(v.x_max), scene.py(m * v.x_max + b));
+      ctx.lineTo(scene.px(v.x_max), scene.py(edge));
+      ctx.lineTo(scene.px(v.x_min), scene.py(edge));
+      ctx.closePath();
+      ctx.fill();
+    });
+  }
+
   function buildTimeline(sol) {
     const { x1, y1, m, b } = sol;
     const show = state.show;
@@ -158,7 +203,16 @@
         },
       });
     }
-    tl.add({ id: "line", caption: `The line ${sol.slope_intercept_form}`, duration: 1.6, draw: (p) => scene.curve((x) => m * x + b, p, C.line) });
+    const ineq = sol.inequality;
+    if (ineq && ineq.dashed) {
+      // < and >: the boundary isn't a solution, so it is dashed.
+      tl.add({
+        id: "line", caption: `The boundary ${sol.slope_intercept_form}, dashed: points on it don't satisfy ${ineq.relation}`, duration: 1.6,
+        draw: (p) => { const v = scene.view; scene.line(v.x_min, m * v.x_min + b, v.x_max, m * v.x_max + b, p, C.line, { width: 3, dash: [10, 7] }); },
+      });
+    } else {
+      tl.add({ id: "line", caption: ineq ? `The boundary ${sol.slope_intercept_form}, solid: ${ineq.relation} includes it` : `The line ${sol.slope_intercept_form}`, duration: 1.6, draw: (p) => scene.curve((x) => m * x + b, p, C.line) });
+    }
     if (show.intercepts) {
       tl.add({
         id: "intercepts", caption: `y-intercept: b = ${fmt(b)}`, duration: 0.7,
@@ -178,6 +232,21 @@
           },
         });
       }
+    }
+    if (ineq) {
+      const [x0, y0] = ineq.test_point;
+      tl.add({
+        id: "shade", caption: `Test (${fmt(x0)}, ${fmt(y0)}): ${fmt(y0)} ${ineq.relation} ${fmt(m * x0 + b)} is ${ineq.test_holds ? "true" : "false"}`, duration: 0.8,
+        draw: (p) => {
+          scene.dot(x0, y0, p, C.test, 6);
+          if (show.labels) scene.label(`test (${fmt(x0)}, ${fmt(y0)}) ${ineq.test_holds ? "✓" : "✗"}`, x0, y0, p, C.test, { dx: 10, dy: ineq.shade === "above" ? 16 : -16 });
+        },
+      });
+      if (show.shade) {
+        tl.add({ id: "shade", caption: `Shade the solutions: ${ineq.shade} the line, ${ineq.slope_intercept_form}`, duration: 1.2, draw: (p) => halfPlane(m, b, ineq.shade === "above", p) });
+      }
+      tl.add({ id: "inequality", caption: `${ineq.slope_intercept_form}  ⇔  ${ineq.standard_form}`, duration: 1.0, rate: rate.linear, draw: () => {} });
+      return tl;
     }
     tl.add({ id: "standard", caption: `Standard form: ${sol.standard_form}`, duration: 1.0, rate: rate.linear, draw: () => {} });
     return tl;
@@ -210,22 +279,29 @@
       return;
     }
     el.error.hidden = true;
-    const sol = fromConfig ? config.solution : solve(state.x1, state.y1, state.m);
+    const sol = fromConfig ? config.solution : solve(state.x1, state.y1, state.m, state.relation);
     current = sol;
     renderResults(sol);
     renderForm(sol);
     renderSteps(sol);
     renderTable(sol);
+    renderInequality(sol);
     timeline = buildTimeline(sol);
     timeline.finish();
     frame(sol, { refit });
-    PPParams.write(Object.fromEntries(KEYS.map((k) => [k, state[k]])));
+    PPParams.write({ ...Object.fromEntries(KEYS.map((k) => [k, state[k]])), rel: REL_NAMES[state.relation] });
+  }
+
+  function syncRelation() {
+    document.querySelectorAll('input[name="relation"]').forEach((radio) => { radio.checked = radio.value === state.relation; });
   }
 
   function readHash() {
     const values = PPParams.read(KEYS);
+    const rel = REL_FROM[new URLSearchParams(location.hash.slice(1)).get("rel")];
     Object.assign(state, values);
-    return Object.keys(values).length > 0;
+    if (rel !== undefined) state.relation = rel;
+    return Object.keys(values).length > 0 || rel !== undefined;
   }
 
   function play() {
@@ -246,14 +322,20 @@
   }
   document.querySelectorAll("[data-preset]").forEach((button) => {
     button.addEventListener("click", () => {
-      button.dataset.preset.split(",").map(Number).forEach((v, i) => { state[KEYS[i]] = v; });
+      const parts = button.dataset.preset.split(",");
+      parts.slice(0, 3).map(Number).forEach((v, i) => { state[KEYS[i]] = v; });
+      state.relation = parts[3] || "=";
       syncInputs();
+      syncRelation();
       update({ refit: true });
       play();
     });
   });
   document.querySelectorAll("[data-show]").forEach((box) => {
     box.addEventListener("change", () => { state.show[box.dataset.show] = box.checked; update(); });
+  });
+  document.querySelectorAll('input[name="relation"]').forEach((radio) => {
+    radio.addEventListener("change", () => { state.relation = radio.value; update(); });
   });
   document.querySelectorAll('input[name="form"]').forEach((radio) => {
     radio.addEventListener("change", () => { state.form = radio.value; if (current) renderForm(current); });
@@ -270,10 +352,11 @@
   el.scrub.addEventListener("input", () => { if (timeline) { timeline.seek(el.scrub.value / 1000); setPlaying(false); } });
   el.speed.addEventListener("change", () => { if (timeline) timeline.speed = Number(el.speed.value); });
   scene.onResize = () => { if (timeline) timeline.render(); };
-  window.addEventListener("hashchange", () => { if (readHash()) { syncInputs(); update(); } });
+  window.addEventListener("hashchange", () => { if (readHash()) { syncInputs(); syncRelation(); update(); } });
 
   renderGlossary();
   const fromHash = readHash();
   syncInputs();
+  syncRelation();
   update({ fromConfig: !fromHash });
 })();
