@@ -1,11 +1,9 @@
 """Algebra: the mathematics behind every neuron in this track, in flashcard order (A1.1 … A2.15).
 
-This is the file to learn from. Each neuron has a section; its formulas are
-written the way they read, with no input checks, rounding cleanup or
-formatting. Sections stay empty until that neuron is built. The pages'
-scaffolding (solvers, text, plot windows) lives in each topic folder and
-imports from here, and each page's "View the code" popup shows the functions
-it uses from this file.
+Sections stay empty until that neuron is built. The pages' scaffolding
+(solvers, text, plot windows) lives in each topic folder and imports from
+here, and each page's "View the code" popup shows the functions it uses from
+this file.
 """
 
 import cmath
