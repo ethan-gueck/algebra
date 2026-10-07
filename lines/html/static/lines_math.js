@@ -10,7 +10,8 @@
   "use strict";
 
   // ---- core/formula.py--------------------------------------------------------
-  const linearForm = (b, c, x) => b * x + c;                          // y = bx + c
+  // y = mx + b; without m, the slope from two points: m = (y₂ − y₁) / (x₂ − x₁)
+  const linearForm = (b, x, m = null, y2 = null, y1 = null, x2 = null, x1 = null) => (m ?? (y1 - y2) / (x1 - x2)) * x + b;
   const pointFormSlope = (x1, y1, m, x) => m * (x - x1) + y1;         // y − y₁ = m(x − x₁)
   const standardFormForLinearForm = (A, B, C, x) => (C - A * x) / B;  // Ax + By = C, for B ≠ 0
   const yIntercept = (m, x1, y1) => y1 - m * x1;                      // b = y₁ − m·x₁ (A1.4)
@@ -74,7 +75,7 @@
 
   const table = (x1, y1, m, b, A, B, C) => TABLE_XS.map((x) => ({
     x,
-    slope_intercept: clean(linearForm(m, b, x)),
+    slope_intercept: clean(linearForm(b, x, m)),
     point_slope: clean(pointFormSlope(x1, y1, m, x)),
     standard: clean(standardFormForLinearForm(A, B, C, x)),
   }));
@@ -91,7 +92,7 @@
     const standardRelation = B > 0 ? relation : FLIP[relation];
     // Test a point off the line: the origin, or (0, 1) when the line passes through it.
     const [x0, y0] = b === 0 ? [0, 1] : [0, 0];
-    const right = clean(linearForm(m, b, x0));
+    const right = clean(linearForm(b, x0, m));
     const inside = holds(y0, relation, right);
     const left = clean(A * x0 + B * y0);
     const dashed = relation === "<" || relation === ">";
@@ -154,7 +155,7 @@
   function plotWindow(x1, y1, m, b, xi) {
     const xs = [x1, 0, ...(xi !== null && Math.abs(xi) <= 50 ? [xi] : [])];
     const ys = [y1, 0, ...(Math.abs(b) <= 50 ? [b] : [])];
-    return fitViewport(xs, (x) => linearForm(m, b, x), { alwaysIncludeY: ys, padding: 0.2 });
+    return fitViewport(xs, (x) => linearForm(b, x, m), { alwaysIncludeY: ys, padding: 0.2 });
   }
 
   /** Same shape as LineSolution.to_dict() in Python. */

@@ -91,7 +91,7 @@ def table(x1: float, y1: float, m: float, b: float, A: int, B: int, C: int) -> l
     return [
         {
             "x": x,
-            "slope_intercept": _clean(formula.linear_form(m, b, x)),
+            "slope_intercept": _clean(formula.linear_form(b, x, m=m)),
             "point_slope": _clean(formula.point_form_slope(x1, y1, m, x)),
             "standard": _clean(formula.standard_form_for_linear_form(A, B, C, x)),
         }
@@ -103,7 +103,7 @@ def plot_window(x1: float, y1: float, m: float, b: float, xi: float | None) -> V
     """A viewport that frames the point, the origin and the line's intercepts."""
     xs = [x1, 0.0] + ([xi] if xi is not None and abs(xi) <= 50 else [])
     ys = [y1, 0.0] + ([b] if abs(b) <= 50 else [])
-    return fit_viewport(xs, lambda x: formula.linear_form(m, b, x), always_include_y=ys, padding=0.2)
+    return fit_viewport(xs, lambda x: formula.linear_form(b, x, m=m), always_include_y=ys, padding=0.2)
 
 
 # ---- Linear inequalities: y < mx + b and its relatives ----------------------
@@ -125,7 +125,7 @@ def inequality(m: float, b: float, A: int, B: int, C: int, relation: str, slope_
     standard_relation = relation if B > 0 else FLIP[relation]
     # Test a point off the line: the origin, or (0, 1) when the line passes through it.
     x0, y0 = (0.0, 1.0) if b == 0 else (0.0, 0.0)
-    right = _clean(formula.linear_form(m, b, x0))
+    right = _clean(formula.linear_form(b, x0, m=m))
     inside = holds(y0, relation, right)
     left = _clean(A * x0 + B * y0)
     dashed = relation in ("<", ">")

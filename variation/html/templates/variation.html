@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en" data-theme="{{theme_name}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{title}}</title>
+  {{head}}
+  <style>
+{{styles}}
+  </style>
+</head>
+<body>
+  <header class="masthead">
+    <div class="container">
+      <div class="masthead__bar">
+        <span class="masthead__kicker">Algebra · A1.13</span>
+        <a href="https://ethan-gueck.github.io/">ethan-gueck.github.io</a>
+      </div>
+      <div class="masthead__title">
+        <div>
+          <h1 class="masthead__name">{{title}}</h1>
+          <p class="masthead__subtitle">One known point fixes the constant of variation <span class="var">k</span>; from it, predict <span class="var">y</span> at any other <span class="var">x</span>.</p>
+        </div>
+        <p class="masthead__aside formula forms-aside" aria-label="y equals k x, direct; y equals k over x, inverse">
+          <span><span class="var">y</span> = <span class="var">kx</span>  <span class="kind-note">(direct)</span></span>
+          <span><span class="var">y</span> = <span class="frac"><span class="num"><span class="var">k</span></span><span class="den"><span class="var">x</span></span></span>  <span class="kind-note">(inverse)</span></span>
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <main class="container page-body">
+    <div class="widget">
+      <section class="widget__main" aria-label="Animation">
+        <div class="stage">
+          <canvas id="scene"></canvas>
+          {{stage_settings}}
+          <button id="run" class="stage__run" type="button">▶ Run animation</button>
+        </div>
+        <div class="narration" id="narration" aria-live="polite">Press run to animate.</div>
+        <div class="transport">
+          <button id="play" class="btn btn--primary btn--pill" type="button">▶ Play</button>
+          <button id="finish" class="btn btn--pill" type="button">Show final</button>
+          <input id="scrub" type="range" min="0" max="1000" value="1000" aria-label="Timeline position">
+          <label class="inline">Speed
+            <select id="speed" class="select">
+              <option value="0.5">0.5×</option>
+              <option value="1" selected>1×</option>
+              <option value="2">2×</option>
+            </select>
+          </label>
+        </div>
+
+        <section class="panel steps-panel" aria-labelledby="steps-title">
+          <div class="panel__head">
+            <h2 class="panel__title" id="steps-title">Step by step</h2>
+            {{code_button}}
+          </div>
+          <ol class="steps steps--compact" id="steps"></ol>
+
+          <div class="same-k">
+            <h3 class="panel__title">Every point shares <span class="var">k</span></h3>
+            <table>
+              <thead><tr><th scope="col"><span class="var">x</span></th><th scope="col" id="table-y"><span class="var">y</span></th><th scope="col" id="table-invariant"></th></tr></thead>
+              <tbody id="table"></tbody>
+            </table>
+            <p class="same-k__note" id="table-note"></p>
+          </div>
+        </section>
+      </section>
+
+      <aside class="widget__side">
+        <fieldset class="panel">
+          <legend>Kind of variation</legend>
+          <div class="segmented" role="radiogroup" aria-label="Kind of variation">
+            <label><input type="radio" name="kind" value="direct" checked> Direct: y = kx</label>
+            <label><input type="radio" name="kind" value="inverse"> Inverse: y = k / x</label>
+          </div>
+          <p class="form-about" id="kind-about"></p>
+        </fieldset>
+
+        <fieldset class="panel">
+          <legend>Points</legend>
+          <p class="point-label">Known point (<span class="var">x</span>₁, <span class="var">y</span>₁)</p>
+          <div class="field">
+            <label for="x1-num"><span class="var">x</span>₁</label>
+            <input id="x1-range" type="range" min="-10" max="10" step="0.5" aria-label="x1 slider">
+            <input id="x1-num" type="number" step="any">
+          </div>
+          <div class="field">
+            <label for="y1-num"><span class="var">y</span>₁</label>
+            <input id="y1-range" type="range" min="-10" max="10" step="0.5" aria-label="y1 slider">
+            <input id="y1-num" type="number" step="any">
+          </div>
+          <p class="point-label">New <span class="var">x</span></p>
+          <div class="field">
+            <label for="x2-num"><span class="var">x</span>₂</label>
+            <input id="x2-range" type="range" min="-10" max="10" step="0.5" aria-label="x2 slider">
+            <input id="x2-num" type="number" step="any">
+          </div>
+          <p id="error" class="error" role="alert" hidden></p>
+          <div class="chips">
+            <button class="btn" type="button" data-preset="2,6,4,direct">y = 3x</button>
+            <button class="btn" type="button" data-preset="2,-3,4,direct">Negative k</button>
+            <button class="btn" type="button" data-preset="2,6,4,inverse">y = 12 / x</button>
+            <button class="btn" type="button" data-preset="-3,4,6,inverse">Inverse, k &lt; 0</button>
+            <button class="btn" type="button" data-preset="40,3,60,inverse">Speed × time = 120</button>
+          </div>
+        </fieldset>
+
+        <fieldset class="panel">
+          <legend>Results</legend>
+          <dl class="results" id="results"></dl>
+          <details class="glossary">
+            <summary>What these terms mean</summary>
+            <dl class="terms" id="glossary"></dl>
+          </details>
+        </fieldset>
+      </aside>
+    </div>
+  </main>
+
+  <script id="pp-config" type="application/json">{{config}}</script>
+  <script>
+{{scripts}}
+  </script>
+</body>
+</html>

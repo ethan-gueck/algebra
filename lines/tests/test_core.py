@@ -9,7 +9,7 @@ def test_the_three_forms_give_the_same_y(x1, y1, m):
     b = formula.y_intercept(m, x1, y1)
     A, B, C = formula.standard_coefficients(m, b)
     for x in (-4.0, -1.0, 0.0, 0.5, 3.0):
-        y = formula.linear_form(m, b, x)
+        y = formula.linear_form(b, x, m=m)
         assert formula.point_form_slope(x1, y1, m, x) == pytest.approx(y)
         assert formula.standard_form_for_linear_form(A, B, C, x) == pytest.approx(y)
         assert A * x + B * y == pytest.approx(C)  # the point really is on Ax + By = C
@@ -64,7 +64,7 @@ def test_inequality_forms_and_shading(case, slope_intercept, standard, shade, da
 def test_test_point_is_on_the_shaded_side(case):
     s = solve(*case)
     x0, y0 = s.inequality["test_point"]
-    on_line = formula.linear_form(s.m, s.b, x0)
+    on_line = formula.linear_form(s.b, x0, m=s.m)
     assert y0 != on_line  # off the line
     assert s.inequality["test_holds"] == ((y0 > on_line) == (s.inequality["shade"] == "above"))
 
@@ -73,3 +73,8 @@ def test_equals_has_no_inequality():
     assert solve(1, 3, 2).inequality is None
     with pytest.raises(ValueError):
         solve(1, 3, 2, "!=")
+
+
+def test_linear_form_finds_the_slope_from_two_points():
+    # (1, 3) and (3, 7): m = (7 − 3) / (3 − 1) = 2, so with b = 1, y(5) = 11.
+    assert formula.linear_form(1, 5, y2=7, y1=3, x2=3, x1=1) == 11

@@ -154,9 +154,16 @@ def standard_form(x1, y1, x2, y2):
 
 # _____________ A1.5 Equations of a Line _____________
 
-def linear_form(b, c, x):
-    """y = bx + c: slope b, y-intercept c (usually written y = mx + b)"""
-    return b * x + c
+def linear_form(b, x, m=None, y2=None, y1=None, x2=None, x1=None):
+    """y = mx + b: slope-intercept form, y for a given x.
+
+    m is the slope (the change in y per 1 unit of x), b the y-intercept (y where
+    x = 0) and x the input. Without m, the slope comes from two points (x₁, y₁)
+    and (x₂, y₂) on the line: m = (y₂ − y₁) / (x₂ − x₁), for x₁ ≠ x₂.
+    """
+    if m is None:
+        m = rise(y2, y1) / run(x2, x1)
+    return m * x + b
 
 
 def point_form_slope(x1, y1, m, x):
@@ -322,6 +329,23 @@ def convert_factored_form_to_vertex_form(a, r1, r2):
 
 # _____________ A1.13 Direct & Inverse Variation _____________
 
+def direct_variation(k, x):
+    """y = kx: y varies directly with x.
+
+    k is the constant of variation (k ≠ 0): the ratio y / x = k is the same for
+    every point, so multiplying x by c multiplies y by c, and the graph is a
+    line through the origin with slope k.
+    """
+    return k * x
+
+def indirect_variation(k, x):
+    """y = k / x, for x ≠ 0: y varies inversely (indirectly) with x.
+
+    k is the constant of variation (k ≠ 0): the product xy = k is the same for
+    every point, so multiplying x by c divides y by c, and the graph is a
+    hyperbola with asymptotes x = 0 and y = 0 (it never touches either axis).
+    """
+    return k / x
 
 # _____________ A1.14 Ratios, Proportions & Percent Change _____________
 
