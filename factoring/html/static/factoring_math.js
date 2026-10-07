@@ -1,5 +1,5 @@
 /*
- * factoring_math.js — browser mirror of factoring/solver.py and the A1.10 / A1.12 sections of core/formula.py.
+ * factoring_math.js — browser mirror of factoring/solver.py and the A1.9 / A1.10 / A1.12 sections of core/formula.py.
  *
  * Loaded after a1's quadratic_math.js (window.QuadMath), which supplies the
  * parabola's details and the three forms as text, exactly as the Python solver
@@ -32,6 +32,12 @@
     return [a, h + Math.sqrt(square), h - Math.sqrt(square)];
   }
   const acMethod = (a, b, c) => { const d = discriminant(a, b, c); return [(b + Math.sqrt(d)) / 2, (b - Math.sqrt(d)) / 2]; };
+
+  // ---- core/formula.py: A1.9 Polynomial Products & Special Products ---------
+  /** Python's math.isclose with the default rel_tol and the formulas' abs_tol. */
+  const isclose = (x, y, absTol = 1e-9) => x === y || Math.abs(x - y) <= Math.max(1e-9 * Math.max(Math.abs(x), Math.abs(y)), absTol);
+  const polynomialProducts = (a, b) => isclose((a + b) ** 2, a ** 2 + 2 * a * b + b ** 2) && isclose((a - b) ** 2, a ** 2 - 2 * a * b + b ** 2);
+  const specialProducts = (a, b) => isclose((a + b) * (a - b), a ** 2 - b ** 2);
 
   // ---- factoring.py ----------------------------------------------------------
   const FORMS = ["standard", "vertex", "factored"];
@@ -218,9 +224,36 @@
     };
   }
 
+  // ---- Special products (A1.9) ----------------------------------------------
+  function specialProductsTable(a, b) {
+    const pa = p_(a), pb = p_(b);
+    const squares = polynomialProducts(a, b);
+    const rows = [
+      ["square_sum", "Square of a sum", "(a + b)² = a² + 2ab + b²", `(${fmt(a)} + ${pb})²`, `${pa}² + 2·${pa}·${pb} + ${pb}²`,
+        (a + b) ** 2, a ** 2 + 2 * a * b + b ** 2, squares],
+      ["square_difference", "Square of a difference", "(a − b)² = a² − 2ab + b²", `(${fmt(a)} − ${pb})²`, `${pa}² − 2·${pa}·${pb} + ${pb}²`,
+        (a - b) ** 2, a ** 2 - 2 * a * b + b ** 2, squares],
+      ["difference_of_squares", "Difference of squares", "(a + b)(a − b) = a² − b²", `(${fmt(a)} + ${pb})(${fmt(a)} − ${pb})`, `${pa}² − ${pb}²`,
+        (a + b) * (a - b), a ** 2 - b ** 2, specialProducts(a, b)],
+    ].map(([id, name, rule, left, right, lv, rv, holds]) => ({ id, name, rule, left, right, values: [lv, rv], equal: lv === rv, holds }));
+    const patterns = [];
+    if (clean(a) && clean(b)) {
+      for (const [name, product, coefs] of [
+        ["Perfect square trinomial", `${binomial(a, b)}²`, [a * a, 2 * a * b, b * b]],
+        ["Perfect square trinomial", `${binomial(a, -b)}²`, [a * a, -2 * a * b, b * b]],
+        ["Difference of squares", `${binomial(a, b)}${binomial(a, -b)}`, [a * a, 0, -b * b]],
+      ]) {
+        const [A, B, C] = coefs.map(clean);
+        patterns.push({ name, product, expanded: poly(A, B, C), standard: [A, B, C] });
+      }
+    }
+    return { rows, patterns };
+  }
+
   const api = {
     solve, fmt, FORMS, PARAMS, to_standard: toStandard,
     factored_form: factoredForm, vertex_form: vertexForm, ac_method: acMethod,
+    special_products_table: specialProductsTable, polynomial_products: polynomialProducts, special_products: specialProducts,
     convert_standard_form_to_factored_form: convertStandardFormToFactoredForm,
     convert_vertex_form_to_factored_form: convertVertexFormToFactoredForm,
     convert_factored_form_to_standard_form: convertFactoredFormToStandardForm,

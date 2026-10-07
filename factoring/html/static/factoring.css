@@ -47,3 +47,31 @@
 .warning { margin: var(--space-2) 0 0; padding: 0.45rem 0.75rem; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text); background: color-mix(in srgb, var(--accent) 22%, transparent); border-left: 3px solid var(--accent); border-radius: 0 var(--radius-sm, 4px) var(--radius-sm, 4px) 0; }
 .warning[hidden] { display: none; }
 .warning strong { color: var(--accent-strong, var(--primary)); }
+
+/* Special products (A1.9): the identities with numbers, and the same patterns as quadratics in x. */
+.products-panel { margin-top: var(--space-4); }
+.products-help { font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-soft); margin: var(--space-2) 0 var(--space-3); max-width: 75ch; }
+.products-inputs { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.field-inline { display: inline-flex; align-items: center; gap: var(--space-2); font-size: 1.15rem; }
+.field-inline input {
+  width: 8rem; padding: 0.3rem 0.5rem; color: var(--text); background: var(--surface); border: 1px solid var(--rule);
+  border-radius: var(--radius-md); font: 1rem var(--font-sans); font-variant-numeric: tabular-nums;
+}
+.field-inline input:focus-visible { outline: none; box-shadow: var(--focus); }
+.table-scroll { overflow-x: auto; margin-top: var(--space-3); }
+.products-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.products-table th, .products-table td { text-align: left; vertical-align: top; padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--rule); }
+.products-table thead th { font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 600; color: var(--text-soft); border-bottom: 2px solid var(--primary); }
+.products-table tbody th { font-weight: 400; min-width: 11rem; }
+.products-table tr.is-broken td:last-child { background: rgba(233,161,91,0.12); }
+.products-table code { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; font-size: 0.88em; }
+.products-name { display: block; font-family: var(--font-sans); font-weight: 600; color: var(--primary); }
+.products-rule { display: block; font-style: italic; color: var(--text-soft); }
+.mark { display: inline-block; margin-top: 0.2rem; font-family: var(--font-sans); font-size: 0.8rem; font-weight: 600; }
+.mark.is-ok { color: var(--primary-soft); }
+.mark.is-bad { color: #B4561E; }
+.patterns { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+.patterns li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); padding: var(--space-2) var(--space-3); border-left: 3px solid var(--rule); }
+.patterns__name { flex-basis: 100%; font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 600; color: var(--text-soft); }
+.patterns__math { font-size: 1.05rem; overflow-wrap: anywhere; }
+.patterns__empty { font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-soft); font-style: italic; }

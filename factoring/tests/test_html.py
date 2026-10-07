@@ -14,7 +14,7 @@ def test_page_inlines_its_scripts_and_has_the_code_popup():
     assert "{{" not in document and "<script src=" not in document
     assert "window.QuadMath" in document and "window.FactorMath" in document
     dialog = document.split('<dialog class="code-modal"')[1].split("</dialog>")[0]
-    for name in ("convert-standard-form-to-factored-form", "convert-vertex-form-to-factored-form", "ac-method", "convert-standard-form-to-vertex-form"):
+    for name in ("polynomial-products", "special-products", "convert-standard-form-to-factored-form", "convert-vertex-form-to-factored-form", "ac-method", "convert-standard-form-to-vertex-form"):
         assert f'id="pp-code-0-{name}"' in dialog
     assert "_clean" not in dialog and "A2.15 Conic Sections" not in dialog  # only the concept: no solver, no empty sections
 
@@ -24,3 +24,10 @@ def test_config_carries_solution_and_roles():
     assert config["initial"] == {"form": "vertex", "a": 1, "p": 1.5, "q": -0.25}
     assert config["solution"]["forms"]["standard"] == "y = x² - 3x + 2"
     assert set(ROLES.values()) <= set(config["theme"]["stage"])
+
+
+def test_page_carries_the_special_products():
+    document = build_factoring_html(output_path=None)
+    config = _config(document)
+    assert "Algebra · A1.9 · A1.10" in document and 'id="products"' in document and 'id="patterns"' in document
+    assert config["products_initial"] == [0.1, 0.3] and len(config["products"]["rows"]) == 3

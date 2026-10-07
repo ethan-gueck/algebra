@@ -13,13 +13,13 @@
   <header class="masthead">
     <div class="container">
       <div class="masthead__bar">
-        <span class="masthead__kicker">Algebra · A1.1 · A1.2 · A1.14</span>
+        <span class="masthead__kicker">Algebra · A1.1 · A1.2 · A1.3 · A1.14</span>
         <a href="https://ethan-gueck.github.io/">ethan-gueck.github.io</a>
       </div>
       <div class="masthead__title">
         <div>
           <h1 class="masthead__name">{{title}}</h1>
-          <p class="masthead__subtitle">The rules arithmetic and exponents follow on paper, the order they happen in, ratios and percent change, and where a computer quietly breaks them.</p>
+          <p class="masthead__subtitle">The rules arithmetic, exponents and roots follow on paper, the order they happen in, ratios and percent change, and where a computer quietly breaks them.</p>
         </div>
         <p class="masthead__aside formula" aria-label="a times the quantity b plus c equals a b plus a c">
           <span class="var">a</span>(<span class="var">b</span> + <span class="var">c</span>) = <span class="var">ab</span> + <span class="var">ac</span>
@@ -140,6 +140,36 @@
         <li><strong>Quotient:</strong> dividing cancels <span class="var">n</span> of the <span class="var">m</span> copies, leaving <span class="var">m</span> − <span class="var">n</span>.</li>
         <li><strong>Power of a power:</strong> <span class="var">m</span> groups of <span class="var">n</span> copies is <span class="var">m</span>·<span class="var">n</span> copies.</li>
         <li><strong>Zero and negative exponents</strong> are the definitions that keep the quotient rule true: <span class="var">a</span><sup><span class="var">m</span></sup> ÷ <span class="var">a</span><sup><span class="var">m</span></sup> = 1 = <span class="var">a</span><sup>0</sup>, and <span class="var">a</span><sup>0</sup> ÷ <span class="var">a</span><sup><span class="var">m</span></sup> = 1 ÷ <span class="var">a</span><sup><span class="var">m</span></sup> = <span class="var">a</span><sup>−<span class="var">m</span></sup>. Both divide by <span class="var">a</span>, so they need <span class="var">a</span> ≠ 0.</li>
+      </ul>
+    </section>
+
+    <section class="panel rn-panel" aria-labelledby="rad-title">
+      <h2 class="panel__title" id="rad-title">Radicals &amp; rational exponents</h2>
+      <p class="rn-help">A fractional exponent is a root: the denominator <span class="var">n</span> picks the root and the numerator <span class="var">m</span> the power, so <span class="var">a</span><sup><span class="var">m</span>/<span class="var">n</span></sup> = <sup><span class="var">n</span></sup>√(<span class="var">a</span><sup><span class="var">m</span></sup>) = (<sup><span class="var">n</span></sup>√<span class="var">a</span>)<sup><span class="var">m</span></sup>. Most roots are irrational, so a computer can only approximate them, and the sides of a rule can come out a hair apart. Each rule is checked two ways in floating point: with <code>==</code>, and with <code>math.isclose</code>, which allows for that rounding.</p>
+      <div class="rn-inputs">
+        <label class="rn-input"><span class="var">a</span><input id="qa" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
+        <label class="rn-input"><span class="var">b</span><input id="qb" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
+        <label class="rn-input"><span class="var">m</span><input id="qm" type="text" inputmode="numeric" autocomplete="off" spellcheck="false"></label>
+        <label class="rn-input"><span class="var">n</span><input id="qn" type="text" inputmode="numeric" autocomplete="off" spellcheck="false"></label>
+      </div>
+      <div class="chips">
+        <button class="btn" type="button" data-rad="8,18,2,3">8^(2/3) ≠ 4 in floats</button>
+        <button class="btn" type="button" data-rad="2,8,1,2">√2 × √8</button>
+        <button class="btn" type="button" data-rad="16,9,3,4">Exact everywhere</button>
+        <button class="btn" type="button" data-rad="27,3,-1,3">Negative exponent</button>
+        <button class="btn" type="button" data-rad="-4,-9,1,2">Negative base</button>
+      </div>
+      <p id="rad-error" class="error" role="alert" hidden></p>
+      <div class="table-scroll">
+        <table class="rn-table">
+          <thead><tr><th scope="col">Rule</th><th scope="col">Exact (real numbers)</th><th scope="col">Floating point (computer)</th></tr></thead>
+          <tbody id="rad"></tbody>
+        </table>
+      </div>
+      <h3 class="rn-subtitle">Why the rules hold</h3>
+      <ul class="rn-list">
+        <li><strong>Rational exponents</strong> extend the power-of-a-power rule: (<span class="var">a</span><sup>1/<span class="var">n</span></sup>)<sup><span class="var">n</span></sup> = <span class="var">a</span><sup>1</sup> = <span class="var">a</span>, so <span class="var">a</span><sup>1/<span class="var">n</span></sup> must be the <span class="var">n</span>th root, and <span class="var">a</span><sup><span class="var">m</span>/<span class="var">n</span></sup> is that root taken <span class="var">m</span> times, in either order.</li>
+        <li><strong>Product of roots:</strong> (√<span class="var">a</span> × √<span class="var">b</span>)² = <span class="var">a</span> × <span class="var">b</span>, so √<span class="var">a</span> × √<span class="var">b</span> is the square root of <span class="var">ab</span>. It needs <span class="var">a</span>, <span class="var">b</span> ≥ 0; with negatives the imaginary units multiply to −1 and the sign flips.</li>
       </ul>
     </section>
 

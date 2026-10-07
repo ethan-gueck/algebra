@@ -1,5 +1,5 @@
 /*
- * real_numbers_math.js — browser mirror of real_numbers/solver.py (A1.1, A1.2, A1.14).
+ * real_numbers_math.js — browser mirror of real_numbers/solver.py (A1.1, A1.2, A1.3, A1.14).
  *
  * Exact real numbers are BigInt fractions (Python: fractions.Fraction);
  * floating point is plain Number (IEEE 754 doubles, like Python's float).
@@ -353,6 +353,75 @@
     });
   }
 
+  // ---- Radicals and rational exponents (A1.3) -------------------------------
+  const RADICAL_RULES = [
+    ["rational", "Rational exponent", "aᵐᐟⁿ = ⁿ√(aᵐ) = (ⁿ√a)ᵐ"],
+    ["product", "Product of roots", "√(ab) = √a × √b"],
+  ];
+  const SUPERSCRIPT = "⁰¹²³⁴⁵⁶⁷⁸⁹";
+
+  // core/formula.py: A1.3 (math.isclose with its default rel_tol = 1e-9)
+  const isclose = (x, y) => x === y || Math.abs(x - y) <= 1e-9 * Math.max(Math.abs(x), Math.abs(y));
+  const termWithExponentDividedByExponent = (a, m, n) => isclose(a ** (m / n), (a ** m) ** (1 / n)) && isclose(a ** (m / n), (a ** (1 / n)) ** m);
+  const rootTermMultiplication = (a, b) => isclose(Math.sqrt(a * b), Math.sqrt(a) * Math.sqrt(b));
+
+  /** The whole k-th root of x ≥ 0n, rounded down (Newton's method on BigInts). */
+  function iroot(x, k) {
+    if (x < 2n) return x;
+    const K = BigInt(k);
+    let r = 1n << BigInt(Math.ceil(x.toString(2).length / k));
+    for (;;) {
+      const s = ((K - 1n) * r + x / r ** (K - 1n)) / K;
+      if (s >= r) return r;
+      r = s;
+    }
+  }
+  /** ᵏ√x for x ≥ 0 as an exact fraction, or null when it is irrational. */
+  function exactRoot(x, k) {
+    const top = iroot(x.n, k), bottom = iroot(x.d, k), K = BigInt(k);
+    return top ** K === x.n && bottom ** K === x.d ? frac(top, bottom) : null;
+  }
+  const base = (v) => { const t = show(v); return t.includes("/") && !t.startsWith("(") ? `(${t})` : t; };
+  const radical = (index) => (index === 2 ? "√" : [...String(index)].map((d) => SUPERSCRIPT[d]).join("") + "√");
+  const radicalRow = ([id, name, rule], sides, exact, floats, holds) => ({
+    id, name, rule, applies: true, sides,
+    exact: exact === null ? null : exactText(exact), exact_value: exact === null ? null : toNumber(exact),
+    float: floats, float_equal: floats.every((f) => f === floats[0]), holds,
+  });
+
+  function radicals(a, b, m, n) {
+    const A = parseNumber(a), B = parseNumber(b);
+    const M = parseExponent(m, "m");
+    const N = parseExponent(n, "n");
+    if (N < 1) throw new Error(`n is the root's index: a whole number from 1 to ${MAX_POWER}.`);
+    if (A.n !== 0n) {
+      const big = powInt(A, Math.abs(M));
+      if (babs(big.n).toString(2).length + big.d.toString(2).length > MAX_POWER_BITS) throw new Error("Those powers get too large to compare in floating point. Try a smaller base or exponents.");
+    }
+    const fa = toFloat(a), fb = toFloat(b);
+    const sa = base(A), sb = base(B);
+    const [rational, product] = RADICAL_RULES;
+    const skip = ([id, name, rule], note) => ({ id, name, rule, applies: false, note });
+    const out = [];
+
+    if (A.n < 0n) out.push(skip(rational, "Needs a ≥ 0: an even root of a negative number isn't real (√−4 isn't), and Python's ** returns a complex number for any negative base."));
+    else if (A.n === 0n && M <= 0) out.push(skip(rational, "Needs a ≠ 0 here: 0 to a zero or negative power is undefined."));
+    else {
+      const root = radical(N);
+      const sides = [`${sa}^(${intText(M)}/${N})`, `${root}(${powText(sa, M)})`, powText(`(${root}${sa})`, M)];
+      const floats = [fa ** (M / N), (fa ** M) ** (1 / N), (fa ** (1 / N)) ** M];
+      out.push(radicalRow(rational, sides, exactRoot(powInt(A, M), N), floats, termWithExponentDividedByExponent(fa, M, N)));
+    }
+
+    if (A.n < 0n || B.n < 0n) out.push(skip(product, "Needs a, b ≥ 0: √(−4 × −9) = 6, but √−4 × √−9 = 2i × 3i = −6."));
+    else {
+      const sides = [`√(${sa} × ${sb})`, `√${sa} × √${sb}`];
+      const floats = [Math.sqrt(fa * fb), Math.sqrt(fa) * Math.sqrt(fb)];
+      out.push(radicalRow(product, sides, exactRoot(mul(A, B), 2), floats, rootTermMultiplication(fa, fb)));
+    }
+    return out;
+  }
+
   // ---- Ratios, proportions and percent change (A1.14) -------------------------
   const ratioText = (x, y) => `${exactText(x)} : ${exactText(y)}`;
   function simplestRatio(x, y) {
@@ -391,7 +460,8 @@
 
   const api = {
     properties, order_of_operations: orderOfOperations, sum_two_ways: sumTwoWays,
-    exponent_rules: exponentRules, proportion, percent_change: percentChange,
+    exponent_rules: exponentRules, radicals, proportion, percent_change: percentChange,
+    term_with_exponent_divided_by_exponent: termWithExponentDividedByExponent, root_term_multiplication: rootTermMultiplication,
     exact_text: (text) => exactText(parseNumber(text)), to_float: toFloat,
     altitude_deg: altitudeDeg, guarded_altitude_deg: guardedAltitudeDeg,
   };

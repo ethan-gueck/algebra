@@ -74,28 +74,35 @@ PRECEDENCE = {"^": 4, "neg": 3, "*": 2, "/": 2, "+": 1, "-": 1}
 
 # _____________ A1.2 Exponent Rules _____________
 
-def exponent_multiplication(a, m, n):
+def term_multiplication_exponent(a, m, n):
     """aᵐ × aⁿ = aᵐ⁺ⁿ: multiplying powers of the same base adds the exponents."""
     return a ** m * a ** n == a ** (m + n)
 
-def exponent_division(a, m, n):
+def term_division_with_exponent(a, m, n):
     """aᵐ ÷ aⁿ = aᵐ⁻ⁿ, for a ≠ 0: dividing powers of the same base subtracts the exponents."""
     return a ** m / a ** n == a ** (m - n)
 
-def exponent_raised_by_exponent(a, m, n):
+def term_with_exponent_raised_by_exponent(a, m, n):
     """(aⁿ)ᵐ = aᵐⁿ: a power raised to a power multiplies the exponents."""
     return (a ** n) ** m == a ** (m * n)
 
-def exponent_equal_to_zero(a):
+def term_with_exponent_equal_to_zero(a):
     """a⁰ = 1, for a ≠ 0 (0⁰ is undefined, though Python returns 1)."""
     return a ** 0 == 1
 
-def negative_exponent(a, m):
+def term_with_negative_exponent(a, m):
     """a⁻ᵐ = 1 ÷ aᵐ, for a ≠ 0: a negative exponent is the reciprocal of the positive power."""
     return a ** (-m) == 1 / a ** m
 
 # _____________ A1.3 Radicals & Rational Exponents _____________
 
+def term_with_exponent_divided_by_exponent(a, m, n):
+    """aᵐᐟⁿ = ⁿ√(aᵐ) = (ⁿ√a)ᵐ, for a ≥ 0, n ≠ 0: the denominator is the root, the numerator the power."""
+    return math.isclose(a ** (m / n), (a ** m) ** (1 / n)) and math.isclose(a ** (m / n), (a ** (1 / n)) ** m)
+
+def root_term_multiplication(a, b):
+    """√(ab) = √a × √b, for a, b ≥ 0: the root of a product is the product of the roots."""
+    return math.isclose(math.sqrt(a * b), math.sqrt(a) * math.sqrt(b))
 
 # _____________ A1.4 Slope _____________
 
@@ -183,6 +190,17 @@ def standard_coefficients(m, b):
 
 # _____________ A1.9 Polynomial Products & Special Products _____________
 
+def polynomial_products(a, b):
+    """(a ± b)² = a² ± 2ab + b²: squaring a binomial gives the square of each term plus twice their product.
+
+    abs_tol: when a ≈ b, both sides of (a − b)² are near 0 and a relative tolerance alone can't match them.
+    """
+    return math.isclose((a + b) ** 2, a ** 2 + 2 * a * b + b ** 2, abs_tol=1e-9) and math.isclose((a - b) ** 2, a ** 2 - 2 * a * b + b ** 2, abs_tol=1e-9)
+
+def special_products(a, b):
+    """(a + b)(a − b) = a² − b²: the difference of squares, where the middle terms +ab and −ab cancel."""
+    return math.isclose((a + b) * (a - b), a ** 2 - b ** 2, abs_tol=1e-9)
+    
 
 # _____________ A1.10 Factoring _____________
 

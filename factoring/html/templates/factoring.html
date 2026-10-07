@@ -13,13 +13,13 @@
   <header class="masthead">
     <div class="container">
       <div class="masthead__bar">
-        <span class="masthead__kicker">Algebra · A1.10</span>
+        <span class="masthead__kicker">Algebra · A1.9 · A1.10</span>
         <a href="https://ethan-gueck.github.io/">ethan-gueck.github.io</a>
       </div>
       <div class="masthead__title">
         <div>
           <h1 class="masthead__name">{{title}}</h1>
-          <p class="masthead__subtitle">One quadratic, three forms, and whether (and how) it factors.</p>
+          <p class="masthead__subtitle">The special products, one quadratic in three forms, and whether (and how) it factors.</p>
         </div>
         <p class="masthead__aside formula forms-aside" aria-label="y equals a x squared plus b x plus c; y equals a times x minus h squared plus k; y equals a times x minus r 1 times x minus r 2">
           <span><span class="var">y</span> = <span class="var">ax</span>² + <span class="var">bx</span> + <span class="var">c</span></span>
@@ -70,6 +70,33 @@
             <h2 class="panel__title" id="convert-title">Converting to the other forms</h2>
           </div>
           <div class="conversions" id="conversions"></div>
+        </section>
+
+        <section class="panel products-panel" aria-labelledby="products-title">
+          <div class="panel__head">
+            <h2 class="panel__title" id="products-title">Special products: what factoring undoes</h2>
+          </div>
+          <p class="products-help">Three products come up so often they are worth knowing by sight. Multiplying them out is <em>expanding</em>; reading them right to left is <em>factoring</em>. Pick two numbers: each identity is checked in floating point with <code>==</code> and with <code>math.isclose</code>, which allows for rounding.</p>
+          <div class="products-inputs">
+            <label class="field-inline"><span class="var">a</span><input id="sp-a" type="number" step="any"></label>
+            <label class="field-inline"><span class="var">b</span><input id="sp-b" type="number" step="any"></label>
+          </div>
+          <div class="chips">
+            <button class="btn" type="button" data-products="3,2">3 and 2</button>
+            <button class="btn" type="button" data-products="0.1,0.3">0.1 and 0.3</button>
+            <button class="btn" type="button" data-products="2,-3">Negative b</button>
+            <button class="btn" type="button" data-products="1,1.0000001">a ≈ b</button>
+          </div>
+          <p id="products-error" class="error" role="alert" hidden></p>
+          <div class="table-scroll">
+            <table class="products-table">
+              <thead><tr><th scope="col">Identity</th><th scope="col">With your numbers</th><th scope="col">Floating point</th></tr></thead>
+              <tbody id="products"></tbody>
+            </table>
+          </div>
+          <h3 class="panel__title subhead">The same patterns in <span class="var">x</span></h3>
+          <p class="products-help">Put <span class="var">ax</span> in place of <span class="var">a</span> and each product becomes a quadratic. Load one into the factoring above to watch it come apart again.</p>
+          <ul class="patterns" id="patterns"></ul>
         </section>
       </section>
 

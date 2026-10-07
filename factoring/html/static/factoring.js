@@ -2,6 +2,7 @@
  * factoring.js — page controller for factoring a quadratic.
  *
  * Reads the Python-built config, wires the form drop-down and the three sliders,
+ * and the special-products table (A1.9), whose patterns load into the widget,
  * and turns a solution into a Manim-style Timeline: the parabola, its axis of
  * symmetry and vertex, the y-intercept and the roots the factors come from.
  * Changing the form rewrites the same parabola in the new form's variables, and
@@ -13,7 +14,7 @@
 (function () {
   "use strict";
   const { ManimCanvas, Timeline, rate, view } = window.Manim;
-  const { solve, fmt, PARAMS, to_standard: toStandard } = window.FactorMath;
+  const { solve, fmt, PARAMS, to_standard: toStandard, special_products_table: specialProductsTable } = window.FactorMath;
   const { framing, solve_linear: solveLinear } = window.QuadMath;
 
   const config = JSON.parse(document.getElementById("pp-config").textContent);
@@ -392,7 +393,63 @@
   scene.onResize = () => { if (timeline) timeline.render(); };
   window.addEventListener("hashchange", () => { if (readHash()) { renderFormControls(); syncInputs(); update(); } });
 
+  // ---- Special products (A1.9) ----------------------------------------------
+  const esc = (s) => String(s).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+  /** A float exactly as the computer holds it (shortest round-trip form), with a true minus sign. */
+  const flt = (x) => (Object.is(x, -0) ? "−0" : String(x).replace("-", "−"));
+  const mark = (ok, text) => `<span class="mark ${ok ? "is-ok" : "is-bad"}">${ok ? "✓" : "✗"} ${text}</span>`;
+
+  function renderProducts(table) {
+    $("products").innerHTML = table.rows.map((r) => {
+      const head = `<th scope="row"><span class="products-name">${r.name}</span><span class="products-rule">${r.rule}</span></th>`;
+      const work = `<code>${esc(r.left)}</code><br>= <code>${esc(r.right)}</code>`;
+      const float = `${flt(r.values[0])}<br>${flt(r.values[1])}<br>` +
+        (r.equal ? mark(true, "== holds") : mark(false, `== fails: the sides differ by ${flt(Math.abs(r.values[0] - r.values[1]))}`)) + "<br>" +
+        mark(r.holds, r.holds ? "math.isclose holds" : "math.isclose fails");
+      return `<tr class="${r.equal ? "" : "is-broken"}">${head}<td>${work}</td><td>${float}</td></tr>`;
+    }).join("");
+    $("patterns").innerHTML = table.patterns.map((t) =>
+      `<li><span class="patterns__name">${t.name}</span><span class="patterns__math">${esc(t.product)} = ${esc(t.expanded)}</span>` +
+      `<button class="btn" type="button" data-pattern="${t.standard.join(",")}">Factor it above</button></li>`).join("") ||
+      `<li class="patterns__empty">With a = 0 or b = 0 these aren't quadratics with two terms to factor; pick non-zero numbers.</li>`;
+  }
+
+  function updateProducts(table) {
+    const a = $("sp-a").value, b = $("sp-b").value;
+    const box = $("products-error");
+    if (!table && (a === "" || b === "" || !Number.isFinite(Number(a)) || !Number.isFinite(Number(b)))) {
+      box.textContent = "Enter a number for a and b.";
+      box.hidden = false;
+      return;
+    }
+    box.hidden = true;
+    renderProducts(table || specialProductsTable(Number(a), Number(b)));
+  }
+
+  ["sp-a", "sp-b"].forEach((id) => $(id).addEventListener("input", () => updateProducts()));
+  document.querySelectorAll("[data-products]").forEach((button) => {
+    button.addEventListener("click", () => {
+      [$("sp-a").value, $("sp-b").value] = button.dataset.products.split(",");
+      updateProducts();
+    });
+  });
+  // "Factor it above": load the pattern's quadratic into the widget, in standard form.
+  $("patterns").addEventListener("click", (event) => {
+    const button = event.target.closest("[data-pattern]");
+    if (!button) return;
+    [state.a, state.p, state.q] = button.dataset.pattern.split(",").map(Number);
+    state.form = "standard";
+    el.note.hidden = true;
+    renderFormControls();
+    syncInputs();
+    update({ refit: true });
+    $("scene").scrollIntoView({ behavior: "smooth", block: "center" });
+    play();
+  });
+
   renderGlossary();
+  [$("sp-a").value, $("sp-b").value] = config.products_initial.map(String);
+  updateProducts(config.products);
   const fromHash = readHash();
   renderFormControls();
   syncInputs();

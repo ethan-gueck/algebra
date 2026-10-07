@@ -1,10 +1,10 @@
 /*
  * real_numbers.js — page controller for properties of real numbers.
  *
- * Five live sections, all computed by RealMath (real_numbers_math.js): the
+ * Six live sections, all computed by RealMath (real_numbers_math.js): the
  * properties explorer, the order-of-operations stepper, the solar-altitude
- * grouping demo (A1.1), the exponent rules (A1.2), and ratios, proportions and
- * percent change (A1.14). The first render uses the Python-built config.
+ * grouping demo (A1.1), the exponent rules (A1.2), radicals and rational
+ * exponents (A1.3), and ratios, proportions and percent change (A1.14). The first render uses the Python-built config.
  * The URL hash (#a=0.1&b=0.2&c=0.3) presets the explorer.
  */
 (function () {
@@ -98,6 +98,28 @@
     guard("exp-error", () => renderRules("exp", rows || M.exponent_rules($("ea").value, $("em").value, $("en").value)));
   }
 
+  // ---- Radicals and rational exponents ----------------------------------------
+  function renderRadicals(rows) {
+    $("rad").innerHTML = rows.map((r) => {
+      const head = `<th scope="row"><span class="rn-name">${r.name}</span><span class="rn-rule">${r.rule}</span></th>`;
+      if (!r.applies) return `<tr>${head}<td colspan="2" class="rn-na">${esc(r.note)}</td></tr>`;
+      const sides = r.sides.map((s) => `<code>${esc(s)}</code>`).join(" = ");
+      const exact = r.exact === null
+        ? `${sides}<br>irrational: no fraction equals it<br>${mark(true, "holds", "")}`
+        : `${sides} = ${esc(r.exact)}<br>${mark(true, "holds", "")}`;
+      const spread = Math.max(...r.float) - Math.min(...r.float);
+      // The sides can all agree and still all miss the exact value.
+      const off = r.exact_value !== null && r.float.some((f) => f !== r.exact_value);
+      const float = r.sides.map((s, i) => `<code>${esc(s)}</code> → ${flt(r.float[i])}`).join("<br>") + "<br>" +
+        (r.float_equal ? mark(true, off ? `== holds, though every side carries the same rounding error (exact: ${esc(r.exact)})` : "== holds", "")
+          : mark(false, "", `== fails: the sides differ by ${flt(spread)}`)) + "<br>" +
+        mark(r.holds, "math.isclose holds", "math.isclose fails");
+      return `<tr class="${r.float_equal ? "" : "is-broken"}">${head}<td>${exact}</td><td>${float}</td></tr>`;
+    }).join("");
+  }
+  const radicalInputs = () => [$("qa").value, $("qb").value, $("qm").value, $("qn").value];
+  function updateRadicals(rows) { guard("rad-error", () => renderRadicals(rows || M.radicals(...radicalInputs()))); }
+
   // ---- Ratios, proportions and percent change --------------------------------
   function renderRatio(r) {
     const off = r.float_holds !== r.exact_holds;
@@ -127,6 +149,7 @@
   const init = config.initial;
   [["a", init.a], ["b", init.b], ["c", init.c], ["expr", init.expr], ["t1", init.terms[0]], ["t2", init.terms[1]], ["t3", init.terms[2]],
     ["ea", init.exponents[0]], ["em", init.exponents[1]], ["en", init.exponents[2]],
+    ["qa", init.radicals[0]], ["qb", init.radicals[1]], ["qm", init.radicals[2]], ["qn", init.radicals[3]],
     ["ra", init.ratio[0]], ["rb", init.ratio[1]], ["rc", init.ratio[2]], ["rd", init.ratio[3]], ["po", init.percent[0]], ["pn", init.percent[1]]]
     .forEach(([id, v]) => { $(id).value = v; });
   const hash = PPParams.read(["a", "b", "c"]);
@@ -137,6 +160,7 @@
   $("expr").addEventListener("input", () => updateOrder());
   ["t1", "t2", "t3"].forEach((id) => $(id).addEventListener("input", () => updateSum()));
   ["ea", "em", "en"].forEach((id) => $(id).addEventListener("input", () => updateExponents()));
+  ["qa", "qb", "qm", "qn"].forEach((id) => $(id).addEventListener("input", () => updateRadicals()));
   ["ra", "rb", "rc", "rd"].forEach((id) => $(id).addEventListener("input", () => updateRatio()));
   ["po", "pn"].forEach((id) => $(id).addEventListener("input", () => updatePercent()));
   const preset = (attr, ids, after) => document.querySelectorAll(`[data-${attr}]`).forEach((button) => {
@@ -145,6 +169,7 @@
   preset("props", ["a", "b", "c"], () => updateProperties());
   preset("sum", ["t1", "t2", "t3"], () => updateSum());
   preset("exp", ["ea", "em", "en"], () => updateExponents());
+  preset("rad", ["qa", "qb", "qm", "qn"], () => updateRadicals());
   preset("ratio", ["ra", "rb", "rc", "rd"], () => updateRatio());
   preset("pct", ["po", "pn"], () => updatePercent());
   document.querySelectorAll("[data-expr]").forEach((button) => {
@@ -161,6 +186,7 @@
   updateOrder(config.solution.order);
   updateSum(config.solution.sum);
   updateExponents(config.solution.exponents);
+  updateRadicals(config.solution.radicals);
   updateRatio(config.solution.ratio);
   updatePercent(config.solution.percent);
 })();

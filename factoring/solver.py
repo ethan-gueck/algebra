@@ -1,7 +1,8 @@
 """One quadratic in standard, vertex and factored form: the conversions and the factoring, step by step.
 
-The mathematics lives in core/formula.py (sections A1.10 Factoring and A1.12
-Vertex Form): the three forms and the conversions between them. This module
+The mathematics lives in core/formula.py (sections A1.9 Polynomial Products,
+A1.10 Factoring and A1.12 Vertex Form): the special products factoring
+reverses, the three forms and the conversions between them. This module
 calls those and adds what the page needs around them: float tidying, the
 discriminant test for whether the quadratic factors, the AC-method or
 quadratic-formula factoring process, and each conversion written out as
@@ -223,6 +224,43 @@ def conversions(form: str, a: float, p: float, q: float, std: dict, vtx: dict, f
             _step("Write a(x − h)² + k", texts["vertex"]),
         ]})
     return out
+
+
+# ---- Special products (A1.9) -----------------------------------------------
+
+
+def special_products_table(a: float, b: float) -> dict:
+    """The A1.9 products with numbers a, b, and the quadratics in x they become.
+
+    Each row has both sides written out, their float values, whether == agrees
+    and the formula's math.isclose verdict (formula.polynomial_products checks
+    both squares at once, so the two square rows share it). ``patterns`` are
+    the same products with ax in place of a, ready for the factoring above:
+    (ax + b)² = a²x² + 2abx + b², and so on (empty when a or b is 0).
+    """
+    a, b = float(a), float(b)
+    pa, pb = _p(a), _p(b)
+    squares = formula.polynomial_products(a, b)
+    rows = [
+        ("square_sum", "Square of a sum", "(a + b)² = a² + 2ab + b²", f"({fmt(a)} + {pb})²", f"{pa}² + 2·{pa}·{pb} + {pb}²",
+         (a + b) ** 2, a ** 2 + 2 * a * b + b ** 2, squares),
+        ("square_difference", "Square of a difference", "(a − b)² = a² − 2ab + b²", f"({fmt(a)} − {pb})²", f"{pa}² − 2·{pa}·{pb} + {pb}²",
+         (a - b) ** 2, a ** 2 - 2 * a * b + b ** 2, squares),
+        ("difference_of_squares", "Difference of squares", "(a + b)(a − b) = a² − b²", f"({fmt(a)} + {pb})({fmt(a)} − {pb})", f"{pa}² − {pb}²",
+         (a + b) * (a - b), a ** 2 - b ** 2, formula.special_products(a, b)),
+    ]
+    out = [{"id": i, "name": name, "rule": rule, "left": left, "right": right, "values": [lv, rv],
+            "equal": lv == rv, "holds": holds} for i, name, rule, left, right, lv, rv, holds in rows]
+    patterns = []
+    if _clean(a) and _clean(b):
+        for name, product, coefs in [
+            ("Perfect square trinomial", f"{_binomial(a, b)}²", (a * a, 2 * a * b, b * b)),
+            ("Perfect square trinomial", f"{_binomial(a, -b)}²", (a * a, -2 * a * b, b * b)),
+            ("Difference of squares", f"{_binomial(a, b)}{_binomial(a, -b)}", (a * a, 0.0, -b * b)),
+        ]:
+            A, B, C = (_clean(v) for v in coefs)
+            patterns.append({"name": name, "product": product, "expanded": _poly(A, B, C), "standard": [A, B, C]})
+    return {"rows": out, "patterns": patterns}
 
 
 @dataclass(frozen=True)

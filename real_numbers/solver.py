@@ -1,9 +1,9 @@
-"""Properties of real numbers, order of operations, exponent rules, ratios and
-percent change, and where floating point breaks them.
+"""Properties of real numbers, order of operations, exponent rules, radicals,
+ratios and percent change, and where floating point breaks them.
 
 formula.py holds the mathematics as written: each property as a function of
-a, b, c returning its two sides, the PEMDAS ranking, each exponent rule and the
-proportion as a check that two sides are equal, and percent change. This module
+a, b, c returning its two sides, the PEMDAS ranking, each exponent and radical
+rule and the proportion as a check that two sides are equal, and percent change. This module
 runs those functions on exact numbers and on floats, steps through expressions,
 and formats everything for the page.
 
@@ -440,19 +440,19 @@ def exponent_rules(a: str, m: str, n: str) -> list[dict]:
     # rule id -> (formula function, its arguments after a, exponents that must be positive when a = 0,
     #             the two sides as text, the two sides from base x and a power function p)
     rows = {
-        "product": (formula.exponent_multiplication, (M, N), (M, N),
+        "product": (formula.term_multiplication_exponent, (M, N), (M, N),
                     f"{_pow_text(sa, M)} × {_pow_text(sa, N)}", _pow_text(sa, M + N),
                     lambda x, p: (p(x, M) * p(x, N), p(x, M + N))),
-        "quotient": (formula.exponent_division, (M, N), (M, N, 0),
+        "quotient": (formula.term_division_with_exponent, (M, N), (M, N, 0),
                      f"{_pow_text(sa, M)} ÷ {_pow_text(sa, N)}", _pow_text(sa, M - N),
                      lambda x, p: (p(x, M) / p(x, N), p(x, M - N))),
-        "power": (formula.exponent_raised_by_exponent, (M, N), (M, N),
+        "power": (formula.term_with_exponent_raised_by_exponent, (M, N), (M, N),
                   _pow_text(f"({_pow_text(sa, N)})", M), _pow_text(sa, M * N),
                   lambda x, p: (p(p(x, N), M), p(x, M * N))),
-        "zero": (formula.exponent_equal_to_zero, (), (0,),
+        "zero": (formula.term_with_exponent_equal_to_zero, (), (0,),
                  _pow_text(sa, 0), "1",
                  lambda x, p: (p(x, 0), 1)),
-        "negative": (formula.negative_exponent, (M,), (M, -M, 0),
+        "negative": (formula.term_with_negative_exponent, (M,), (M, -M, 0),
                      _pow_text(sa, -M), f"1 ÷ {_pow_text(sa, M)}",
                      lambda x, p: (p(x, -M), 1 / p(x, M))),
     }
@@ -472,6 +472,99 @@ def exponent_rules(a: str, m: str, n: str) -> list[dict]:
             "exact_float": [float(el), float(er)],
             "float": [float(fl), float(fr)], "float_holds": fl == fr,
         })
+    return out
+
+
+# ---- Radicals and rational exponents (A1.3) ---------------------------------
+
+RADICAL_RULES = (
+    _Property("rational", "Rational exponent", "aᵐᐟⁿ = ⁿ√(aᵐ) = (ⁿ√a)ᵐ"),
+    _Property("product", "Product of roots", "√(ab) = √a × √b"),
+)
+SUPERSCRIPT = str.maketrans("0123456789", "⁰¹²³⁴⁵⁶⁷⁸⁹")
+
+
+def _iroot(x: int, k: int) -> int:
+    """The whole k-th root of x ≥ 0, rounded down (Newton's method on integers)."""
+    if x < 2:
+        return x
+    r = 1 << -(-x.bit_length() // k)  # 2^⌈bits/k⌉ is above the root
+    while True:
+        s = ((k - 1) * r + x // r ** (k - 1)) // k
+        if s >= r:
+            return r
+        r = s
+
+
+def exact_root(x: Fraction, k: int) -> Fraction | None:
+    """ᵏ√x for x ≥ 0 as an exact fraction, or None when it is irrational."""
+    top, bottom = _iroot(x.numerator, k), _iroot(x.denominator, k)
+    return Fraction(top, bottom) if top ** k == x.numerator and bottom ** k == x.denominator else None
+
+
+def _base(value: Fraction) -> str:
+    """A base inside a power or root: fractions in parentheses, '(1/4)'."""
+    text = _show(value)
+    return f"({text})" if "/" in text and not text.startswith("(") else text
+
+
+def _radical(index: int) -> str:
+    """'√' for a square root, '³√' for a cube root."""
+    return "√" if index == 2 else str(index).translate(SUPERSCRIPT) + "√"
+
+
+def _radical_row(rule: _Property, sides: list[str], exact: Fraction | None, floats: list[float], holds: bool) -> dict:
+    return {
+        "id": rule.id, "name": rule.name, "rule": rule.rule, "applies": True, "sides": sides,
+        "exact": None if exact is None else exact_text(exact), "exact_value": None if exact is None else float(exact),
+        "float": floats, "float_equal": all(f == floats[0] for f in floats), "holds": holds,
+    }
+
+
+def radicals(a: str, b: str, m: str, n: str) -> list[dict]:
+    """Check the A1.3 rules with bases a, b and the rational exponent m/n, exactly and in floating point.
+
+    Each side is computed in floating point the way core/formula.py does it
+    (``**`` and math.sqrt). A root is usually irrational, so ``exact`` is the
+    common exact value only when it is a fraction (8^(2/3) = 4) and None
+    otherwise. ``float_equal`` is what == says about the float sides and
+    ``holds`` is the formula's math.isclose verdict: they disagree when
+    rounding leaves the sides a hair apart. Rules that need a negative base's
+    root, or 0 to a non-positive power, are skipped (``applies: False``).
+    """
+    A, B = parse_number(a), parse_number(b)
+    M = parse_exponent(m, "m")
+    N = parse_exponent(n, "n")
+    if N < 1:
+        raise ValueError(f"n is the root's index: a whole number from 1 to {MAX_POWER}.")
+    big = A ** abs(M)
+    if A != 0 and big.numerator.bit_length() + big.denominator.bit_length() > MAX_POWER_BITS:
+        raise ValueError("Those powers get too large to compare in floating point. Try a smaller base or exponents.")
+    fa, fb = float(A), float(B)
+    sa, sb = _base(A), _base(B)
+    rational, product = RADICAL_RULES
+    out = []
+
+    if A < 0:
+        out.append({"id": rational.id, "name": rational.name, "rule": rational.rule, "applies": False,
+                    "note": "Needs a ≥ 0: an even root of a negative number isn't real (√−4 isn't), and Python's ** returns a complex number for any negative base."})
+    elif A == 0 and M <= 0:
+        out.append({"id": rational.id, "name": rational.name, "rule": rational.rule, "applies": False,
+                    "note": "Needs a ≠ 0 here: 0 to a zero or negative power is undefined."})
+    else:
+        root = _radical(N)
+        sides = [f"{sa}^({_int_text(M)}/{N})", f"{root}({_pow_text(sa, M)})", _pow_text(f"({root}{sa})", M)]
+        floats = [fa ** (M / N), (fa ** M) ** (1 / N), (fa ** (1 / N)) ** M]
+        out.append(_radical_row(rational, sides, exact_root(A ** M, N), floats,
+                                formula.term_with_exponent_divided_by_exponent(fa, M, N)))
+
+    if A < 0 or B < 0:
+        out.append({"id": product.id, "name": product.name, "rule": product.rule, "applies": False,
+                    "note": "Needs a, b ≥ 0: √(−4 × −9) = 6, but √−4 × √−9 = 2i × 3i = −6."})
+    else:
+        sides = [f"√({sa} × {sb})", f"√{sa} × √{sb}"]
+        floats = [math.sqrt(fa * fb), math.sqrt(fa) * math.sqrt(fb)]
+        out.append(_radical_row(product, sides, exact_root(A * B, 2), floats, formula.root_term_multiplication(fa, fb)))
     return out
 
 

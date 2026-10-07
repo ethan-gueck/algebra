@@ -2,7 +2,7 @@ from fractions import Fraction
 
 import pytest
 
-from real_numbers.solver import exact_text, exponent_rules, order_of_operations, parse_number, percent_change, properties, proportion, sum_two_ways
+from real_numbers.solver import exact_root, exact_text, exponent_rules, order_of_operations, parse_number, percent_change, properties, proportion, radicals, sum_two_ways
 
 
 @pytest.mark.parametrize("text, value", [("0.1", Fraction(1, 10)), ("-3", Fraction(-3)), ("2/3", Fraction(2, 3)), ("1e-3", Fraction(1, 1000)), (".5", Fraction(1, 2)), ("−2.5", Fraction(-5, 2))])
@@ -116,15 +116,56 @@ def test_base_zero_skips_the_rules_that_divide_by_it():
 def test_exponent_formulas_are_exact_on_fractions_and_can_fail_on_floats():
     from core import formula
 
-    assert formula.exponent_multiplication(Fraction(3), -4, -4) and not formula.exponent_multiplication(3, -4, -4)
-    assert formula.exponent_division(Fraction(1, 3), 5, -2) and formula.negative_exponent(Fraction(7), 3)
-    assert formula.exponent_raised_by_exponent(2, 3, 4) and formula.exponent_equal_to_zero(5)
+    assert formula.term_multiplication_exponent(Fraction(3), -4, -4) and not formula.term_multiplication_exponent(3, -4, -4)
+    assert formula.term_division_with_exponent(Fraction(1, 3), 5, -2) and formula.term_with_negative_exponent(Fraction(7), 3)
+    assert formula.term_with_exponent_raised_by_exponent(2, 3, 4) and formula.term_with_exponent_equal_to_zero(5)
 
 
 @pytest.mark.parametrize("bad", [("2", "1.5", "1"), ("2", "21", "1"), ("1e16", "20", "20"), ("x", "1", "1")])
 def test_bad_exponent_inputs_are_rejected(bad):
     with pytest.raises(ValueError):
         exponent_rules(*bad)
+
+
+# ---- Radicals and rational exponents (A1.3) ----
+
+@pytest.mark.parametrize("x, k, root", [(Fraction(64), 3, Fraction(4)), (Fraction(1, 4), 2, Fraction(1, 2)), (Fraction(2), 2, None), (Fraction(0), 5, Fraction(0)), (Fraction(3**60), 20, Fraction(27))])
+def test_exact_roots_are_fractions_or_none(x, k, root):
+    assert exact_root(x, k) == root
+
+
+def test_rational_exponent_is_exact_but_float_sides_differ():
+    rows = {r["id"]: r for r in radicals("8", "18", "2", "3")}
+    rational = rows["rational"]
+    assert rational["sides"] == ["8^(2/3)", "³√(8^2)", "(³√8)^2"] and rational["exact"] == "4"
+    assert rational["float"] == [3.9999999999999996, 3.9999999999999996, 4.0]
+    assert not rational["float_equal"] and rational["holds"]  # == fails, math.isclose holds
+
+
+def test_product_of_irrational_roots_can_be_rational():
+    product = {r["id"]: r for r in radicals("2", "8", "1", "2")}["product"]
+    assert product["sides"] == ["√(2 × 8)", "√2 × √8"] and product["exact"] == "4"
+    assert product["float"] == [4.0, 4.000000000000001] and not product["float_equal"] and product["holds"]
+    assert {r["id"]: r for r in radicals("2", "3", "1", "2")}["product"]["exact"] is None  # √6 is irrational
+
+
+def test_radicals_need_non_negative_bases():
+    rows = {r["id"]: r for r in radicals("-4", "-9", "1", "2")}
+    assert not rows["rational"]["applies"] and not rows["product"]["applies"]
+    assert not {r["id"]: r for r in radicals("0", "1", "-1", "2")}["rational"]["applies"]
+
+
+def test_radical_formulas():
+    from core import formula
+
+    assert formula.term_with_exponent_divided_by_exponent(8, 2, 3) and not 8 ** (2 / 3) == 4  # why the formula uses isclose
+    assert formula.root_term_multiplication(2, 8) and formula.root_term_multiplication(0, 5)
+
+
+@pytest.mark.parametrize("bad", [("8", "1", "2", "0"), ("8", "1", "2", "-3"), ("8", "1", "1.5", "2"), ("1e16", "1", "20", "2")])
+def test_bad_radical_inputs_are_rejected(bad):
+    with pytest.raises(ValueError):
+        radicals(*bad)
 
 
 # ---- Ratios, proportions and percent change (A1.14) ----
