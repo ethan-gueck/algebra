@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en" data-theme="{{theme_name}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{title}}</title>
+  {{head}}
+  <style>
+{{styles}}
+  </style>
+</head>
+<body>
+  <header class="masthead">
+    <div class="container">
+      <div class="masthead__bar">
+        <span class="masthead__kicker">Algebra · A1.6</span>
+        <a href="https://ethan-gueck.github.io/">ethan-gueck.github.io</a>
+      </div>
+      <div class="masthead__title">
+        <div>
+          <h1 class="masthead__name">{{title}}</h1>
+          <p class="masthead__subtitle">Two lines, each through two points. Equal slopes never meet; slopes that multiply to −1 meet at a right angle.</p>
+        </div>
+        <p class="masthead__aside formula forms-aside" aria-label="parallel: m 1 equals m 2; perpendicular: m 1 times m 2 equals negative 1">
+          <span><span class="var">m</span>₁ = <span class="var">m</span>₂ <span class="kind-note">(parallel)</span></span>
+          <span><span class="var">m</span>₁ · <span class="var">m</span>₂ = −1 <span class="kind-note">(perpendicular)</span></span>
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <main class="container page-body">
+    <div class="widget">
+      <section class="widget__main" aria-label="Animation">
+        <div class="stage">
+          <canvas id="scene"></canvas>
+          {{stage_settings}}
+          <button id="run" class="stage__run" type="button">▶ Run animation</button>
+        </div>
+        <div class="narration" id="narration" aria-live="polite">Press run to animate.</div>
+        <div class="transport">
+          <button id="play" class="btn btn--primary btn--pill" type="button">▶ Play</button>
+          <button id="finish" class="btn btn--pill" type="button">Show final</button>
+          <input id="scrub" type="range" min="0" max="1000" value="1000" aria-label="Timeline position">
+          <label class="inline">Speed
+            <select id="speed" class="select">
+              <option value="0.5">0.5×</option>
+              <option value="1" selected>1×</option>
+              <option value="2">2×</option>
+            </select>
+          </label>
+        </div>
+
+        <section class="panel steps-panel" aria-labelledby="steps-title">
+          <div class="panel__head">
+            <h2 class="panel__title" id="steps-title">Step by step</h2>
+            {{code_button}}
+          </div>
+          <ol class="steps steps--compact" id="steps"></ol>
+          <p class="verdict" id="verdict" aria-live="polite"></p>
+        </section>
+      </section>
+
+      <aside class="widget__side">
+        <fieldset class="panel">
+          <legend>Line 1</legend>
+          <div class="point-grid">
+            <label for="x1"><span class="var">x</span>₁</label><input id="x1" type="number" step="any">
+            <label for="y1"><span class="var">y</span>₁</label><input id="y1" type="number" step="any">
+            <label for="x2"><span class="var">x</span>₂</label><input id="x2" type="number" step="any">
+            <label for="y2"><span class="var">y</span>₂</label><input id="y2" type="number" step="any">
+          </div>
+        </fieldset>
+        <fieldset class="panel">
+          <legend>Line 2</legend>
+          <div class="point-grid">
+            <label for="x3"><span class="var">x</span>₃</label><input id="x3" type="number" step="any">
+            <label for="y3"><span class="var">y</span>₃</label><input id="y3" type="number" step="any">
+            <label for="x4"><span class="var">x</span>₄</label><input id="x4" type="number" step="any">
+            <label for="y4"><span class="var">y</span>₄</label><input id="y4" type="number" step="any">
+          </div>
+          <p id="error" class="error" role="alert" hidden></p>
+          <div class="chips">
+            <button class="btn" type="button" data-preset="0,1,2,5,0,3,4,1">Perpendicular</button>
+            <button class="btn" type="button" data-preset="0,1,1,3,0,-3,2,1">Parallel</button>
+            <button class="btn" type="button" data-preset="0,0,2,1,0,4,3,1">Neither</button>
+            <button class="btn" type="button" data-preset="2,-2,2,4,-3,1,4,1">Vertical &amp; horizontal</button>
+            <button class="btn" type="button" data-preset="-1,-2,-1,3,3,-1,3,4">Two verticals</button>
+            <button class="btn" type="button" data-preset="0,1,1,3,2,5,3,7">Same line</button>
+          </div>
+        </fieldset>
+
+        <fieldset class="panel">
+          <legend>Results</legend>
+          <dl class="results" id="results"></dl>
+          <details class="glossary">
+            <summary>What these terms mean</summary>
+            <dl class="terms" id="glossary"></dl>
+          </details>
+        </fieldset>
+      </aside>
+    </div>
+  </main>
+
+  <script id="pp-config" type="application/json">{{config}}</script>
+  <script>
+{{scripts}}
+  </script>
+</body>
+</html>

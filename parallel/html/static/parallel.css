@@ -1,0 +1,42 @@
+/* parallel.css: page-specific styles for parallel & perpendicular lines (formula typesetting as on the lines page). */
+.formula { margin: 0; display: inline-flex; align-items: center; gap: 0.4em; font-family: var(--font-serif); }
+.frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; line-height: 1.25; }
+.frac .num { padding: 0 0.3em 0.1em; border-bottom: 1.5px solid currentColor; }
+.frac .den { padding-top: 0.1em; }
+.forms-aside { flex-direction: column; align-items: flex-end; gap: 0.15em; font-size: var(--fs-md); }
+.kind-note { font-family: var(--font-sans); font-size: var(--fs-sm); opacity: 0.75; }
+
+.steps-panel { margin-top: var(--space-4); }
+.point-label { margin: var(--space-2) 0 0; font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 600; color: var(--text-soft); }
+.point-label:first-of-type { margin-top: 0; }
+
+.terms { grid-template-columns: minmax(0, 1fr); gap: 0; }
+.terms dt { color: var(--text); font-weight: 600; padding-top: var(--space-2); }
+.terms dd { margin: 0; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-soft); }
+.glossary { margin-top: var(--space-3); }
+.glossary summary { cursor: pointer; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--primary-soft); }
+.glossary .terms { display: grid; margin: 0; }
+
+/* Direct / inverse toggle (as on the lines page) and the "every point shares k" table. */
+.segmented { display: flex; border: 1px solid var(--rule); border-radius: 999px; overflow: hidden; font-family: var(--font-sans); font-size: var(--fs-sm); }
+.segmented label { flex: 1; text-align: center; padding: 0.3rem 0.4rem; cursor: pointer; color: var(--text-soft); transition: background-color 0.2s ease, color 0.2s ease; }
+.segmented label + label { border-left: 1px solid var(--rule); }
+.segmented input { position: absolute; opacity: 0; pointer-events: none; }
+.segmented label:has(input:checked) { background: var(--primary); color: var(--on-primary); font-weight: 600; }
+.segmented label:has(input:focus-visible) { box-shadow: inset var(--focus); }
+.form-about { margin: var(--space-2) 0 0; font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-soft); }
+.form-general { display: block; font-family: var(--font-serif); font-style: italic; color: var(--text); }
+.same-k { margin-top: var(--space-4); }
+.same-k table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.same-k th, .same-k td { padding: 0.4rem 0.6rem; text-align: right; border-bottom: 1px solid var(--rule); }
+.same-k th:first-child, .same-k td:first-child { text-align: left; }
+.same-k thead th { font-family: var(--font-sans); font-size: var(--fs-sm); font-weight: 600; color: var(--text-soft); border-bottom: 2px solid var(--primary); }
+.same-k .same-k__note { font-family: var(--font-sans); font-size: var(--fs-sm); color: var(--text-soft); margin: var(--space-2) 0 0; }
+
+/* Four coordinates per line, two to a row */
+.point-grid { display: grid; grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr); gap: var(--space-2); align-items: center; }
+.point-grid label { font-family: var(--font-serif); font-style: italic; }
+.point-grid input { width: 100%; min-width: 0; }
+/* The verdict under the steps */
+.verdict { margin: var(--space-3) 0 0; padding: var(--space-2) var(--space-3); border-left: 3px solid var(--primary); font-family: var(--font-sans); font-weight: 600; }
+.verdict[data-relation="neither"] { border-left-color: var(--text-soft); }

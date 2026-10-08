@@ -182,6 +182,38 @@ def standard_coefficients(m, b):
 
 # _____________ A1.6 Parallel & Perpendicular Lines _____________
 
+def is_parallel(m1=None, m2=None, x1=None, y1=None, x2=None, y2=None, x3=None, y3=None, x4=None, y4=None):
+    """m₁ = m₂: two lines are parallel when their slopes are equal (they never meet).
+
+    m₁ is the slope of line 1 and m₂ the slope of line 2. Instead of a slope, pass two points
+    on that line and the slope is found with slope(): line 1 through (x₁, y₁) and (x₂, y₂),
+    line 2 through (x₃, y₃) and (x₄, y₄). A vertical line (x₁ = x₂) has no defined slope; it
+    is taken as m = ∞, so two vertical lines are parallel. Slopes are compared with a small
+    tolerance, since decimals computed from points are rounded.
+    """
+    if m1 is None:
+        m1 = math.inf if run(x1, x2) == 0 else slope(x1, y1, x2, y2)
+    if m2 is None:
+        m2 = math.inf if run(x3, x4) == 0 else slope(x3, y3, x4, y4)
+    if math.isinf(m1) or math.isinf(m2):
+        return math.isinf(m1) and math.isinf(m2)
+    return math.isclose(m1, m2, abs_tol=1e-12)
+
+def is_perpendicular(m1=None, m2=None, x1=None, y1=None, x2=None, y2=None, x3=None, y3=None, x4=None, y4=None):
+    """m₁ · m₂ = −1: two lines are perpendicular (meet at a right angle) when their slopes multiply to −1.
+
+    m₁ and m₂ are the slopes of lines 1 and 2, or pass two points per line as in is_parallel():
+    line 1 through (x₁, y₁) and (x₂, y₂), line 2 through (x₃, y₃) and (x₄, y₄). The product
+    rule cannot cover a vertical line (m = ∞, undefined): a vertical line is perpendicular to
+    a horizontal one (m = 0), the exception on the card.
+    """
+    if m1 is None:
+        m1 = math.inf if run(x1, x2) == 0 else slope(x1, y1, x2, y2)
+    if m2 is None:
+        m2 = math.inf if run(x3, x4) == 0 else slope(x3, y3, x4, y4)
+    if math.isinf(m1) or math.isinf(m2):
+        return (math.isinf(m1) and m2 == 0) or (math.isinf(m2) and m1 == 0)
+    return math.isclose(m1 * m2, -1)
 
 # _____________ A1.7 Absolute Value Equations & Inequalities _____________
 
