@@ -1,10 +1,4 @@
-"""Algebra: the mathematics behind every neuron in this track, in flashcard order (A1.1 … A2.15).
-
-Sections stay empty until that neuron is built. The pages' scaffolding
-(solvers, text, plot windows) lives in each topic folder and imports from
-here, and each page's "View the code" popup shows the functions it uses from
-this file.
-"""
+"""Algebra: the mathematics behind every neuron in this track, in flashcard order (A1.1 … A2.15)."""
 
 import cmath
 import math

@@ -20,7 +20,7 @@ MATH_SCRIPTS = (STATIC / "variation_math.js",)
 BUNDLE = WIDGET.extend(css=[STATIC / "variation.css"], js=[*MATH_SCRIPTS, STATIC / "variation.js"])
 # The "View the code" popup shows only the concept: this page's functions from core/formula.py.
 FORMULA = HTML_DIR.parent.parent / "core" / "formula.py"  # the Algebra track's mathematics, one section per neuron
-MATH = ("module", "direct_variation", "indirect_variation")
+MATH = ("direct_variation", "indirect_variation")
 # The animation's toggles, in the gear menu in the corner of the stage.
 SHOW = (("grid", "Grid"), ("labels", "Labels"), ("invariant", "Triangles / rectangles (= k)"))
 CODE = (CodeFile(FORMULA, "Direct and inverse variation in Python, as they read.", only=MATH),)

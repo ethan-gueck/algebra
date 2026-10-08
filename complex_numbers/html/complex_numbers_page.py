@@ -22,7 +22,7 @@ FORMULA = HTML_DIR.parent.parent / "core" / "formula.py"  # the Algebra track's 
 MATH_SCRIPTS = (*QUADRATIC_SCRIPTS, STATIC / "complex_numbers_math.js")
 BUNDLE = WIDGET.extend(css=[STATIC / "complex_numbers.css"], js=[*MATH_SCRIPTS, STATIC / "complex_numbers.js"])
 # The "View the code" popup shows only the concept: the A2.3 section of core/formula.py.
-MATH = ("module", "complex_to_real", "complex_standard_form", "complex_conjugate", "complex_modulus")
+MATH = ("complex_to_real", "complex_standard_form", "complex_conjugate", "complex_modulus")
 # The animation's toggles, in the gear menu in the corner of the stage.
 SHOW = (("grid", "Grid"), ("labels", "Labels"), ("powers", "Powers of i"), ("parts", "Real and imaginary parts"), ("conjugate", "Conjugate"), ("modulus", "Modulus circle"))
 CODE = (CodeFile(FORMULA, "Complex numbers in Python: i² = −1, z = a + bi, the conjugate and the modulus.", only=MATH),)

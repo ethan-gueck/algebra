@@ -20,7 +20,7 @@ MATH_SCRIPTS = (STATIC / "lines_math.js",)
 BUNDLE = WIDGET.extend(css=[STATIC / "lines.css"], js=[*MATH_SCRIPTS, STATIC / "lines.js"])
 # The "View the code" popup shows only the concept: this page's functions from core/formula.py.
 FORMULA = HTML_DIR.parent.parent / "core" / "formula.py"  # the Algebra track's mathematics, one section per neuron
-MATH = ("module", "linear_form", "point_form_slope", "standard_form_for_linear_form", "y_intercept", "x_intercept_of_linear_form", "standard_coefficients", "linear_inequality")
+MATH = ("linear_form", "point_form_slope", "standard_form_for_linear_form", "y_intercept", "x_intercept_of_linear_form", "standard_coefficients", "linear_inequality")
 # The animation's toggles, in the gear menu in the corner of the stage.
 SHOW = (("grid", "Grid"), ("labels", "Labels"), ("triangle", "Slope triangle"), ("intercepts", "Intercepts"), ("shade", "Shaded solutions"))
 CODE = (CodeFile(FORMULA, "The three forms of a line in Python, as they read, the conversions between them, and the rules for inequalities.", only=MATH),)

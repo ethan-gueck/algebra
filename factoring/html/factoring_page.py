@@ -23,7 +23,6 @@ MATH_SCRIPTS = (*QUADRATIC_SCRIPTS, STATIC / "factoring_math.js")
 BUNDLE = WIDGET.extend(css=[STATIC / "factoring.css"], js=[*MATH_SCRIPTS, STATIC / "factoring.js"])
 # The "View the code" popup shows only the concept: the A1.9, A1.10 and A1.12 sections of core/formula.py.
 MATH = (
-    "module",
     "polynomial_products",
     "special_products",
     "factored_form",

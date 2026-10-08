@@ -22,7 +22,7 @@ BUNDLE = BASE.extend(
 )
 # The "View the code" popup shows only the concept: this page's functions from core/formula.py.
 FORMULA = HTML_DIR.parent.parent / "core" / "formula.py"  # the Algebra track's mathematics, one section per neuron
-MATH = ("module", "commutative_addition", "commutative_multiplication", "associative_addition", "associative_multiplication", "distributive",
+MATH = ("commutative_addition", "commutative_multiplication", "associative_addition", "associative_multiplication", "distributive",
         "additive_identity", "multiplicative_identity", "additive_inverse", "multiplicative_inverse", "sine_of_solar_altitude", "solar_altitude", "PRECEDENCE",
         "term_multiplication_exponent", "term_division_with_exponent", "term_with_exponent_raised_by_exponent", "term_with_exponent_equal_to_zero",
         "term_with_negative_exponent", "term_with_exponent_divided_by_exponent", "root_term_multiplication",

@@ -20,7 +20,7 @@ MATH_SCRIPTS = (STATIC / "slope_math.js",)
 BUNDLE = WIDGET.extend(css=[STATIC / "slope.css"], js=[*MATH_SCRIPTS, STATIC / "slope.js"])
 # The "View the code" popup shows only the concept: this page's functions from core/formula.py.
 FORMULA = HTML_DIR.parent.parent / "core" / "formula.py"  # the Algebra track's mathematics, one section per neuron
-MATH = ("module", "rise", "run", "slope", "y_intercept", "x_intercept", "angle_of_inclination", "slope_intercept_form", "point_slope_form", "standard_form")
+MATH = ("rise", "run", "slope", "y_intercept", "x_intercept", "angle_of_inclination", "slope_intercept_form", "point_slope_form", "standard_form")
 # The animation's toggles, in the gear menu in the corner of the stage.
 SHOW = (("grid", "Grid"), ("labels", "Labels"), ("triangle", "Rise and run"), ("yint", "y-intercept"))
 CODE = (CodeFile(FORMULA, "Slope in Python, as it reads: rise Δy = y₂ − y₁, run Δx = x₂ − x₁, then m = Δy / Δx.", only=MATH),)
