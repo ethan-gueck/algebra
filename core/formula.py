@@ -4,6 +4,8 @@ import cmath
 import math
 
 
+# ============= Algebra I =============
+
 # _____________ A1.1 Properties of Real Numbers & Order of Operations _____________
 
 def commutative_addition(a, b):
@@ -66,6 +68,8 @@ def solar_altitude(sine):
 PRECEDENCE = {"^": 4, "neg": 3, "*": 2, "/": 2, "+": 1, "-": 1}
 
 
+# _____________ A1.2 Fractions & Rational Arithmetic _____________
+
 # _____________ A1.3 Exponent Rules _____________
 
 def term_multiplication_exponent(a, m, n):
@@ -97,6 +101,8 @@ def term_with_exponent_divided_by_exponent(a, m, n):
 def root_term_multiplication(a, b):
     """√(ab) = √a × √b, for a, b ≥ 0: the root of a product is the product of the roots."""
     return math.isclose(math.sqrt(a * b), math.sqrt(a) * math.sqrt(b))
+
+# _____________ A1.5 Scientific Notation & Significant Figures _____________
 
 # _____________ A1.6 Slope _____________
 
@@ -215,11 +221,13 @@ def is_perpendicular(m1=None, m2=None, x1=None, y1=None, x2=None, y2=None, x3=No
         return (math.isinf(m1) and m2 == 0) or (math.isinf(m2) and m1 == 0)
     return math.isclose(m1 * m2, -1)
 
+# _____________ A1.9 Functions, Domain & Range _____________
+
+# _____________ A1.10 Solving Linear & Literal Equations _____________
+
 # _____________ A1.11 Absolute Value Equations & Inequalities _____________
 
-
 # _____________ A1.12 Systems of Linear Equations _____________
-
 
 # _____________ A1.13 Polynomial Products & Special Products _____________
 
@@ -353,6 +361,8 @@ def convert_factored_form_to_vertex_form(a, r1, r2):
     return a, h, k
 
 
+# _____________ A1.17 Quadratic & Polynomial Inequalities _____________
+
 # _____________ A1.18 Direct & Inverse Variation _____________
 
 def direct_variation(k, x):
@@ -395,12 +405,17 @@ def linear_inequality(a, b, c):
 
 # _____________ A1.21 Sets, Set Operations & Interval Notation _____________
 
+# ============= Algebra II =============
 
 # _____________ A2.1 Functions: Composition & Inverses _____________
 
+# _____________ A2.2 Parent Functions & Function Families _____________
+
+# _____________ A2.3 Even & Odd Functions _____________
+
+# _____________ A2.4 Piecewise & Step Functions _____________
 
 # _____________ A2.5 Transformations of Functions _____________
-
 
 # _____________ A2.6 Complex Numbers _____________
 
@@ -421,37 +436,42 @@ def complex_modulus(z):
     return abs(z)
 
 
+# _____________ A2.7 Polynomial Long & Synthetic Division _____________
+
 # _____________ A2.8 Remainder, Factor & Rational Root Theorems _____________
 
+# _____________ A2.9 Polynomial Graphs: End Behavior & Multiplicity _____________
 
 # _____________ A2.10 Rational Functions & Asymptotes _____________
 
+# _____________ A2.11 Rational Equations & Inequalities _____________
+
+# _____________ A2.12 Radical Equations & Extraneous Roots _____________
 
 # _____________ A2.13 Exponential Growth & Decay _____________
 
-
 # _____________ A2.14 Logarithms: Definition & Properties _____________
 
+# _____________ A2.15 Graphs of Exponential & Logarithmic Functions _____________
 
 # _____________ A2.16 Change of Base & Exponential Equations _____________
 
+# _____________ A2.17 Logarithmic Equations _____________
 
 # _____________ A2.18 Arithmetic Sequences & Series _____________
 
-
 # _____________ A2.19 Geometric Sequences & Series _____________
 
+# _____________ A2.20 Arithmetic, Geometric & Harmonic Means _____________
 
 # _____________ A2.21 Sigma Notation & Summation Formulas _____________
 
+# _____________ A2.22 Mathematical Induction _____________
 
 # _____________ A2.23 Binomial Theorem _____________
 
-
 # _____________ A2.24 Matrix Operations _____________
 
-
 # _____________ A2.25 Determinants, Inverses & Cramer’s Rule _____________
-
 
 # _____________ A2.26 Conic Sections _____________
