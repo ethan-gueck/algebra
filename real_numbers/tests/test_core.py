@@ -89,7 +89,7 @@ def test_solar_altitude_formula():
     assert formula.solar_altitude(formula.sine_of_solar_altitude(math.radians(40), 0.0, math.pi / 2)) == pytest.approx(0, abs=1e-9)
 
 
-# ---- Exponent rules (A1.2) ----
+# ---- Exponent rules (A1.3) ----
 
 def test_exponent_rules_hold_exactly_but_not_always_in_floating_point():
     rows = {r["id"]: r for r in exponent_rules("0.1", "2", "5")}
@@ -127,7 +127,7 @@ def test_bad_exponent_inputs_are_rejected(bad):
         exponent_rules(*bad)
 
 
-# ---- Radicals and rational exponents (A1.3) ----
+# ---- Radicals and rational exponents (A1.4) ----
 
 @pytest.mark.parametrize("x, k, root", [(Fraction(64), 3, Fraction(4)), (Fraction(1, 4), 2, Fraction(1, 2)), (Fraction(2), 2, None), (Fraction(0), 5, Fraction(0)), (Fraction(3**60), 20, Fraction(27))])
 def test_exact_roots_are_fractions_or_none(x, k, root):
@@ -168,7 +168,7 @@ def test_bad_radical_inputs_are_rejected(bad):
         radicals(*bad)
 
 
-# ---- Ratios, proportions and percent change (A1.14) ----
+# ---- Ratios, proportions and percent change (A1.19) ----
 
 def test_proportion_holds_exactly_but_float_division_disagrees():
     r = proportion("0.1", "0.3", "1", "3")

@@ -16,7 +16,7 @@ def test_page_inlines_its_scripts_and_has_the_code_popup():
     dialog = document.split('<dialog class="code-modal"')[1].split("</dialog>")[0]
     for name in ("complex-to-real", "complex-standard-form", "complex-conjugate", "complex-modulus"):
         assert f'id="pp-code-0-{name}"' in dialog
-    assert "_clean" not in dialog and "quadratic_formula" not in dialog  # only the A2.3 section
+    assert "_clean" not in dialog and "quadratic_formula" not in dialog  # only the A2.6 section
 
 
 def test_config_carries_solution_and_roles():

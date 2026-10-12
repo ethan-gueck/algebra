@@ -1,5 +1,5 @@
 /*
- * real_numbers_math.js — browser mirror of real_numbers/solver.py (A1.1, A1.2, A1.3, A1.14).
+ * real_numbers_math.js — browser mirror of real_numbers/solver.py (A1.1, A1.3, A1.4, A1.19).
  *
  * Exact real numbers are BigInt fractions (Python: fractions.Fraction);
  * floating point is plain Number (IEEE 754 doubles, like Python's float).
@@ -296,7 +296,7 @@
     };
   }
 
-  // ---- Exponent rules (A1.2) -------------------------------------------------
+  // ---- Exponent rules (A1.3) -------------------------------------------------
   const MAX_POWER = 20;
   const MAX_POWER_BITS = 1000;  // numerator + denominator bits: keeps every power inside a double's range (2^±1023)
   const EXPONENT_RULES = [
@@ -353,14 +353,14 @@
     });
   }
 
-  // ---- Radicals and rational exponents (A1.3) -------------------------------
+  // ---- Radicals and rational exponents (A1.4) -------------------------------
   const RADICAL_RULES = [
     ["rational", "Rational exponent", "aᵐᐟⁿ = ⁿ√(aᵐ) = (ⁿ√a)ᵐ"],
     ["product", "Product of roots", "√(ab) = √a × √b"],
   ];
   const SUPERSCRIPT = "⁰¹²³⁴⁵⁶⁷⁸⁹";
 
-  // core/formula.py: A1.3 (math.isclose with its default rel_tol = 1e-9)
+  // core/formula.py: A1.4 (math.isclose with its default rel_tol = 1e-9)
   const isclose = (x, y) => x === y || Math.abs(x - y) <= 1e-9 * Math.max(Math.abs(x), Math.abs(y));
   const termWithExponentDividedByExponent = (a, m, n) => isclose(a ** (m / n), (a ** m) ** (1 / n)) && isclose(a ** (m / n), (a ** (1 / n)) ** m);
   const rootTermMultiplication = (a, b) => isclose(Math.sqrt(a * b), Math.sqrt(a) * Math.sqrt(b));
@@ -422,7 +422,7 @@
     return out;
   }
 
-  // ---- Ratios, proportions and percent change (A1.14) -------------------------
+  // ---- Ratios, proportions and percent change (A1.19) -------------------------
   const ratioText = (x, y) => `${exactText(x)} : ${exactText(y)}`;
   function simplestRatio(x, y) {
     const q = div(x, y);

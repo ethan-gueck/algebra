@@ -1,5 +1,5 @@
 /*
- * complex_numbers_math.js — browser mirror of complex_numbers/solver.py and the A2.3 section of core/formula.py.
+ * complex_numbers_math.js — browser mirror of complex_numbers/solver.py and the A2.6 section of core/formula.py.
  *
  * JavaScript has no complex type, so a complex number is { re, im }, multiplied
  * exactly as Python multiplies complex numbers. Loaded after a1's
@@ -14,7 +14,7 @@
   // ---- complex arithmetic (Python's complex type) --------------------------------
   const mul = (z, w) => ({ re: z.re * w.re - z.im * w.im, im: z.re * w.im + z.im * w.re });
 
-  // ---- core/formula.py: A2.3 Complex Numbers -------------------------------------
+  // ---- core/formula.py: A2.6 Complex Numbers -------------------------------------
   const complexToReal = (i) => mul(i, i);
   const complexStandardForm = (a, b) => ({ re: a, im: b });
   const complexConjugate = (z) => ({ re: z.re, im: -z.im });

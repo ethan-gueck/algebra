@@ -18,7 +18,7 @@ def _build_page(output_path, theme=None):
 TOPIC = Topic(
     title="Slope",
     description="Rise over run between two points, the angle of the line, its intercepts, and the line in slope-intercept, point-slope and standard form.",
-    cards=("A1.4",),  # flashcard: Slope
+    cards=("A1.6",),  # flashcard: Slope
     modules=(
         JSModule(
             name="slope",

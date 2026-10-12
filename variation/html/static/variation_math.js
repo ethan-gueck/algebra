@@ -1,5 +1,5 @@
 /*
- * variation_math.js — browser mirror of core/formula.py (A1.13) + variation/solver.py.
+ * variation_math.js — browser mirror of core/formula.py (A1.18) + variation/solver.py.
  *
  * The page recalculates as the points move, so the math is ported here.
  * Python stays the source of truth: tests/test_js_parity.py runs this file and

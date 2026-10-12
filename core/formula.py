@@ -1,4 +1,4 @@
-"""Algebra: the mathematics behind every neuron in this track, in flashcard order (A1.1 … A2.15)."""
+"""Algebra: the mathematics behind every neuron in this track, in flashcard order (A1.1 … A2.26)."""
 
 import cmath
 import math
@@ -66,7 +66,7 @@ def solar_altitude(sine):
 PRECEDENCE = {"^": 4, "neg": 3, "*": 2, "/": 2, "+": 1, "-": 1}
 
 
-# _____________ A1.2 Exponent Rules _____________
+# _____________ A1.3 Exponent Rules _____________
 
 def term_multiplication_exponent(a, m, n):
     """aᵐ × aⁿ = aᵐ⁺ⁿ: multiplying powers of the same base adds the exponents."""
@@ -88,7 +88,7 @@ def term_with_negative_exponent(a, m):
     """a⁻ᵐ = 1 ÷ aᵐ, for a ≠ 0: a negative exponent is the reciprocal of the positive power."""
     return a ** (-m) == 1 / a ** m
 
-# _____________ A1.3 Radicals & Rational Exponents _____________
+# _____________ A1.4 Radicals & Rational Exponents _____________
 
 def term_with_exponent_divided_by_exponent(a, m, n):
     """aᵐᐟⁿ = ⁿ√(aᵐ) = (ⁿ√a)ᵐ, for a ≥ 0, n ≠ 0: the denominator is the root, the numerator the power."""
@@ -98,7 +98,7 @@ def root_term_multiplication(a, b):
     """√(ab) = √a × √b, for a, b ≥ 0: the root of a product is the product of the roots."""
     return math.isclose(math.sqrt(a * b), math.sqrt(a) * math.sqrt(b))
 
-# _____________ A1.4 Slope _____________
+# _____________ A1.6 Slope _____________
 
 def rise(y1, y2):
     """Δy = y₂ − y₁"""
@@ -146,7 +146,7 @@ def standard_form(x1, y1, x2, y2):
     return A, B, A * x1 + B * y1
 
 
-# _____________ A1.5 Equations of a Line _____________
+# _____________ A1.7 Equations of a Line _____________
 
 def linear_form(b, x, m=None, y2=None, y1=None, x2=None, x1=None):
     """y = mx + b: slope-intercept form, y for a given x.
@@ -180,7 +180,7 @@ def standard_coefficients(m, b):
     return -m, 1, b
 
 
-# _____________ A1.6 Parallel & Perpendicular Lines _____________
+# _____________ A1.8 Parallel & Perpendicular Lines _____________
 
 def is_parallel(m1=None, m2=None, x1=None, y1=None, x2=None, y2=None, x3=None, y3=None, x4=None, y4=None):
     """m₁ = m₂: two lines are parallel when their slopes are equal (they never meet).
@@ -215,13 +215,13 @@ def is_perpendicular(m1=None, m2=None, x1=None, y1=None, x2=None, y2=None, x3=No
         return (math.isinf(m1) and m2 == 0) or (math.isinf(m2) and m1 == 0)
     return math.isclose(m1 * m2, -1)
 
-# _____________ A1.7 Absolute Value Equations & Inequalities _____________
+# _____________ A1.11 Absolute Value Equations & Inequalities _____________
 
 
-# _____________ A1.8 Systems of Linear Equations _____________
+# _____________ A1.12 Systems of Linear Equations _____________
 
 
-# _____________ A1.9 Polynomial Products & Special Products _____________
+# _____________ A1.13 Polynomial Products & Special Products _____________
 
 def polynomial_products(a, b):
     """(a ± b)² = a² ± 2ab + b²: squaring a binomial gives the square of each term plus twice their product.
@@ -235,7 +235,7 @@ def special_products(a, b):
     return math.isclose((a + b) * (a - b), a ** 2 - b ** 2, abs_tol=1e-9)
     
 
-# _____________ A1.10 Factoring _____________
+# _____________ A1.14 Factoring _____________
 
 def factored_form(a, r1, r2, x):
     """y = a(x − r₁)(x − r₂)"""
@@ -279,7 +279,7 @@ def ac_method(a, b, c):
     return (b + math.sqrt(d)) / 2, (b - math.sqrt(d)) / 2
 
 
-# _____________ A1.11 Quadratic Formula & Discriminant _____________
+# _____________ A1.15 Quadratic Formula & Discriminant _____________
 
 def parabola(a, b, c, x):
     """y = ax² + bx + c"""
@@ -325,7 +325,7 @@ def opens(a):
     return "up" if a > 0 else "down"
 
 
-# _____________ A1.12 Vertex Form of a Quadratic _____________
+# _____________ A1.16 Vertex Form & Completing the Square _____________
 
 def vertex_form(a, h, k, x):
     """y = a(x − h)² + k"""
@@ -353,7 +353,7 @@ def convert_factored_form_to_vertex_form(a, r1, r2):
     return a, h, k
 
 
-# _____________ A1.13 Direct & Inverse Variation _____________
+# _____________ A1.18 Direct & Inverse Variation _____________
 
 def direct_variation(k, x):
     """y = kx: y varies directly with x.
@@ -373,7 +373,7 @@ def indirect_variation(k, x):
     """
     return k / x
 
-# _____________ A1.14 Ratios, Proportions & Percent Change _____________
+# _____________ A1.19 Ratios, Proportions & Percent Change _____________
 
 def ratio(a, b):
     """a : b"""
@@ -387,22 +387,22 @@ def percent_change(original, new):
     """(new − original) ÷ original × 100%, for original ≠ 0: positive is an increase, negative a decrease."""
     return (new - original) / original * 100
 
-# _____________ A1.15 Linear Inequalities _____________
+# _____________ A1.20 Linear Inequalities _____________
 
 def linear_inequality(a, b, c):
     """a > b implies a + c > b + c and ac > bc for c > 0, ac < bc for c < 0 (c ≠ 0)."""
     return (a > b) == (a + c > b + c) and (a > b) == (a*c > b*c if c > 0 else a*c < b*c)
 
-# _____________ A1.16 Sets, Set Operations & Interval Notation _____________
+# _____________ A1.21 Sets, Set Operations & Interval Notation _____________
 
 
 # _____________ A2.1 Functions: Composition & Inverses _____________
 
 
-# _____________ A2.2 Transformations of Functions _____________
+# _____________ A2.5 Transformations of Functions _____________
 
 
-# _____________ A2.3 Complex Numbers _____________
+# _____________ A2.6 Complex Numbers _____________
 
 def complex_to_real(i):
     """i² = −1"""
@@ -421,37 +421,37 @@ def complex_modulus(z):
     return abs(z)
 
 
-# _____________ A2.4 Remainder, Factor & Rational Root Theorems _____________
+# _____________ A2.8 Remainder, Factor & Rational Root Theorems _____________
 
 
-# _____________ A2.5 Rational Functions & Asymptotes _____________
+# _____________ A2.10 Rational Functions & Asymptotes _____________
 
 
-# _____________ A2.6 Exponential Growth & Decay _____________
+# _____________ A2.13 Exponential Growth & Decay _____________
 
 
-# _____________ A2.7 Logarithms: Definition & Properties _____________
+# _____________ A2.14 Logarithms: Definition & Properties _____________
 
 
-# _____________ A2.8 Change of Base & Exponential Equations _____________
+# _____________ A2.16 Change of Base & Exponential Equations _____________
 
 
-# _____________ A2.9 Arithmetic Sequences & Series _____________
+# _____________ A2.18 Arithmetic Sequences & Series _____________
 
 
-# _____________ A2.10 Geometric Sequences & Series _____________
+# _____________ A2.19 Geometric Sequences & Series _____________
 
 
-# _____________ A2.11 Sigma Notation & Summation Formulas _____________
+# _____________ A2.21 Sigma Notation & Summation Formulas _____________
 
 
-# _____________ A2.12 Binomial Theorem _____________
+# _____________ A2.23 Binomial Theorem _____________
 
 
-# _____________ A2.13 Matrix Operations _____________
+# _____________ A2.24 Matrix Operations _____________
 
 
-# _____________ A2.14 Determinants, Inverses & Cramer’s Rule _____________
+# _____________ A2.25 Determinants, Inverses & Cramer’s Rule _____________
 
 
-# _____________ A2.15 Conic Sections _____________
+# _____________ A2.26 Conic Sections _____________

@@ -1,6 +1,6 @@
 # a1: Quadratic Formula & Vertex Form (template topic)
 
-Solves and visualises **ax² + bx + c = 0**, and writes the same parabola in vertex form **y = a(x − h)² + k** (flashcards A1.11 and A1.12):
+Solves and visualises **ax² + bx + c = 0**, and writes the same parabola in vertex form **y = a(x − h)² + k** (flashcards A1.15 and A1.16):
 
 $$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$$
 
@@ -18,8 +18,8 @@ Shared themes, CSS/JS, plotting, Manim helpers and the page builder live in [`ge
 
 ```
 a1/
-├── solver.py                # built on ../core/formula.py (A1.11): roots, text forms, plot window, solve(); shared with factoring/
-├── forms.py                 # the page's calculations: quadratic formula steps, vertex form (A1.12), completing the square
+├── solver.py                # built on ../core/formula.py (A1.15): roots, text forms, plot window, solve(); shared with factoring/
+├── forms.py                 # the page's calculations: quadratic formula steps, vertex form (A1.16), completing the square
 ├── animations/
 │   ├── quadratic_scene.py   #   QuadraticScene(ThemedScene) + make_quadratic_scene(a, b, c, theme=..., **show)
 │   └── render.py            #   render_quadratic(...)

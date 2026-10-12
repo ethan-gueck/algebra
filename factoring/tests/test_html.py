@@ -16,7 +16,7 @@ def test_page_inlines_its_scripts_and_has_the_code_popup():
     dialog = document.split('<dialog class="code-modal"')[1].split("</dialog>")[0]
     for name in ("polynomial-products", "special-products", "convert-standard-form-to-factored-form", "convert-vertex-form-to-factored-form", "ac-method", "convert-standard-form-to-vertex-form"):
         assert f'id="pp-code-0-{name}"' in dialog
-    assert "_clean" not in dialog and "A2.15 Conic Sections" not in dialog  # only the concept: no solver, no empty sections
+    assert "_clean" not in dialog and "A2.26 Conic Sections" not in dialog  # only the concept: no solver, no empty sections
 
 
 def test_config_carries_solution_and_roles():
@@ -29,5 +29,5 @@ def test_config_carries_solution_and_roles():
 def test_page_carries_the_special_products():
     document = build_factoring_html(output_path=None)
     config = _config(document)
-    assert "Algebra · A1.9 · A1.10" in document and 'id="products"' in document and 'id="patterns"' in document
+    assert "Algebra · A1.13 · A1.14" in document and 'id="products"' in document and 'id="patterns"' in document
     assert config["products_initial"] == [0.1, 0.3] and len(config["products"]["rows"]) == 3

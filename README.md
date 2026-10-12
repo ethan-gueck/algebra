@@ -16,21 +16,21 @@ The bar is the cumulative size of every file in the published site, where 100% i
 
 | Folder | Page | Flashcards |
 | --- | --- | --- |
-| [`real_numbers/`](real_numbers/) | [Real Numbers, Exponents, Radicals & Ratios](https://ethan-gueck.github.io/algebra/real_numbers/properties.html) | A1.1, A1.2, A1.3, A1.14 |
-| [`slope/`](slope/) | [Slope](https://ethan-gueck.github.io/algebra/slope/slope.html) | A1.4 |
-| [`lines/`](lines/) | [Equations of a Line & Linear Inequalities](https://ethan-gueck.github.io/algebra/lines/lines.html) | A1.5, A1.15 |
-| [`parallel/`](parallel/) | [Parallel & Perpendicular Lines](https://ethan-gueck.github.io/algebra/parallel/parallel.html) | A1.6 |
-| [`factoring/`](factoring/) | [Special Products & Factoring](https://ethan-gueck.github.io/algebra/factoring/factoring.html) | A1.9, A1.10 |
-| [`variation/`](variation/) | [Direct & Inverse Variation](https://ethan-gueck.github.io/algebra/variation/variation.html) | A1.13 |
-| [`a1/`](a1/) | [Quadratic Formula & Vertex Form](https://ethan-gueck.github.io/algebra/a1/quadratic.html) | A1.11, A1.12 |
-| [`complex_numbers/`](complex_numbers/) | [Complex Numbers](https://ethan-gueck.github.io/algebra/complex_numbers/complex_numbers.html) | A2.3 |
+| [`real_numbers/`](real_numbers/) | [Real Numbers, Exponents, Radicals & Ratios](https://ethan-gueck.github.io/algebra/real_numbers/properties.html) | A1.1, A1.3, A1.4, A1.19 |
+| [`slope/`](slope/) | [Slope](https://ethan-gueck.github.io/algebra/slope/slope.html) | A1.6 |
+| [`lines/`](lines/) | [Equations of a Line & Linear Inequalities](https://ethan-gueck.github.io/algebra/lines/lines.html) | A1.7, A1.20 |
+| [`parallel/`](parallel/) | [Parallel & Perpendicular Lines](https://ethan-gueck.github.io/algebra/parallel/parallel.html) | A1.8 |
+| [`factoring/`](factoring/) | [Special Products & Factoring](https://ethan-gueck.github.io/algebra/factoring/factoring.html) | A1.13, A1.14 |
+| [`variation/`](variation/) | [Direct & Inverse Variation](https://ethan-gueck.github.io/algebra/variation/variation.html) | A1.18 |
+| [`a1/`](a1/) | [Quadratic Formula & Vertex Form](https://ethan-gueck.github.io/algebra/a1/quadratic.html) | A1.15, A1.16 |
+| [`complex_numbers/`](complex_numbers/) | [Complex Numbers](https://ethan-gueck.github.io/algebra/complex_numbers/complex_numbers.html) | A2.6 |
 
 ## Layout
 
 ```
 algebra/
 ├── <topic>/                  one folder per topic
-├── core/formula.py           every neuron's mathematics, in flashcard order A1.1 … A2.15 (empty sections until built)
+├── core/formula.py           every neuron's mathematics, in flashcard order A1.1 … A2.26 (empty sections until built)
 ├── tests/test_site.py        the site builds; topic cards are flashcard ids
 ├── pyproject.toml            [tool.portfolio-site]: site title and URL
 ├── .github/workflows/pages.yml   test, build and deploy on every push to main

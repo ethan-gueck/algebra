@@ -1,5 +1,5 @@
 /*
- * forms_math.js — browser mirror of a1/forms.py and the A1.12 section of core/formula.py.
+ * forms_math.js — browser mirror of a1/forms.py and the A1.16 section of core/formula.py.
  *
  * Loaded after a1's quadratic_math.js (window.QuadMath), which supplies the
  * parabola's details and the three forms as text, exactly as the Python solver
@@ -12,7 +12,7 @@
   const Quad = global.QuadMath;
   const { fmt } = Quad;
 
-  // ---- core/formula.py: A1.12 Vertex Form ------------------------------------
+  // ---- core/formula.py: A1.16 Vertex Form ------------------------------------
   const parabola = (a, b, c, x) => a * x * x + b * x + c;
   const factoredForm = (a, r1, r2, x) => a * (x - r1) * (x - r2);
   const opens = (a) => (a > 0 ? "up" : "down");

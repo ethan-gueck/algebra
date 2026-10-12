@@ -20,7 +20,7 @@ def _build_page(output_path, theme=None):
 TOPIC = Topic(
     title="Special Products & Factoring",
     description="The special products (a ± b)² and (a + b)(a − b), checked with == and math.isclose and turned into quadratics; a quadratic in standard, vertex and factored form: the conversions between them, what the discriminant says about factoring, and the factoring itself.",
-    cards=("A1.9", "A1.10"),  # flashcards: Polynomial Products & Special Products; Factoring
+    cards=("A1.13", "A1.14"),  # flashcards: Polynomial Products & Special Products; Factoring
     modules=(
         JSModule(
             name="factoring",

@@ -1,6 +1,6 @@
 """z = a + bi on the complex plane: i² = −1, the standard form, the conjugate and the modulus, step by step.
 
-The mathematics lives in core/formula.py (section A2.3 Complex Numbers): i²,
+The mathematics lives in core/formula.py (section A2.6 Complex Numbers): i²,
 z = a + bi, its conjugate z̄ = a − bi and its modulus |z| = √(a² + b²). This
 module calls those and adds what the page needs around them: complex numbers
 as text and JSON, the powers of i, which quadrant z sits in, and each formula
@@ -58,7 +58,7 @@ def powers() -> list[dict]:
 
 
 def steps(a: float, b: float, z: complex, conjugate: complex, modulus: float, product: complex) -> list[dict]:
-    """Each formula on the A2.3 card, with this z's numbers in it."""
+    """Each formula on the A2.6 card, with this z's numbers in it."""
     square = formula.complex_to_real(I)
 
     def worked(a_text: str, sign: str, b: float, z: complex) -> str:

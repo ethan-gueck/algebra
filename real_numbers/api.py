@@ -21,7 +21,7 @@ def _build_page(output_path, theme=None):
 TOPIC = Topic(
     title="Real Numbers, Exponents, Radicals & Ratios",
     description="Commutative, associative, distributive, identity and inverse properties, the exponent rules and rational exponents checked exactly and in floating point; PEMDAS one step at a time; ratios, proportions and percent change; and how float rounding produced impossible solar altitudes.",
-    cards=("A1.1", "A1.2", "A1.3", "A1.14"),  # flashcards: Properties of Real Numbers & Order of Operations; Exponent Rules; Radicals & Rational Exponents; Ratios, Proportions & Percent Change
+    cards=("A1.1", "A1.3", "A1.4", "A1.19"),  # flashcards: Properties of Real Numbers & Order of Operations; Exponent Rules; Radicals & Rational Exponents; Ratios, Proportions & Percent Change
     modules=(
         JSModule(
             name="real_numbers",

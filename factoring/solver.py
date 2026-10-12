@@ -1,7 +1,7 @@
 """One quadratic in standard, vertex and factored form: the conversions and the factoring, step by step.
 
-The mathematics lives in core/formula.py (sections A1.9 Polynomial Products,
-A1.10 Factoring and A1.12 Vertex Form): the special products factoring
+The mathematics lives in core/formula.py (sections A1.13 Polynomial Products,
+A1.14 Factoring and A1.16 Vertex Form): the special products factoring
 reverses, the three forms and the conversions between them. This module
 calls those and adds what the page needs around them: float tidying, the
 discriminant test for whether the quadratic factors, the AC-method or
@@ -226,11 +226,11 @@ def conversions(form: str, a: float, p: float, q: float, std: dict, vtx: dict, f
     return out
 
 
-# ---- Special products (A1.9) -----------------------------------------------
+# ---- Special products (A1.13) -----------------------------------------------
 
 
 def special_products_table(a: float, b: float) -> dict:
-    """The A1.9 products with numbers a, b, and the quadratics in x they become.
+    """The A1.13 products with numbers a, b, and the quadratics in x they become.
 
     Each row has both sides written out, their float values, whether == agrees
     and the formula's math.isclose verdict (formula.polynomial_products checks

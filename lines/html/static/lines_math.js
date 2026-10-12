@@ -1,5 +1,5 @@
 /*
- * lines_math.js — browser mirror of core/formula.py (A1.4, A1.5, A1.15) + lines/solver.py (+ general/plotting/viewport.py).
+ * lines_math.js — browser mirror of core/formula.py (A1.6, A1.7, A1.20) + lines/solver.py (+ general/plotting/viewport.py).
  *
  * The page recalculates as the point and slope move, so the math is ported
  * here. Python stays the source of truth: tests/test_js_parity.py runs this
@@ -14,9 +14,9 @@
   const linearForm = (b, x, m = null, y2 = null, y1 = null, x2 = null, x1 = null) => (m ?? (y1 - y2) / (x1 - x2)) * x + b;
   const pointFormSlope = (x1, y1, m, x) => m * (x - x1) + y1;         // y − y₁ = m(x − x₁)
   const standardFormForLinearForm = (A, B, C, x) => (C - A * x) / B;  // Ax + By = C, for B ≠ 0
-  const yIntercept = (m, x1, y1) => y1 - m * x1;                      // b = y₁ − m·x₁ (A1.4)
+  const yIntercept = (m, x1, y1) => y1 - m * x1;                      // b = y₁ − m·x₁ (A1.6)
   const xInterceptOfLinearForm = (m, b) => -b / m;                    // x = −b / m
-  // a > b ⇒ a + c > b + c, and ac > bc for c > 0, ac < bc for c < 0 (A1.15)
+  // a > b ⇒ a + c > b + c, and ac > bc for c > 0, ac < bc for c < 0 (A1.20)
   const linearInequality = (a, b, c) => (a > b) === (a + c > b + c) && (a > b) === (c > 0 ? a * c > b * c : a * c < b * c);
 
   // ---- lines/solver.py----------------------------------------------------------

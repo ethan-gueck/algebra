@@ -1,5 +1,5 @@
 /*
- * factoring_math.js — browser mirror of factoring/solver.py and the A1.9 / A1.10 / A1.12 sections of core/formula.py.
+ * factoring_math.js — browser mirror of factoring/solver.py and the A1.13 / A1.14 / A1.16 sections of core/formula.py.
  *
  * Loaded after a1's quadratic_math.js (window.QuadMath), which supplies the
  * parabola's details and the three forms as text, exactly as the Python solver
@@ -12,7 +12,7 @@
   const Quad = global.QuadMath;
   const { fmt } = Quad;
 
-  // ---- core/formula.py: A1.10 Factoring, A1.12 Vertex Form ----------------
+  // ---- core/formula.py: A1.14 Factoring, A1.16 Vertex Form ----------------
   const discriminant = (a, b, c) => b * b - 4 * a * c;
   const parabola = (a, b, c, x) => a * x * x + b * x + c;
   const factoredForm = (a, r1, r2, x) => a * (x - r1) * (x - r2);
@@ -33,7 +33,7 @@
   }
   const acMethod = (a, b, c) => { const d = discriminant(a, b, c); return [(b + Math.sqrt(d)) / 2, (b - Math.sqrt(d)) / 2]; };
 
-  // ---- core/formula.py: A1.9 Polynomial Products & Special Products ---------
+  // ---- core/formula.py: A1.13 Polynomial Products & Special Products ---------
   /** Python's math.isclose with the default rel_tol and the formulas' abs_tol. */
   const isclose = (x, y, absTol = 1e-9) => x === y || Math.abs(x - y) <= Math.max(1e-9 * Math.max(Math.abs(x), Math.abs(y)), absTol);
   const polynomialProducts = (a, b) => isclose((a + b) ** 2, a ** 2 + 2 * a * b + b ** 2) && isclose((a - b) ** 2, a ** 2 - 2 * a * b + b ** 2);
@@ -224,7 +224,7 @@
     };
   }
 
-  // ---- Special products (A1.9) ----------------------------------------------
+  // ---- Special products (A1.13) ----------------------------------------------
   function specialProductsTable(a, b) {
     const pa = p_(a), pb = p_(b);
     const squares = polynomialProducts(a, b);

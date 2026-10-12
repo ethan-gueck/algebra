@@ -20,7 +20,7 @@ def _build_page(output_path, theme=None):
 TOPIC = Topic(
     title="Parallel & Perpendicular Lines",
     description="Two lines through two points each: parallel when m₁ = m₂, perpendicular when m₁ · m₂ = −1, with a vertical line handled as the exception.",
-    cards=("A1.6",),  # flashcard: Parallel & Perpendicular Lines
+    cards=("A1.8",),  # flashcard: Parallel & Perpendicular Lines
     modules=(
         JSModule(
             name="parallel",

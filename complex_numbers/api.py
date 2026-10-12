@@ -19,7 +19,7 @@ def _build_page(output_path, theme=None):
 TOPIC = Topic(
     title="Complex Numbers",
     description="z = a + bi on the complex plane: i² = −1, the real and imaginary parts, the conjugate z̄ = a − bi and the modulus |z| = √(a² + b²).",
-    cards=("A2.3",),  # flashcard: Complex Numbers
+    cards=("A2.6",),  # flashcard: Complex Numbers
     modules=(
         JSModule(
             name="complex_numbers",

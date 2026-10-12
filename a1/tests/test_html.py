@@ -61,7 +61,7 @@ def test_code_popup_shows_only_the_quadratic_and_vertex_form_sections():
     for name in ("parabola", "discriminant", "quadratic-formula", "x-intercepts", "axis-of-symmetry", "vertex", "y-intercept-of-parabola",
                  "vertex-form", "convert-standard-form-to-vertex-form", "convert-vertex-form-to-standard-form", "convert-factored-form-to-vertex-form"):
         assert f'id="pp-code-0-{name}"' in dialog
-    assert "_clean" not in dialog and "quadratic_math.js" not in dialog and "A2.15 Conic Sections" not in dialog  # only the concept
+    assert "_clean" not in dialog and "quadratic_math.js" not in dialog and "A2.26 Conic Sections" not in dialog  # only the concept
 
 
 def test_title_is_escaped():

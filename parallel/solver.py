@@ -1,6 +1,6 @@
 """Two lines, each through two points: their slopes, and whether they are parallel or perpendicular.
 
-core/formula.py holds the mathematics as written: A1.4 slope() and A1.6 is_parallel() and
+core/formula.py holds the mathematics as written: A1.6 slope() and A1.8 is_parallel() and
 is_perpendicular(), which take the two points of each line and handle a vertical line
 (undefined slope). This module calls those and adds what the page needs around them: each
 line's equation as text, the product m₁ · m₂, the angle between the lines, where they cross,

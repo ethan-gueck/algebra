@@ -1,4 +1,4 @@
-"""Interactive quadratic page: solve ax² + bx + c = 0 and write it as a(x − h)² + k (A1.11 and A1.12)."""
+"""Interactive quadratic page: solve ax² + bx + c = 0 and write it as a(x − h)² + k (A1.15 and A1.16)."""
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ MATH_SCRIPTS = (STATIC / "quadratic_math.js",)
 # This page's own calculations (forms.py) on top of it.
 PAGE_SCRIPTS = (*MATH_SCRIPTS, STATIC / "forms_math.js")
 BUNDLE = WIDGET.extend(css=[STATIC / "quadratic.css"], js=[*PAGE_SCRIPTS, STATIC / "quadratic_geometry.js", STATIC / "quadratic.js"])
-# The "View the code" popup shows only the concept: the A1.11 and A1.12 sections of core/formula.py.
+# The "View the code" popup shows only the concept: the A1.15 and A1.16 sections of core/formula.py.
 MATH = (
     "parabola",
     "discriminant",

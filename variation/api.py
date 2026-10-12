@@ -21,7 +21,7 @@ def _build_page(output_path, theme=None):
 TOPIC = Topic(
     title="Direct & Inverse Variation",
     description="y = kx and y = k / x: find k from one known point, predict y at a new x, and see y / x (direct) or xy (inverse) stay equal to k.",
-    cards=("A1.13",),  # flashcard: Direct & Inverse Variation
+    cards=("A1.18",),  # flashcard: Direct & Inverse Variation
     modules=(
         JSModule(
             name="variation",

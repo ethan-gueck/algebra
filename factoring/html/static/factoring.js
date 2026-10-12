@@ -2,7 +2,7 @@
  * factoring.js — page controller for factoring a quadratic.
  *
  * Reads the Python-built config, wires the form drop-down and the three sliders,
- * and the special-products table (A1.9), whose patterns load into the widget,
+ * and the special-products table (A1.13), whose patterns load into the widget,
  * and turns a solution into a Manim-style Timeline: the parabola, its axis of
  * symmetry and vertex, the y-intercept and the roots the factors come from.
  * Changing the form rewrites the same parabola in the new form's variables, and
@@ -393,7 +393,7 @@
   scene.onResize = () => { if (timeline) timeline.render(); };
   window.addEventListener("hashchange", () => { if (readHash()) { renderFormControls(); syncInputs(); update(); } });
 
-  // ---- Special products (A1.9) ----------------------------------------------
+  // ---- Special products (A1.13) ----------------------------------------------
   const esc = (s) => String(s).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
   /** A float exactly as the computer holds it (shortest round-trip form), with a true minus sign. */
   const flt = (x) => (Object.is(x, -0) ? "−0" : String(x).replace("-", "−"));

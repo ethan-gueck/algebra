@@ -21,7 +21,7 @@ def _build_page(output_path, theme=None):
 TOPIC = Topic(
     title="Quadratic Formula & Vertex Form",
     description="Solve ax² + bx + c = 0 (real or complex roots) and write it as a(x − h)² + k: y = x² shifted, stretched and lifted, completing the square, and back.",
-    cards=("A1.11", "A1.12"),  # flashcards: Quadratic Formula & Discriminant; Vertex Form of a Quadratic
+    cards=("A1.15", "A1.16"),  # flashcards: Quadratic Formula & Discriminant; Vertex Form & Completing the Square
     modules=(
         JSModule(
             name="quadratic",

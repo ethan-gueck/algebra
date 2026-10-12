@@ -21,7 +21,7 @@ FORMULA = HTML_DIR.parent.parent / "core" / "formula.py"  # the Algebra track's 
 # The parabola's details come from the quadratic topic's browser module, so it loads first.
 MATH_SCRIPTS = (*QUADRATIC_SCRIPTS, STATIC / "factoring_math.js")
 BUNDLE = WIDGET.extend(css=[STATIC / "factoring.css"], js=[*MATH_SCRIPTS, STATIC / "factoring.js"])
-# The "View the code" popup shows only the concept: the A1.9, A1.10 and A1.12 sections of core/formula.py.
+# The "View the code" popup shows only the concept: the A1.13, A1.14 and A1.16 sections of core/formula.py.
 MATH = (
     "polynomial_products",
     "special_products",

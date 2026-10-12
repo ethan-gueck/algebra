@@ -35,5 +35,5 @@ def test_config_carries_every_section():
 
 def test_page_covers_its_four_flashcards():
     document = build_real_numbers_html(output_path=None)
-    assert "A1.1 · A1.2 · A1.3 · A1.14" in document and "Exponent rules" in document and "Radicals &amp; rational exponents" in document
+    assert "A1.1 · A1.3 · A1.4 · A1.19" in document and "Exponent rules" in document and "Radicals &amp; rational exponents" in document
     assert "Percent change" in document

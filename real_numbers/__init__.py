@@ -1,8 +1,8 @@
-"""A1.1 Properties of real numbers and order of operations, A1.2 exponent rules,
-A1.3 radicals and rational exponents and A1.14 ratios, proportions and percent
+"""A1.1 Properties of real numbers and order of operations, A1.3 exponent rules,
+A1.4 radicals and rational exponents and A1.19 ratios, proportions and percent
 change, and where floating point breaks them.
 
-    solver.py    the page's calculations, built on core/formula.py (A1.1, A1.2, A1.3, A1.14)
+    solver.py    the page's calculations, built on core/formula.py (A1.1, A1.3, A1.4, A1.19)
     html/        interactive page built on solver.py + general.web / general.styles
     api.py       what this topic publishes to the static API (PP.use / PP.embed)
 """

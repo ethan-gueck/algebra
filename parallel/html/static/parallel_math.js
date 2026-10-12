@@ -1,5 +1,5 @@
 /*
- * parallel_math.js — browser mirror of core/formula.py (A1.4 slope, A1.6) + parallel/solver.py.
+ * parallel_math.js — browser mirror of core/formula.py (A1.6 slope, A1.8) + parallel/solver.py.
  *
  * The page recalculates as the points move, so the math is ported here. Python stays the
  * source of truth: tests/test_js_parity.py runs this file and compares solve() with Python.

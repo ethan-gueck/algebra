@@ -1,6 +1,6 @@
 """Direct and inverse variation through one known point, and the y it predicts at a new x.
 
-core/formula.py holds the mathematics as written: A1.13 Direct & Inverse
+core/formula.py holds the mathematics as written: A1.18 Direct & Inverse
 Variation (y = kx and y = k / x). This module calls those and adds what the
 page needs around them: k from the known point (x₁, y₁), the y it predicts at
 x₂, the quantity that stays equal to k (y / x or xy), how scaling x scales y,

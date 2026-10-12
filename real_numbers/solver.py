@@ -386,7 +386,7 @@ def sum_two_ways(a: str, b: str, c: str) -> dict:
     }
 
 
-# ---- Exponent rules (A1.2) --------------------------------------------------
+# ---- Exponent rules (A1.3) --------------------------------------------------
 
 MAX_POWER = 20
 MAX_POWER_BITS = 1000  # numerator + denominator bits: keeps every power inside a double's range (2^±1023)
@@ -475,7 +475,7 @@ def exponent_rules(a: str, m: str, n: str) -> list[dict]:
     return out
 
 
-# ---- Radicals and rational exponents (A1.3) ---------------------------------
+# ---- Radicals and rational exponents (A1.4) ---------------------------------
 
 RADICAL_RULES = (
     _Property("rational", "Rational exponent", "aᵐᐟⁿ = ⁿ√(aᵐ) = (ⁿ√a)ᵐ"),
@@ -522,7 +522,7 @@ def _radical_row(rule: _Property, sides: list[str], exact: Fraction | None, floa
 
 
 def radicals(a: str, b: str, m: str, n: str) -> list[dict]:
-    """Check the A1.3 rules with bases a, b and the rational exponent m/n, exactly and in floating point.
+    """Check the A1.4 rules with bases a, b and the rational exponent m/n, exactly and in floating point.
 
     Each side is computed in floating point the way core/formula.py does it
     (``**`` and math.sqrt). A root is usually irrational, so ``exact`` is the
@@ -568,7 +568,7 @@ def radicals(a: str, b: str, m: str, n: str) -> list[dict]:
     return out
 
 
-# ---- Ratios, proportions and percent change (A1.14) -------------------------
+# ---- Ratios, proportions and percent change (A1.19) -------------------------
 
 def _ratio_text(x: Fraction, y: Fraction) -> str:
     return f"{exact_text(x)} : {exact_text(y)}"

@@ -1,7 +1,7 @@
 """The line through a point (x₁, y₁) with slope m, in all three forms, and the inequalities it bounds.
 
-core/formula.py holds the mathematics as written: A1.5 Equations of a Line
-(the three forms and the conversions between them) and A1.15 Linear
+core/formula.py holds the mathematics as written: A1.7 Equations of a Line
+(the three forms and the conversions between them) and A1.20 Linear
 Inequalities (adding to both sides keeps the sign; multiplying by a negative
 flips it). This module calls those and adds what the page needs around them:
 float tidying, whole-number standard form, the forms as text, a table showing

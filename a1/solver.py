@@ -1,7 +1,7 @@
 """The quadratic y = ax² + bx + c: the solver the page uses, built on core/formula.py.
 
-core/formula.py holds the mathematics as written (A1.11 Quadratic Formula and
-A1.12 Vertex Form). This module calls it and adds what the page needs: input
+core/formula.py holds the mathematics as written (A1.15 Quadratic Formula and
+A1.16 Vertex Form). This module calls it and adds what the page needs: input
 checks, float tidying, sorted and real/complex-aware results, the forms as text
 and a plot window. Pure Python with no plotting dependencies; both
 ``animations/`` and ``html/`` consume it. The JavaScript mirror

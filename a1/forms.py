@@ -1,6 +1,6 @@
 """The quadratic page's calculations: solving ax² + bx + c = 0 and writing it as a(x − h)² + k.
 
-The mathematics lives in core/formula.py (A1.11 Quadratic Formula and A1.12
+The mathematics lives in core/formula.py (A1.15 Quadratic Formula and A1.16
 Vertex Form). This module calls it and adds what the page needs around it:
 the quadratic formula worked through (complex roots included), the three
 transformations of the parent y = x² that build a(x − h)² + k, what a, h and

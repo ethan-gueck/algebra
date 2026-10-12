@@ -70,7 +70,7 @@ def test_a_must_be_non_zero():
         solve("standard", 0, 1, 2)
 
 
-# ---- Special products (A1.9) ----
+# ---- Special products (A1.13) ----
 
 @pytest.mark.parametrize("a, b", [(3, 2), (-4, 7), (0, 5), (0.1, 0.3), (1, 1.0000001), (2.5, -0.5)])
 def test_special_product_formulas_hold(a, b):

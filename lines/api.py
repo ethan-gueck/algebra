@@ -21,7 +21,7 @@ def _build_page(output_path, theme=None):
 TOPIC = Topic(
     title="Equations of a Line & Linear Inequalities",
     description="One line written three ways (y = mx + b, y − y₁ = m(x − x₁), Ax + By = C) and the inequalities it bounds: y < mx + b shaded, with the sign flipping when you divide by a negative.",
-    cards=("A1.5", "A1.15"),  # flashcards: Equations of a Line; Linear Inequalities
+    cards=("A1.7", "A1.20"),  # flashcards: Equations of a Line; Linear Inequalities
     modules=(
         JSModule(
             name="lines",

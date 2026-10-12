@@ -3,8 +3,8 @@
  *
  * Six live sections, all computed by RealMath (real_numbers_math.js): the
  * properties explorer, the order-of-operations stepper, the solar-altitude
- * grouping demo (A1.1), the exponent rules (A1.2), radicals and rational
- * exponents (A1.3), and ratios, proportions and percent change (A1.14). The first render uses the Python-built config.
+ * grouping demo (A1.1), the exponent rules (A1.3), radicals and rational
+ * exponents (A1.4), and ratios, proportions and percent change (A1.19). The first render uses the Python-built config.
  * The URL hash (#a=0.1&b=0.2&c=0.3) presets the explorer.
  */
 (function () {
