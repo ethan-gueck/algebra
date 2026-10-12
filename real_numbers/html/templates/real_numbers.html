@@ -31,6 +31,42 @@
   <main class="container page-body">
     <p class="lede">Real numbers obey a short list of properties: you can swap, regroup and distribute without changing the answer. Computers don't store real numbers, though. They store <em>floating-point</em> numbers, the nearest binary fraction to each value, and round after every operation. Most properties survive that. Some don't.</p>
 
+    <section class="panel rn-panel rn-story" aria-labelledby="story-title">
+      <h2 class="panel__title" id="story-title">When grouping changes the answer: a real case</h2>
+      <p>On paper, addition is associative: (<span class="var">a</span> + <span class="var">b</span>) + <span class="var">c</span> and <span class="var">a</span> + (<span class="var">b</span> + <span class="var">c</span>) are the same number. In floating point they often aren't. 0.1 is stored as 0.1000000000000000055…, and every addition rounds its result again, so changing the grouping changes which roundings happen. Subtraction is addition of a negative, so it inherits the same problem.</p>
+      <p>I ran into this while calculating solar altitude, the angle of the sun above the horizon. The sine of the altitude is a sum of products of the latitude, the sun’s declination and the hour angle, and the altitude is the arcsin of that sum:</p>
+      <p class="rn-formula">sin(<span class="var">H</span><sub>c</sub>) = cos(Lat)·cos(<span class="var">δ</span>)·cos(<span class="var">ω</span>) + sin(Lat)·sin(<span class="var">δ</span>) &nbsp;&nbsp;→&nbsp;&nbsp; <span class="var">H</span><sub>c</sub> = arcsin(…)</p>
+      <p>Some of the arcsin results came back negative where that was not physically possible. Nothing was wrong with the formula. The floating-point arithmetic underneath it had rounded the sum to the wrong side of a boundary: a fundamental detail of how computers add numbers produced physically impossible outputs.</p>
+
+      <h3 class="rn-subtitle">Try it</h3>
+      <p class="rn-help">Three terms whose exact sum is 0 (the sun on the horizon) or 1 (the sun straight overhead), added in the two possible groupings.</p>
+      <div class="rn-inputs">
+        <label class="rn-input"><span><span class="var">t</span>₁</span><input id="t1" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
+        <label class="rn-input"><span><span class="var">t</span>₂</span><input id="t2" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
+        <label class="rn-input"><span><span class="var">t</span>₃</span><input id="t3" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
+      </div>
+      <div class="chips">
+        <button class="btn" type="button" data-sum="0.1,0.3,-0.4">Sun on the horizon</button>
+        <button class="btn" type="button" data-sum="0.1,0.34,0.56">Sun overhead</button>
+        <button class="btn" type="button" data-sum="0.25,0.5,-0.75">Exact in binary</button>
+      </div>
+      <p id="sum-error" class="error" role="alert" hidden></p>
+      <div class="table-scroll">
+        <table class="rn-table">
+          <thead><tr><th scope="col">How it's added</th><th scope="col">sin(<span class="var">H</span><sub>c</sub>)</th><th scope="col">Altitude <span class="var">H</span><sub>c</sub> = arcsin</th><th scope="col">Physically</th></tr></thead>
+          <tbody id="sum"></tbody>
+        </table>
+      </div>
+
+      <h3 class="rn-subtitle">How to guard against it</h3>
+      <ul class="rn-list">
+        <li>Don't compare floats for exact equality; compare within a tolerance.</li>
+        <li>Clamp a value to a function's domain before calling it: arcsin and arccos only accept −1 to 1.</li>
+        <li>Snap results within a tolerance of a physical boundary (here 0 and ±1) onto the boundary. The guarded row above does both.</li>
+        <li>Add long sums with compensated summation (Python's <code>math.fsum</code>), or at least in a consistent order.</li>
+      </ul>
+    </section>
+
     <section class="panel rn-panel" aria-labelledby="props-title">
       <div class="panel__head">
         <h2 class="panel__title" id="props-title">Properties explorer</h2>
@@ -74,42 +110,6 @@
       <p class="rn-start" id="ops-start"></p>
       <ol class="steps steps--compact" id="ops-steps"></ol>
       <dl class="results rn-result" id="ops-result"></dl>
-    </section>
-
-    <section class="panel rn-panel rn-story" aria-labelledby="story-title">
-      <h2 class="panel__title" id="story-title">When grouping changes the answer: a real case</h2>
-      <p>On paper, addition is associative: (<span class="var">a</span> + <span class="var">b</span>) + <span class="var">c</span> and <span class="var">a</span> + (<span class="var">b</span> + <span class="var">c</span>) are the same number. In floating point they often aren't. 0.1 is stored as 0.1000000000000000055…, and every addition rounds its result again, so changing the grouping changes which roundings happen. Subtraction is addition of a negative, so it inherits the same problem.</p>
-      <p>I ran into this while calculating solar altitude, the angle of the sun above the horizon. The sine of the altitude is a sum of products of the latitude, the sun’s declination and the hour angle, and the altitude is the arcsin of that sum:</p>
-      <p class="rn-formula">sin(<span class="var">H</span><sub>c</sub>) = cos(Lat)·cos(<span class="var">δ</span>)·cos(<span class="var">ω</span>) + sin(Lat)·sin(<span class="var">δ</span>) &nbsp;&nbsp;→&nbsp;&nbsp; <span class="var">H</span><sub>c</sub> = arcsin(…)</p>
-      <p>Some of the arcsin results came back negative where that was not physically possible. Nothing was wrong with the formula. The floating-point arithmetic underneath it had rounded the sum to the wrong side of a boundary: a fundamental detail of how computers add numbers produced physically impossible outputs.</p>
-
-      <h3 class="rn-subtitle">Try it</h3>
-      <p class="rn-help">Three terms whose exact sum is 0 (the sun on the horizon) or 1 (the sun straight overhead), added in the two possible groupings.</p>
-      <div class="rn-inputs">
-        <label class="rn-input"><span><span class="var">t</span>₁</span><input id="t1" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
-        <label class="rn-input"><span><span class="var">t</span>₂</span><input id="t2" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
-        <label class="rn-input"><span><span class="var">t</span>₃</span><input id="t3" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"></label>
-      </div>
-      <div class="chips">
-        <button class="btn" type="button" data-sum="0.1,0.3,-0.4">Sun on the horizon</button>
-        <button class="btn" type="button" data-sum="0.1,0.34,0.56">Sun overhead</button>
-        <button class="btn" type="button" data-sum="0.25,0.5,-0.75">Exact in binary</button>
-      </div>
-      <p id="sum-error" class="error" role="alert" hidden></p>
-      <div class="table-scroll">
-        <table class="rn-table">
-          <thead><tr><th scope="col">How it's added</th><th scope="col">sin(<span class="var">H</span><sub>c</sub>)</th><th scope="col">Altitude <span class="var">H</span><sub>c</sub> = arcsin</th><th scope="col">Physically</th></tr></thead>
-          <tbody id="sum"></tbody>
-        </table>
-      </div>
-
-      <h3 class="rn-subtitle">How to guard against it</h3>
-      <ul class="rn-list">
-        <li>Don't compare floats for exact equality; compare within a tolerance.</li>
-        <li>Clamp a value to a function's domain before calling it: arcsin and arccos only accept −1 to 1.</li>
-        <li>Snap results within a tolerance of a physical boundary (here 0 and ±1) onto the boundary. The guarded row above does both.</li>
-        <li>Add long sums with compensated summation (Python's <code>math.fsum</code>), or at least in a consistent order.</li>
-      </ul>
     </section>
 
     <section class="panel rn-panel" aria-labelledby="exp-title">
