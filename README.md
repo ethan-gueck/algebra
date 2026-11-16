@@ -20,6 +20,7 @@ The bar is the cumulative size of every file in the published site, where 100% i
 | [`slope/`](slope/) | [Slope](https://ethan-gueck.github.io/algebra/slope/slope.html) | A1.6 |
 | [`lines/`](lines/) | [Equations of a Line & Linear Inequalities](https://ethan-gueck.github.io/algebra/lines/lines.html) | A1.7, A1.20 |
 | [`parallel/`](parallel/) | [Parallel & Perpendicular Lines](https://ethan-gueck.github.io/algebra/parallel/parallel.html) | A1.8 |
+| [`functions/`](functions/) | [Functions, Domain & Range](https://ethan-gueck.github.io/algebra/functions/functions.html) | A1.9 |
 | [`factoring/`](factoring/) | [Special Products & Factoring](https://ethan-gueck.github.io/algebra/factoring/factoring.html) | A1.13, A1.14 |
 | [`variation/`](variation/) | [Direct & Inverse Variation](https://ethan-gueck.github.io/algebra/variation/variation.html) | A1.18 |
 | [`a1/`](a1/) | [Quadratic Formula & Vertex Form](https://ethan-gueck.github.io/algebra/a1/quadratic.html) | A1.15, A1.16 |

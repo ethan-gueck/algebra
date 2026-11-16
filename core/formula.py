@@ -223,6 +223,35 @@ def is_perpendicular(m1=None, m2=None, x1=None, y1=None, x2=None, y2=None, x3=No
 
 # _____________ A1.9 Functions, Domain & Range _____________
 
+def function_notation(f, x):
+    """y = f(x): substitute the input x into the rule f to get its one output."""
+    return f(x)
+
+
+def denominator_allowed(g):
+    """1 / g(x) needs g(x) ≠ 0: no division by zero."""
+    return g != 0
+
+
+def even_root_allowed(g):
+    """√g(x) needs g(x) ≥ 0: no even root of a negative."""
+    return g >= 0
+
+
+def log_allowed(g):
+    """ln g(x) needs g(x) > 0: no logarithm of zero or a negative."""
+    return g > 0
+
+
+def vertical_line_test(pairs):
+    """A relation is a function when each x maps to exactly one y: no vertical line meets its graph twice."""
+    outputs = {}
+    for x, y in pairs:
+        if outputs.setdefault(x, y) != y:
+            return False
+    return True
+
+
 # _____________ A1.10 Solving Linear & Literal Equations _____________
 
 # _____________ A1.11 Absolute Value Equations & Inequalities _____________
